@@ -1,5 +1,9 @@
 package Dungeon;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
 /*
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +28,9 @@ public class Dungeon
 	public Celda [][] dungeon;
 	
 	
+	ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
+	
+	
 	//booleano para saber si ya se ha llegado a la meta y si es asi ya no se tiene que seguir pasando por la funcion
 	boolean llegada= false;
 	
@@ -36,7 +43,7 @@ public class Dungeon
 		c= _y;
 		
 		inicializarDungeon(); // Inicializamos el dungeon para crear primero las dimensiones que va a tener el mapa
-		//generateDungeon(filas_iniciales, columnas_iniciales); // generamos el dungeon empezando por la posicion 0 0
+		generateDungeon(filas_iniciales, columnas_iniciales); // generamos el dungeon empezando por la posicion 0 0
 		
 		// pintamos el dungeon que hemos generado
 		//pintar(f, c);
@@ -46,7 +53,104 @@ public class Dungeon
 	/** 
      *	Función que genera el dungeon del tamaño que nos han dado y va abriendo las puertas entre las celdas
      */
-/*	public void generateDungeon(int _x, int _y) 
+	/*public void generateDungeon(int _x, int _y) 
+	{
+		Celda inicio = dungeon[_x][_y]; //guardamos las coordenadas de la celda en la que nos encontramos
+		
+		inicio.visitada = true;//marcamos la celda como visitada
+		
+		//Guardamos todas las celdas vecinas de la celda actual recorriendo la lista
+		ArrayList<Pared> vecinos = inicio.getLista();
+		Collections.reverse(vecinos);//le damos la vuelta a los vecinos que recibimos
+		Collections.shuffle(vecinos);//desordenamos los vecinos para generar el siguiente vecino random
+		//le damos la vuelta y luego le damos a desordenar para que haya menos probabilidades de que salga igual el mapa
+		
+		//Recorremos la lista de vecinos para comprobar cuales han sido visitados y cuales no y el primero que no esté
+		//visitado lo visitamos
+		Iterator<Pared> it =vecinos.iterator();
+		//Mientras haya un vecino siguiente en la lista por el cual no hayamos pasado seguimos dentro del while
+		while(it.hasNext())
+		{
+			//Cojo la primera vecina de la lista de vecinas.
+			Pared currentPared = it.next();//guardamos la pared del vecino que tenemos como siguiente
+			
+			//Guardo una referencia a la celda vecina.
+			int [] siguientePosicion = currentPared.movement(_x, _y, currentPared.direction);
+			Celda neighbour = dungeon[siguientePosicion[1]][siguientePosicion[0]];
+			
+			if(neighbour.visitada)
+			{
+				//Si ha sido visitada continuo sin hacer nada, pues es una celda que ya ha sido abierta por algun lado
+				continue;
+			}
+			else
+			{
+				//Pared vecino = neighbour.UnionParedes(currentPared.getDirection());
+				
+				//Pared opuesta = new Pared(currentPared.direction, false);
+				
+				Pared.Direcciones opuesta = null;
+						
+				//Compruebo cual es la celda opuesta
+				if(currentPared.getDirection() == Pared.Direcciones.ESTE)
+				{
+					opuesta = Pared.Direcciones.OESTE;
+				}
+				
+				else if(currentPared.getDirection() == Pared.Direcciones.OESTE)
+				{
+					opuesta = Pared.Direcciones.ESTE;
+				}
+				
+				else if(currentPared.getDirection() == Pared.Direcciones.NORTE)
+				{
+					opuesta = Pared.Direcciones.SUR;
+				}
+				
+				else if(currentPared.getDirection() == Pared.Direcciones.SUR)
+				{
+					opuesta = Pared.Direcciones.NORTE;
+				}
+				
+				
+				
+				//Lista con todas las direcciones de las puertas de la celda siguiente
+				lista_opuesta = dungeon[neighbour.fila][neighbour.columna].getLista();
+				
+				
+				
+				//Para cada elemento de la lista de la siguiente posicion busco donde se encuentra la pared opuesta con respecto a la posicion donde me 
+				//encuentro
+				for (int num_dir_opuesta = 0; num_dir_opuesta < lista_opuesta.size(); num_dir_opuesta++)
+				{
+
+					
+					//Si la direccion opuesta coincide con la opuesta de la pared que hemos seleccionado de la celda donde nos encontramos
+					//entonces abrimos esa pared
+					if(lista_opuesta.get(num_dir_opuesta).direction == opuesta)
+					{
+						//Abro la puerta de la celda de al lado
+						lista_opuesta.get(num_dir_opuesta).open = true;
+						
+						//Abro la puerta de la celda donde me encuentro
+						//lista.get(elemento).open = true;
+						//quito paredes tanto de la celda donde me encuentro como de la vecina a la que estoy accediendo
+						currentPared.open = true;
+					}
+				}
+				//vecino.open = true;
+				
+
+				//Marco el vecino como visitado, puesto que va a ser nuestra siguiente posicion
+				generateDungeon(neighbour.fila, neighbour.columna);
+			}
+			
+		}
+
+	}
+	*/
+
+	public void generateDungeon(int _x, int _y) 
 	{
 		Celda inicio = dungeon[_x][_y]; //guardamos las coordenadas de la celda en la que nos encontramos
 		
@@ -81,7 +185,6 @@ public class Dungeon
 				//quito paredes tanto de la celda donde me encuentro como de la vecina a la que estoy accediendo
 				currentPared.open = true;
 				Pared vecino = neighbour.UnionParedes(currentPared.getDirection());
-				
 				vecino.open = true;
 				
 
@@ -92,7 +195,6 @@ public class Dungeon
 		}
 
 	}
-*/	
 	
 	/** 
      *	Función que realiza la busqueda del camino optimo entre la celda origen y la meta
@@ -338,6 +440,7 @@ public class Dungeon
 	{
 		//creamos el dungeon con las dimensiones que nos han pasado para saber las dimensiones totales
 		dungeon= new Celda[f][c];
+		
 		//Inicializamos el dungeon (sin pintarlo).
 		for(int i = 0; i <= dungeon.length-1; i++)
 		{

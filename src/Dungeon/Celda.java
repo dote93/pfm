@@ -88,7 +88,7 @@ public class Celda
 	{
 		
 		//Si soy esquina superior derecha
-		if(fila == max_fila && columna == 0)
+		if(columna == max_columna && fila == 0)
 		{
 			lista.add(new Pared(Pared.Direcciones.OESTE, false));
 			lista.add(new Pared(Pared.Direcciones.SUR, false));
@@ -107,41 +107,41 @@ public class Celda
 			lista.add(new Pared(Pared.Direcciones.NORTE, false));
 		}
 		//si soy esquina inferior izquierda
-		if(fila == 0 && columna == max_columna)
+		if(fila == max_fila && columna == 0)
 		{
 			lista.add(new Pared(Pared.Direcciones.ESTE, false));
 			lista.add(new Pared(Pared.Direcciones.NORTE, false));
 		}
 		//Si soy lado derecho
-		if(fila == max_fila && (columna > 0 && columna < max_columna))
+		if(columna == max_columna && (fila > 0 && fila < max_fila))
 		{
 			lista.add(new Pared(Pared.Direcciones.NORTE, false));
 			lista.add(new Pared(Pared.Direcciones.SUR, false));
 			lista.add(new Pared(Pared.Direcciones.OESTE, false));
 		}
 		//Si soy lado izquierdo
-		if(fila == 0 && (columna > 0 && columna < max_columna))
+		if(columna == 0 && (fila > 0 && fila < max_fila))
 		{
 			lista.add(new Pared(Pared.Direcciones.NORTE, false));
 			lista.add(new Pared(Pared.Direcciones.SUR, false));
 			lista.add(new Pared(Pared.Direcciones.ESTE, false));
 		}
 		//Si soy lado norte
-		if(columna == 0 && (fila >0 && fila <max_fila))
+		if(fila == 0 && (columna > 0 && columna < max_columna))
 		{
 			lista.add(new Pared(Pared.Direcciones.OESTE, false));
 			lista.add(new Pared(Pared.Direcciones.ESTE, false));
 			lista.add(new Pared(Pared.Direcciones.SUR, false));
 		}
 		//Si soy lado sur
-		if(columna == max_columna && (fila >0 && fila <max_fila))
+		if(fila == max_fila && (columna > 0 && columna < max_columna))
 		{
 			lista.add(new Pared(Pared.Direcciones.OESTE, false));
 			lista.add(new Pared(Pared.Direcciones.ESTE, false));
 			lista.add(new Pared(Pared.Direcciones.NORTE, false));
 		}
 		//Si estoy por el medio
-		if((fila >0 && fila <max_fila) && (columna > 0 && columna < max_columna))
+		if((fila > 0 && fila <max_fila) && (columna > 0 && columna < max_columna))
 		{
 			lista.add(new Pared(Pared.Direcciones.ESTE, false));
 			lista.add(new Pared(Pared.Direcciones.OESTE, false));

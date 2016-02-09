@@ -62,22 +62,54 @@ public class Pared
 		{
 		case ESTE:
 			//nos movemos una posicion a la derecha en el eje x
-			cellX += 1;
+			cellY += 1;
 			break;
 		case OESTE:
 			//nos movemos una posicion a la izquierda en el eje x
-			cellX -= 1;
+			cellY -= 1;
 			break;
 		case NORTE:
 			//nos movemos una posicion hacia arriba en el eje y
-			cellY -= 1;
+			cellX -= 1;
 			break;
 		case SUR:
 			//nos movemos una posicion hacia abajo en el eje y
-			cellY += 1;
+			cellX += 1;
 			break;
 		}
 		//Devolvemos un array con los valores de las coordenadas x eys
+		int[] result = {cellX, cellY};
+		return result;
+	}
+	
+	public int[] movement(int x, int y)
+	{
+		//La celda en la que estoy
+		int cellX = x;
+		int cellY = y;
+		
+		//paso un numero para saber la posicion ( 0,1,2,3)
+		//Switch para saber la posicion
+		switch(direction)
+		{
+		case ESTE:
+			//nos movemos una posicion a la derecha en el eje y
+			cellY += 1;
+			break;
+		case OESTE:
+			//nos movemos una posicion a la izquierda en el eje y
+			cellY -= 1;
+			break;
+		case NORTE:
+			//nos movemos una posicion hacia arriba en el eje x
+			cellX -= 1;
+			break;
+		case SUR:
+			//nos movemos una posicion hacia abajo en el eje x
+			cellX += 1;
+			break;
+		}
+		//Devolvemos un array con los valores de las coordenadas x y
 		int[] result = {cellX, cellY};
 		return result;
 	}
