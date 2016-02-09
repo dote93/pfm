@@ -9,7 +9,7 @@ import Dungeon.Pared.Direcciones;
  * @version 1.0
  * @author  Alvaro Valle del Pozo
  * 			TFM
- * 			Profesor: Jose Maria Font y Daniel Manrique
+ * 			Profesor: Daniel Manrique y Jose Maria Font
  * 			Fecha: 01-02-2016
  */
 public class EvPopulation 
@@ -58,7 +58,7 @@ public class EvPopulation
 	 * @param numero_tesoros cuantos tesoros por mapa
 	 * @param numero_puertas cuantas puertas por mapa
 	 */
-	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, int numero_puertas, int porcentaje)
+	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, int numero_puertas, int porcentaje)
 	{
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
@@ -67,13 +67,12 @@ public class EvPopulation
 			
 			mapa = new Dungeon(f, c); //El dungeon se pasa con las dimensiones (x, y)
 			
+			//Se anaden las puertas al mapa
+			anadir_puertas_posicion(pos_puertas, numero_puertas);
+			//anadir_puertas(f, c, numero_puertas);
 			
-			//Se inicializan las variables para saber si ya hay puerta o no en ese lado por cada individuo
-			hay_puerta_N = false;
-			hay_puerta_S = false;
-			hay_puerta_E = false;
-			hay_puerta_O = false;
-			
+			//LOG
+			//System.out.println(" ");
 			
 			//Se anaden los monstruos al mapa
 			anadir_monstruos(f, c, numero_monstruos);
@@ -83,13 +82,6 @@ public class EvPopulation
 			
 			//Se anaden los tesoros al mapa
 			anadir_tesoros(f, c, numero_tesoros);
-			
-			
-			//LOG
-			//System.out.println(" ");	
-			
-			//Se anaden las puertas al mapa
-			anadir_puertas(f, c, numero_puertas);
 			
 			//LOG
 			//System.out.println(" ");
@@ -140,8 +132,8 @@ public class EvPopulation
 			//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para tesoro");
 			
 			
-			//Si la posicion random seleccionada ya tiene un monstruo o tesoro se toma esta vuelta como nula restando el numero de vueltas dadas
-			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true)
+			//Si la posicion random seleccionada ya tiene un monstruo o tesoro o puerta se toma esta vuelta como nula restando el numero de vueltas dadas
+			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true || mapa.dungeon[random_x][random_y].puerta == true)
 			{
 				tesoros = tesoros - 1;
 			}
@@ -174,8 +166,8 @@ public class EvPopulation
 			//LOG
 			//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para monstruo");
 			
-			//Si la posicion random seleccionada ya tiene un monstruo se toma esta vuelta como nula restando el numero de vueltas dadas
-			if (mapa.dungeon[random_x][random_y].monstruo == true)
+			//Si la posicion random seleccionada ya tiene un monstruo o tesoro o puerta se toma esta vuelta como nula restando el numero de vueltas dadas
+			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true || mapa.dungeon[random_x][random_y].puerta == true)
 			{
 				monstruos = monstruos - 1;
 			}
@@ -188,6 +180,18 @@ public class EvPopulation
 		}
 	}
 	
+	/**
+	 * Funcion que se encarga de poner una puerta en la posicion que recibe
+	 * @param f fila donde va a estar la puerta
+	 * @param c columna donde va a estar la puerta
+	 */
+	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, int numero_puertas)
+	{
+		for (int puerta=0; puerta<numero_puertas; puerta++)
+		{
+			mapa.dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
+		}
+	}
 	
 	/**
 	 * Funcion que anade puertas al mapa
@@ -197,6 +201,14 @@ public class EvPopulation
 	 */
 	public void anadir_puertas(int f, int c, int numero_puertas)
 	{
+		
+		//Se inicializan las variables para saber si ya hay puerta o no en ese lado por cada individuo
+		hay_puerta_N = false;
+		hay_puerta_S = false;
+		hay_puerta_E = false;
+		hay_puerta_O = false;
+		
+		
 		//Se anaden las x puertas a cada mapa en posiciones random
 		for (int puertas=0; puertas<numero_puertas; puertas++)
 		{
@@ -278,7 +290,7 @@ public class EvPopulation
 				for(int elemento = 0; elemento < lista.size(); elemento++)
 				{
 					//Variable que almacena la posicion del vecino dada la posicion de la celda y la direccion de la pared
-					int [] siguientePosicion = lista.get(elemento).movement(fila, columna, lista.get(elemento).direction);
+					int [] siguientePosicion = lista.get(elemento).movement(fila, columna);
 					
 					//LOG
 					//System.out.println("Direccion de la pared " + elemento + ": " + lista.get(elemento).direction);
@@ -354,6 +366,7 @@ public class EvPopulation
 			Poblacion.get(j).pintar();
 		}
 	}
+	
 	
 	/**
 	 * Funcion que pinta a un individuo

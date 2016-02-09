@@ -7,10 +7,9 @@ package Dungeon;
  * @version 1.0
  * @author  Alvaro Valle del Pozo
  * 			TFM
- * 			Profesor: Jose Maria Font y Daniel Manrique
+ * 			Profesor: Daniel Manrique y Jose Maria Font
  * 			Fecha: 01-02-2016
  */
-
 public class Pared 
 {
 		
@@ -40,48 +39,21 @@ public class Pared
 	}
 	
 	/** 
-     *	Funci—n que devuelve la direccion de la pared
+     *	Funcion que devuelve la direccion de la pared
      */
 	public Pared.Direcciones getDirection()
 	{
 		return direction;
 	}
 	
-	/** 
-     *	Funci—n que devuelve el resultado de desplazarse de la celda que recibe y la siguiente posicion a la que se va a mover pasandole un array unidimensional de int con la posicion x, y 
-     */
-	public int[] movement(int x, int y, Direcciones direction) //**********************************************************************************
-	{
-		//La celda en la que estoy
-		int cellX = x;
-		int cellY = y;
-		
-		//paso un numero para saber la posicion ( 0,1,2,3)
-		//Switch para saber la posicion
-		switch(direction)
-		{
-		case ESTE:
-			//nos movemos una posicion a la derecha en el eje x
-			cellY += 1;
-			break;
-		case OESTE:
-			//nos movemos una posicion a la izquierda en el eje x
-			cellY -= 1;
-			break;
-		case NORTE:
-			//nos movemos una posicion hacia arriba en el eje y
-			cellX -= 1;
-			break;
-		case SUR:
-			//nos movemos una posicion hacia abajo en el eje y
-			cellX += 1;
-			break;
-		}
-		//Devolvemos un array con los valores de las coordenadas x eys
-		int[] result = {cellX, cellY};
-		return result;
-	}
-	
+
+	/**
+	 * Funcion que devuelve el resultado de desplazarse de la celda que recibe y la siguiente posicion a la que se va a mover pasandole un array 
+	 * unidimensional de int con la posicion x, y
+	 * @param x fila donde me encuentro
+	 * @param y columna donde me encuentro
+	 * @return
+	 */
 	public int[] movement(int x, int y)
 	{
 		//La celda en la que estoy

@@ -11,10 +11,9 @@ import java.util.Scanner;
  * @version 1.0
  * @author  Alvaro Valle del Pozo
  * 			TFM
- * 			Profesor: Jose Maria Font y Daniel Manrique
+ * 			Profesor: Daniel Manrique y Jose Maria Font
  * 			Fecha: 01-02-2016
  */
-
 public class main
 {
 	
@@ -35,22 +34,39 @@ public class main
 		
 		int numero_monstruos = 5;
 		int numero_tesoros = 5;
-		int numero_puertas = 3;
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 20;
+		int porcentaje = 25;
 		
 		
 		//ArrayList que almacena los individuos de la poblacion
 		ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
 
+		ArrayList<int[]> pos_puertas = new ArrayList<int[]>();
 		
 		//Creo una variable de tipo evpopulation
 		EvPopulation evopopulation = new EvPopulation();
 		
 		
+		//Creo las posiciones de las puertas
+		int [] puerta_1 = {((f / 2) - 1), 0}; // puerta centrada en el lado oeste
+		int [] puerta_2 = {0, ((c/2) - 1)}; //puerta centrada en el lado norte
+		int [] puerta_3 = {(f-1), ((c/2) - 1)}; //puerta centrada en el lado sur
+		int [] puerta_4 = {((f / 2) - 1), (c-1)};
+		
+		
+		//Anado las puertas a la lista con sus respectivas posiciones
+		pos_puertas.add(puerta_1);
+		pos_puertas.add(puerta_2);
+		pos_puertas.add(puerta_3);
+		pos_puertas.add(puerta_4);
+		
+		//Calculo el numero de puertas que va a haber
+		int numero_puertas = pos_puertas.size();
+		
+		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, numero_puertas, porcentaje);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros,pos_puertas, numero_puertas, porcentaje);
 		
 		
 		
