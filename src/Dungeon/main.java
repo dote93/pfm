@@ -28,8 +28,8 @@ public class main
 		//****************************************************************************************
 		
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
-		int f = 10;
-		int c = 10;
+		int f = 20;
+		int c = 20;
 		int numero_poblacion = 10;
 		
 		int numero_monstruos = 5;
