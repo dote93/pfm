@@ -25,7 +25,7 @@ public class Dungeon
 	int filas_iniciales= 0;
 	int columnas_iniciales=0;
 	public Celda [][] dungeon;
-	
+	public int contador = 0;
 	
 	ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
 	
@@ -45,7 +45,7 @@ public class Dungeon
 		inicializarDungeon(); 
 		
 		//Generamos el dungeon empezando por la posicion 0 0
-		generateDungeon(filas_iniciales, columnas_iniciales); 
+		//generateDungeon(filas_iniciales, columnas_iniciales); 
 		
 		// pintamos el dungeon que hemos generado
 		//pintar(f, c);
@@ -106,18 +106,18 @@ public class Dungeon
 	/** 
      *	Funci—n que realiza la busqueda del camino optimo entre la celda origen y la meta
      */
-/*	public void llegada_optima(int x_inicio, int y_inicio, int x_final, int y_final)
+	public void llegada_optima(int x_inicio, int y_inicio, int x_final, int y_final)
 	{
 		//reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
-		ResetearDungeonCamino();
+		//ResetearDungeonCamino();
 		
 		//Creamos dos celdas nuevas 
 		Celda celda_inicio = dungeon[x_inicio][y_inicio];
 		Celda celda_final = dungeon[x_final][y_final];
 		
 		//ponemos a true las celdas de salida y de meta a true 
-		celda_inicio.posicion_salida= true;
-		celda_final.posicion_meta= true;
+		celda_inicio.puerta= true; //celda_inicio.posicion_salida= true;
+		celda_final.tesoro= true; //celda_final.posicion_meta= true;
 		
 		
 		//Nos creamos dos listas de las celdas abiertas y cerradas para poder ir recorriendo el dungeon e ir guardando las celdas 
@@ -143,8 +143,8 @@ public class Dungeon
 				int coste_provisional= celdas_abiertas.get(i).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(i).fila,celdas_abiertas.get(i).columna);
 				int posicion_provisional = i;
 				
-				//si el coste provisional es mayor 
-				if(coste_provisional <= coste)
+				//si el coste provisional es mayor // IMPORTANTE NO PONER <= PORQUE SINO SE PISA UN CAMINO MEJOR
+				if(coste_provisional < coste) 
 				{
 					coste= coste_provisional;
 					posicion= posicion_provisional;
@@ -199,7 +199,7 @@ public class Dungeon
 		}
 		RecorrerCamino(celda_final);// Recorremos el camino optimo empezando desde la celda final		
 	}
-*/
+
 	
 	
 	/** 
@@ -359,11 +359,11 @@ public class Dungeon
 		}
 	}
 
-/*
+
 	/** 
      *	Funci—n que devuelve una lista de los vecinos transitables de la celda en la que nos encontramos
      */
-/*	public ArrayList<Celda> getlistaVecinos(Celda celda_actual)
+	public ArrayList<Celda> getlistaVecinos(Celda celda_actual)
 	{
 		//Nos creamos un arraylist de celda para guardar los vecinos de la celda que recibimos 
 		ArrayList<Celda> vecinos_celda_actual = new ArrayList<Celda>();
@@ -383,7 +383,8 @@ public class Dungeon
 		return vecinos_celda_actual; // devolvemos el vecino al que podriamos transitar 
 		
 	}
-*/	
+
+	
 	/** 
      *	Funci—n que va recorriendo el camino que hemos hecho desde la meta hasta la celda inicial
      */
@@ -400,6 +401,7 @@ public class Dungeon
 			Celda celda_precursora = dungeon[celda_camino.Posicion_precursor[0]][celda_camino.Posicion_precursor[1]];
 			// decimos que la posicion camino de la celda precursora est‡ a true para luego poder pintar una O
 			celda_precursora.monstruo= true;
+			contador++;
 			
 			// si la celda precursora no tiene la posicion de salida a false, la igualamos a esta a false para luego al pintar no tener problemass
 			if(celda_precursora.puerta == false)

@@ -68,20 +68,20 @@ public class EvPopulation
 			mapa = new Dungeon(f, c); //El dungeon se pasa con las dimensiones (x, y)
 			
 			//Se anaden las puertas al mapa
-			anadir_puertas_posicion(pos_puertas, numero_puertas);
+//			anadir_puertas_posicion(pos_puertas, numero_puertas);
 			//anadir_puertas(f, c, numero_puertas);
 			
 			//LOG
 			//System.out.println(" ");
 			
 			//Se anaden los monstruos al mapa
-			anadir_monstruos(f, c, numero_monstruos);
+//			anadir_monstruos(f, c, numero_monstruos);
 			
 			//LOG
 			//System.out.println(" ");
 			
 			//Se anaden los tesoros al mapa
-			anadir_tesoros(f, c, numero_tesoros);
+			//anadir_tesoros(f, c, numero_tesoros);
 			
 			//LOG
 			//System.out.println(" ");
@@ -92,6 +92,9 @@ public class EvPopulation
 			
 			//SE ABREN LAS PAREDES
 			abrir_paredes(f, c, porcentaje);
+			
+			//Generamos el dungeon empezando por la posicion 0 0
+			mapa.generateDungeon(0, 0); 
 			
 			/*
 			System.out.println("¿La pared esta abierta? ");
@@ -342,6 +345,7 @@ public class EvPopulation
 							
 							//Abro la puerta de la celda donde me encuentro
 							lista.get(elemento).open = true;
+							
 						}
 					}
 					
@@ -352,6 +356,7 @@ public class EvPopulation
 	}
 	
 	
+
 	/**
 	 * Funcion que se encarga de pintar los mapas de los individuos 
 	 * @param Poblacion
@@ -366,6 +371,8 @@ public class EvPopulation
 			Poblacion.get(j).pintar();
 		}
 	}
+	
+	
 	
 	
 	/**

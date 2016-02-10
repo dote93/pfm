@@ -33,10 +33,10 @@ public class main
 		int numero_poblacion = 10;
 		
 		int numero_monstruos = 5;
-		int numero_tesoros = 5;
+		int numero_tesoros = 10;
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 25;
+		int porcentaje = 50; //25
 		
 		
 		//ArrayList que almacena los individuos de la poblacion
@@ -52,7 +52,7 @@ public class main
 		int [] puerta_1 = {((f / 2) - 1), 0}; // puerta centrada en el lado oeste
 		int [] puerta_2 = {0, ((c/2) - 1)}; //puerta centrada en el lado norte
 		int [] puerta_3 = {(f-1), ((c/2) - 1)}; //puerta centrada en el lado sur
-		int [] puerta_4 = {((f / 2) - 1), (c-1)};
+		int [] puerta_4 = {((f / 2) - 1), (c-1)}; ////puerta centrada en el lado este
 		
 		
 		//Anado las puertas a la lista con sus respectivas posiciones
@@ -73,6 +73,18 @@ public class main
 		//Pinta la poblacion**************************************************************************
 		evopopulation.pintar_poblacion(Poblacion);
 		
+		
+		
+		//Busco el camino entre las dos puertas
+		Poblacion.get(9).llegada_optima(puerta_1[0], puerta_1[1], puerta_2[0], puerta_2[1]);
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Pintado de individuo");
+		evopopulation.pintar_individuo(Poblacion.get(9));
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Contador= " + Poblacion.get(9).contador);
 		
 		/*
 		//Pinta un individuo**************************************************************************
