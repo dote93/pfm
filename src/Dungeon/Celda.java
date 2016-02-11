@@ -31,6 +31,11 @@ public class Celda
 	public boolean tesoro;
 	public boolean monstruo;
 	
+	//Variables para comprobar la distancia entre una puerta y un tesoro
+	public boolean inicio;
+	public boolean destino;
+	public boolean camino;
+	
 	//Lista de las paredes de los vecinos.
 	ArrayList<Pared> lista = new ArrayList<Pared>();
 	

@@ -116,8 +116,8 @@ public class Dungeon
 		Celda celda_final = dungeon[x_final][y_final];
 		
 		//ponemos a true las celdas de salida y de meta a true 
-		celda_inicio.puerta= true; //celda_inicio.posicion_salida= true;
-		celda_final.tesoro= true; //celda_final.posicion_meta= true;
+		celda_inicio.inicio= true;
+		celda_final.destino= true; 
 		
 		
 		//Nos creamos dos listas de las celdas abiertas y cerradas para poder ir recorriendo el dungeon e ir guardando las celdas 
@@ -259,11 +259,17 @@ public class Dungeon
 					{
 						System.out.print("| T ");
 					}
-					if(dungeon[i][j].monstruo && dungeon[i][j].puerta == false)//Si es celda camino pintamos una O
+					if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 					{
 						System.out.print("| M ");
 					}
-					if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
+					else if(!dungeon[i][j].monstruo && !dungeon[i][j].tesoro && dungeon[i][j].camino)//Si es celda camino pintamos una C
+					{
+						System.out.print("| C ");
+					}
+					
+					
+					if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
 					{
 						System.out.print("|   ");
 					}
@@ -275,19 +281,25 @@ public class Dungeon
 					// si la pared oeste de la celda en la que estamos esta abierta, no pintamos una barra, sino que espacios o si es una celda representativa, mostramos la letra correspondiente junto con espacios
 					if(dungeon[i][j].isParedOpen(Pared.Direcciones.OESTE))
 					{
-						if(dungeon[i][j].puerta)//Si es celda inical pintamos una S
+						if(dungeon[i][j].puerta)//Si es celda puerta pintamos una P
 						{
 							System.out.print("  P ");
 						}
-						if(dungeon[i][j].tesoro)//Si es celda final pintamos una F
+						if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
 						{
 							System.out.print("  T ");
 						}
-						if(dungeon[i][j].monstruo && dungeon[i][j].puerta == false)//Si es celda camino pintamos una O
+						if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 						{
 							System.out.print("  M ");
 						}
-						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo) // si la celda no tiene a true ningun booleano representativo mostramos espacios
+						else if(!dungeon[i][j].monstruo && !dungeon[i][j].tesoro && dungeon[i][j].camino)//Si es celda camino y no hay nada pintamos una C
+						{
+							System.out.print("  C ");
+						}
+						
+						
+						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos espacios
 						{
 							System.out.print("    ");
 						}
@@ -295,22 +307,29 @@ public class Dungeon
 					}
 					else // si la tiene cerrada entonces mostramos la pared junto con lo que contiene esa celda
 					{
-						if(dungeon[i][j].puerta)//Si es celda inical pintamos una S
+						if(dungeon[i][j].puerta)//Si es celda puerta pintamos una P
 						{
 							System.out.print("| P ");
 						}
-						if(dungeon[i][j].tesoro)//Si es celda final pintamos una F
+						if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
 						{
 							System.out.print("| T ");
 						}
-						if(dungeon[i][j].monstruo && dungeon[i][j].puerta == false)//Si es celda camino pintamos una O
+						if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 						{
 							System.out.print("| M ");
 						}
-						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
+						else if(!dungeon[i][j].monstruo && !dungeon[i][j].tesoro && dungeon[i][j].camino)//Si es celda camino pintamos una C
+						{
+							System.out.print("| C ");
+						}
+
+						
+						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
 						{
 							System.out.print("|   ");
 						}
+						
 						
 					}
 				}
@@ -390,24 +409,29 @@ public class Dungeon
      */
 	public void RecorrerCamino (Celda posicion_meta)
 	{
-		// Creamos una celda y guardamos la posicion de meta en ella 
+		// Creamos una celda y guardamos la posicion de meta en ella ya que empezamos por el final
 		Celda celda_camino = posicion_meta;
 		
-		// mientras la celda camino no tenga la variable boolean posicion salida a true no nos salimos, pues todavia no hemos terminado de recorrer el 
-		// camino hasta llegar a la posicion de salida viniendo desde la posicion de meta
-		while(celda_camino.puerta == false)
+		// mientras la celda camino no tenga la variable boolean posicion inicio a true no nos salimos, pues todavia no hemos terminado de recorrer el 
+		// camino hasta llegar a la posicion de inicio viniendo desde la posicion de meta
+		while(celda_camino.inicio == false)
 		{
-			// nos creamos una celda que la igualamos a la celda precursora de la celda camino
+			//Nos creamos una celda que la igualamos a la celda precursora de la celda camino
 			Celda celda_precursora = dungeon[celda_camino.Posicion_precursor[0]][celda_camino.Posicion_precursor[1]];
-			// decimos que la posicion camino de la celda precursora est‡ a true para luego poder pintar una O
-			celda_precursora.monstruo= true;
-			contador++;
 			
-			// si la celda precursora no tiene la posicion de salida a false, la igualamos a esta a false para luego al pintar no tener problemass
-			if(celda_precursora.puerta == false)
+			
+			
+			//Si la celda donde nos encontramos es el destino la precursora es un camino, y si la celda precursora no es el inicio (la meta ya que 
+			// vamos al contrario) entonces la celda precursora es un camino
+			if(celda_camino.destino || !celda_precursora.inicio)
 			{
-				celda_camino.puerta = false;
+				// decimos que la posicion camino de la celda precursora est‡ a true (para luego poder pintar una C como log)
+				celda_precursora.camino= true;
+				
+				//si la siguiente posicion no es la de inicio (puerta) entonces contamos que esta celda donde nos encontramos es un movimiento
+				contador++;
 			}
+			
 			celda_camino= celda_precursora; // continuamos con el recorrrido
 		}
 		

@@ -21,22 +21,20 @@ public class main
 	@SuppressWarnings({ "resource", "unused" })
 	public static void main(String[] args) 
 	{
-		
-		
 		Scanner scan = new Scanner(System.in);
 		
 		//****************************************************************************************
 		
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
-		int f = 20;
-		int c = 20;
+		int f = 10;
+		int c = 10;
 		int numero_poblacion = 10;
 		
 		int numero_monstruos = 5;
 		int numero_tesoros = 10;
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 50; //25
+		int porcentaje = 25; //25
 		
 		
 		//ArrayList que almacena los individuos de la poblacion

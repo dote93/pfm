@@ -68,20 +68,20 @@ public class EvPopulation
 			mapa = new Dungeon(f, c); //El dungeon se pasa con las dimensiones (x, y)
 			
 			//Se anaden las puertas al mapa
-//			anadir_puertas_posicion(pos_puertas, numero_puertas);
+			anadir_puertas_posicion(pos_puertas, numero_puertas);
 			//anadir_puertas(f, c, numero_puertas);
 			
 			//LOG
 			//System.out.println(" ");
 			
 			//Se anaden los monstruos al mapa
-//			anadir_monstruos(f, c, numero_monstruos);
+			anadir_monstruos(f, c, numero_monstruos);
 			
 			//LOG
 			//System.out.println(" ");
 			
 			//Se anaden los tesoros al mapa
-			//anadir_tesoros(f, c, numero_tesoros);
+			anadir_tesoros(f, c, numero_tesoros);
 			
 			//LOG
 			//System.out.println(" ");
