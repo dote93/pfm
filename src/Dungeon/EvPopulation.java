@@ -38,6 +38,15 @@ public class EvPopulation
 	
 	
 	
+	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
+	public ArrayList<Integer> puertas_distancias = new ArrayList<Integer>();
+	
+	//Variable que va a guardar una lista de todas las distancias entre las puertas y los tesoros
+	public ArrayList<Integer> tam_dist = new ArrayList<Integer>();
+	
+	//Varible que guarda todas las distancias de todos los individuos de la poblacion
+	public ArrayList<Integer> puertas_distancias_poblacion = new ArrayList<Integer>();
+	
 	
 	/**
 	 * Constructor de EvPopulation
@@ -74,11 +83,21 @@ public class EvPopulation
 			//LOG
 			//System.out.println(" ");
 			
+			
+			//Se inicializa el tamano de la posicion de los monstruos
+//			mapa.posicion_monstruos= new Celda[numero_monstruos][numero_monstruos]; //tantas x y como monstruos vayamos a colocar en el mapa
+			
+			
 			//Se anaden los monstruos al mapa
 			anadir_monstruos(f, c, numero_monstruos);
 			
+			
 			//LOG
 			//System.out.println(" ");
+			
+			
+			//Se inicializa el tamano de la posicion de los tesoros
+//			mapa.posicion_tesoros= new Celda[numero_tesoros][numero_tesoros]; //tantas x y como tesoros vayamos a colocar en el mapa
 			
 			//Se anaden los tesoros al mapa
 			anadir_tesoros(f, c, numero_tesoros);
@@ -145,6 +164,10 @@ public class EvPopulation
 			else
 			{
 				mapa.dungeon[random_x][random_y].tesoro = true; 
+				
+				//se guarda la posicion del tesoro en el mapa
+				int[] posicion = {random_x, random_y};
+				mapa.posicion_tesoros.add(mapa.dungeon[posicion[0]][posicion[1]]);
 			}
 		}
 	}
@@ -179,6 +202,10 @@ public class EvPopulation
 			else
 			{
 				mapa.dungeon[random_x][random_y].monstruo = true; 
+				
+				//se guarda la posicion del monstruo en el mapa
+				int[] posicion = {random_x, random_y};
+				mapa.posicion_monstruos.add(mapa.dungeon[posicion[0]][posicion[1]]);
 			}
 		}
 	}
@@ -193,6 +220,10 @@ public class EvPopulation
 		for (int puerta=0; puerta<numero_puertas; puerta++)
 		{
 			mapa.dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
+			
+			//se guarda la posicion del tesoro en el mapa
+			int[] posicion = {pos_puertas.get(puerta)[0], pos_puertas.get(puerta)[1]};
+			mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
 		}
 	}
 	
@@ -238,6 +269,10 @@ public class EvPopulation
 				{
 					mapa.dungeon[random_x][random_y].puerta = true;
 					hay_puerta_E = true;
+					
+					//se guarda la posicion de la puerta en el mapa
+					int[] posicion = {random_x, random_y};
+					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
 				}
 				
 				//si me encuentro en el lado Norte que al pintar es el lado Oeste
@@ -245,6 +280,10 @@ public class EvPopulation
 				{
 					mapa.dungeon[random_x][random_y].puerta = true;
 					hay_puerta_N = true;
+					
+					//se guarda la posicion de la puerta en el mapa
+					int[] posicion = {random_x, random_y};
+					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
 				}
 				
 				//si me encuentro en el lado Oeste que al pintar es el lado Sur
@@ -252,6 +291,10 @@ public class EvPopulation
 				{
 					mapa.dungeon[random_x][random_y].puerta = true;
 					hay_puerta_O = true;
+					
+					//se guarda la posicion de la puerta en el mapa
+					int[] posicion = {random_x, random_y};
+					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
 				}
 				
 				//si me encuentro en el lado Sur que al pintar es el lado Este
@@ -259,6 +302,10 @@ public class EvPopulation
 				{
 					mapa.dungeon[random_x][random_y].puerta = true;
 					hay_puerta_S = true;
+					
+					//se guarda la posicion de la puerta en el mapa
+					int[] posicion = {random_x, random_y};
+					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
 				}
 				
 				//Si ya hay alguna puerta en ese lado, se vuelve a buscar una posicion random
@@ -355,20 +402,83 @@ public class EvPopulation
 		}
 	}
 	
+	/**
+	 * Funcion calcula la distancia entre las puertas y los tesoros guardando un arraylist con las distancias
+	 * @param Poblacion
+	 * @return 
+	 */
+	public ArrayList<Dungeon> calcular_distancias_PT(ArrayList<Dungeon> Poblacion_, int numero_puertas, int numero_tesoros)
+	{
+		Poblacion = Poblacion_;
+		//por cada individuo de la poblacion calculo las distancias
+		for (int individuo = 0; individuo < Poblacion_.size(); individuo++)
+		{
+			//Se inicializan los arraylist
+			puertas_distancias = new ArrayList<Integer>();
+			tam_dist = new ArrayList<Integer>();
+			
+			//Variable para guardar la distancia entre una puerta y un tesoro
+			int distancia = 0;
+			
+			
+			//Se calculan las distancias entre cada puerta con cada tesoro
+			for(int contador_puertas = 0; contador_puertas < numero_puertas; contador_puertas++)//por cada puerta
+			{
+				
+				//Para cada tesoro con respecto a una puerta se guarda su distancia
+				for(int contador_tesoros = 0; contador_tesoros < numero_tesoros; contador_tesoros++)
+				{
+					
+					//Para cada individuo se calcula la distancia de cada puesta con cada tesoro // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					Poblacion_.get(individuo).llegada_optima(Poblacion_.get(individuo).posicion_puertas.get(contador_puertas).fila, Poblacion_.get(individuo).posicion_puertas.get(contador_puertas).columna, Poblacion_.get(individuo).posicion_tesoros.get(contador_tesoros).fila, Poblacion_.get(individuo).posicion_tesoros.get(contador_tesoros).columna);
+					distancia = Poblacion_.get(individuo).distancia;
+					//se anade una posicion con valor 0 por cada tesoro que haya en el mapa para guardar su distancia con la puerta
+					tam_dist.add(distancia);
+					
+					
+					//se resetea la distancia
+					distancia = 0;
+				}
+				
+				//se anaden las distancias de cada tesoro con respecto a la puerta i
+				puertas_distancias.addAll(tam_dist);
+				
+				
+				//se resetean las distancias para la siguiente puerta
+				tam_dist.clear();
+				
+			}
+			
+			
+			/*
+			//LOG
+			System.out.println("");
+			System.out.println("Puertas_distancias individuo " + individuo);
+			System.out.println(puertas_distancias);
+			System.out.println("");
+			System.out.println("Tamano Puertas_distancias individuo " + individuo + " = " + puertas_distancias.size());
+			*/
+			
+			
+			//Anado las distancias a una variable que va a guardar todo y en el individuo y elimino esa lista para que no de errores en el siguiente individuo
+			puertas_distancias_poblacion.addAll(puertas_distancias);
+			Poblacion.get(individuo).distancias_PT = puertas_distancias;
+			
+		}
+		return Poblacion;
+	}
 	
 
 	/**
 	 * Funcion que se encarga de pintar los mapas de los individuos 
 	 * @param Poblacion
 	 */
-	public void pintar_poblacion(ArrayList<Dungeon> Poblacion)
+	public void pintar_poblacion(ArrayList<Dungeon> Poblacion_)
 	{
 		
-		for(int j= 0; j<Poblacion.size(); j++)
+		for(int j= 0; j<Poblacion_.size(); j++)
 		{
-			System.out.println(" ");
-			System.out.println("Individuo " + j );
-			Poblacion.get(j).pintar();
+			pintar_individuo(Poblacion_.get(j));
 		}
 	}
 	
@@ -390,6 +500,10 @@ public class EvPopulation
 				System.out.println(" ");
 				System.out.println("Individuo " + j );
 				Individuo.pintar();
+				
+				System.out.println(" ");
+				System.out.println("Distancias (tamano = numero_T ("+ Individuo.posicion_tesoros.size() +") * numero_P ("+ Individuo.posicion_puertas.size() +")) = "+ Individuo.distancias_PT.size() +": ");
+				System.out.println(Individuo.distancias_PT);
 			}
 			
 		}

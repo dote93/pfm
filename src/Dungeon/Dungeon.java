@@ -25,9 +25,25 @@ public class Dungeon
 	int filas_iniciales= 0;
 	int columnas_iniciales=0;
 	public Celda [][] dungeon;
-	public int contador = 0;
+	public int distancia = 0;
 	
 	ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
+	
+	
+	//Variable para saber la posicion de donde estan las paredes
+	public ArrayList<Celda>  posicion_puertas = new ArrayList<Celda>();
+
+	//Variable para saber la posicion de donde estan los tesoros
+	public ArrayList<Celda>  posicion_tesoros = new ArrayList<Celda>();
+		
+	//Variable para saber la posicion de donde estan los monstruos
+	public ArrayList<Celda>  posicion_monstruos = new ArrayList<Celda>();
+	
+	
+	
+	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
+	public ArrayList<Integer> distancias_PT = new ArrayList<Integer>();
+	
 	
 	
 	//booleano para saber si ya se ha llegado a la meta y si es asi ya no se tiene que seguir pasando por la funcion
@@ -109,10 +125,13 @@ public class Dungeon
 	public void llegada_optima(int x_inicio, int y_inicio, int x_final, int y_final)
 	{
 		//reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
-		//ResetearDungeonCamino();
+		ResetearDungeonCamino();
+		
+		//reseteo la distancia
+		distancia = 0;
 		
 		//Creamos dos celdas nuevas 
-		Celda celda_inicio = dungeon[x_inicio][y_inicio];
+		 Celda celda_inicio = dungeon[x_inicio][y_inicio];
 		Celda celda_final = dungeon[x_final][y_final];
 		
 		//ponemos a true las celdas de salida y de meta a true 
@@ -197,7 +216,13 @@ public class Dungeon
 			}	
 						
 		}
-		RecorrerCamino(celda_final);// Recorremos el camino optimo empezando desde la celda final		
+		
+		//Recorremos el camino optimo empezando desde la celda final
+		RecorrerCamino(celda_final);	
+		
+		//Reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
+		ResetearDungeonCamino();
+		
 	}
 
 	
@@ -255,11 +280,11 @@ public class Dungeon
 					{
 						System.out.print("| P ");
 					}
-					if(dungeon[i][j].tesoro)//Si es celda final pintamos una F
+					else if(dungeon[i][j].tesoro)//Si es celda final pintamos una F
 					{
 						System.out.print("| T ");
 					}
-					if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
+					else if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 					{
 						System.out.print("| M ");
 					}
@@ -269,7 +294,7 @@ public class Dungeon
 					}
 					
 					
-					if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
+					else if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
 					{
 						System.out.print("|   ");
 					}
@@ -285,11 +310,11 @@ public class Dungeon
 						{
 							System.out.print("  P ");
 						}
-						if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
+						else if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
 						{
 							System.out.print("  T ");
 						}
-						if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
+						else if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 						{
 							System.out.print("  M ");
 						}
@@ -299,7 +324,7 @@ public class Dungeon
 						}
 						
 						
-						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos espacios
+						else if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos espacios
 						{
 							System.out.print("    ");
 						}
@@ -311,11 +336,11 @@ public class Dungeon
 						{
 							System.out.print("| P ");
 						}
-						if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
+						else if(dungeon[i][j].tesoro)//Si es celda tesoro pintamos una T
 						{
 							System.out.print("| T ");
 						}
-						if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
+						else if(dungeon[i][j].monstruo)//Si es celda monstruo pintamos una M
 						{
 							System.out.print("| M ");
 						}
@@ -325,7 +350,7 @@ public class Dungeon
 						}
 
 						
-						if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
+						else if(!dungeon[i][j].puerta && !dungeon[i][j].tesoro && !dungeon[i][j].monstruo && !dungeon[i][j].camino) // si la celda no tiene a true ningun booleano representativo mostramos una barra con espacios
 						{
 							System.out.print("|   ");
 						}
@@ -429,7 +454,7 @@ public class Dungeon
 				celda_precursora.camino= true;
 				
 				//si la siguiente posicion no es la de inicio (puerta) entonces contamos que esta celda donde nos encontramos es un movimiento
-				contador++;
+				distancia++;
 			}
 			
 			celda_camino= celda_precursora; // continuamos con el recorrrido
@@ -448,9 +473,9 @@ public class Dungeon
 			for(int j = 0; j <= dungeon[i].length-1; j++)
 			{
 				//resetamos los booleanos y los ponemos a false de nuevo por si estamos volviendo de nuevo a pasar por este dungeon
-				dungeon[i][j].monstruo = false;
-				dungeon[i][j].puerta = false;
-				dungeon[i][j].tesoro = false;
+				dungeon[i][j].inicio = false;
+				dungeon[i][j].camino = false;
+				dungeon[i][j].destino = false;
 			}
 		}
 	}

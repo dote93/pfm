@@ -31,7 +31,7 @@ public class main
 		int numero_poblacion = 10;
 		
 		int numero_monstruos = 5;
-		int numero_tesoros = 10;
+		int numero_tesoros = 5;
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
 		int porcentaje = 25; //25
@@ -62,35 +62,40 @@ public class main
 		//Calculo el numero de puertas que va a haber
 		int numero_puertas = pos_puertas.size();
 		
+		/*****************************************************************************************************************************************/
+		/*************************************************** INIZIALIZACION **********************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
 		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros,pos_puertas, numero_puertas, porcentaje);
 		
 		
+		//Se calculan las distancias de las puertas con los tesoros de cada individuo de la poblacion**********************
+		Poblacion = evopopulation.calcular_distancias_PT(Poblacion, numero_puertas, numero_tesoros);
+		
 		
 		//Pinta la poblacion**************************************************************************
 		evopopulation.pintar_poblacion(Poblacion);
 		
-		
-		
-		//Busco el camino entre las dos puertas
-		Poblacion.get(9).llegada_optima(puerta_1[0], puerta_1[1], puerta_2[0], puerta_2[1]);
-		
-		System.out.println("");
-		System.out.println("");
-		System.out.println("Pintado de individuo");
-		evopopulation.pintar_individuo(Poblacion.get(9));
-		System.out.println("");
-		System.out.println("");
-		System.out.println("Contador= " + Poblacion.get(9).contador);
+
 		
 		/*
+		//LOG
+		System.out.println("");
+		System.out.println("Puertas_distancias global");
+		System.out.println(evopopulation.puertas_distancias_poblacion);
+		System.out.println("");
+		System.out.println("Tamano Puertas_distancias global= " + evopopulation.puertas_distancias_poblacion.size());
+		*/
+		
+		
+		
 		//Pinta un individuo**************************************************************************
 		System.out.println("");
 		System.out.println("");
-		System.out.println("Pintado de individuo");
-		evopopulation.pintar_individuo(Poblacion.get(numero_poblacion - 1));
-		*/
+		System.out.println("-------------------------------------------------------");
+		evopopulation.pintar_individuo(Poblacion.get(9));
+		
+
 		
 		
 		
