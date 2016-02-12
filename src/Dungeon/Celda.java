@@ -40,6 +40,9 @@ public class Celda
 	ArrayList<Pared> lista = new ArrayList<Pared>();
 	
 	
+	
+	
+	
 	/** 
      *	Constructor de Celda
      */

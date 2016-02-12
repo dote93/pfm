@@ -21,31 +21,6 @@ public class EvPopulation
 	//ArrayList que almacena los individuos de la poblacion
 	ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
 	
-	//Variable para calcular un numero aleatorio entre el numero de filas o columnas y 0
-	int min = 0;
-	
-	//Variables para saber si ya hay una puerta en ese lado
-	boolean hay_puerta_N;
-	boolean hay_puerta_S;
-	boolean hay_puerta_E;
-	boolean hay_puerta_O;
-	
-	
-	
-	//Arraylist que guardan las paredes de la celda donde nos encontramos y de la opuesta a la pared seleccionada
-	ArrayList<Pared> lista = new ArrayList<Pared>();
-	ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
-	
-	
-	
-	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
-	public ArrayList<Integer> puertas_distancias = new ArrayList<Integer>();
-	
-	//Variable que va a guardar una lista de todas las distancias entre las puertas y los tesoros
-	public ArrayList<Integer> tam_dist = new ArrayList<Integer>();
-	
-	//Varible que guarda todas las distancias de todos los individuos de la poblacion
-	public ArrayList<Integer> puertas_distancias_poblacion = new ArrayList<Integer>();
 	
 	
 	/**
@@ -67,62 +42,14 @@ public class EvPopulation
 	 * @param numero_tesoros cuantos tesoros por mapa
 	 * @param numero_puertas cuantas puertas por mapa
 	 */
-	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, int numero_puertas, int porcentaje)
+	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, ArrayList<int[]> pos_puertas, int numero_puertas, int porcentaje)
 	{
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
 		for(int i = 0; i<numero_poblacion; i++)
 		{
 			
-			mapa = new Dungeon(f, c); //El dungeon se pasa con las dimensiones (x, y)
-			
-			//Se anaden las puertas al mapa
-			anadir_puertas_posicion(pos_puertas, numero_puertas);
-			//anadir_puertas(f, c, numero_puertas);
-			
-			//LOG
-			//System.out.println(" ");
-			
-			
-			//Se inicializa el tamano de la posicion de los monstruos
-//			mapa.posicion_monstruos= new Celda[numero_monstruos][numero_monstruos]; //tantas x y como monstruos vayamos a colocar en el mapa
-			
-			
-			//Se anaden los monstruos al mapa
-			anadir_monstruos(f, c, numero_monstruos);
-			
-			
-			//LOG
-			//System.out.println(" ");
-			
-			
-			//Se inicializa el tamano de la posicion de los tesoros
-//			mapa.posicion_tesoros= new Celda[numero_tesoros][numero_tesoros]; //tantas x y como tesoros vayamos a colocar en el mapa
-			
-			//Se anaden los tesoros al mapa
-			anadir_tesoros(f, c, numero_tesoros);
-			
-			//LOG
-			//System.out.println(" ");
-			
-			
-			//Se abren paredes entre las puertas y los objetos
-			
-			
-			//SE ABREN LAS PAREDES
-			abrir_paredes(f, c, porcentaje);
-			
-			//Generamos el dungeon empezando por la posicion 0 0
-			mapa.generateDungeon(0, 0); 
-			
-			/*
-			System.out.println("¿La pared esta abierta? ");
-			System.out.println(mapa.dungeon[f-2][c-1].isParedOpen(Pared.Direcciones.ESTE));
-			
-			System.out.println("¿La pared esta abierta? ");
-			System.out.println(mapa.dungeon[f-1][c-2].isParedOpen(Pared.Direcciones.SUR));
-			
-			*/
+			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, numero_puertas, porcentaje); //El dungeon se pasa con las dimensiones (x, y)
 	
 			//Se anade a la poblacion el mapa nuevo generado
 			Poblacion.add(mapa);
@@ -133,341 +60,7 @@ public class EvPopulation
 	}
 	
 	
-	
-	
-	/**
-	 * Funcion que anade los tesoros al mapa
-	 * @param f filas
-	 * @param c columnas
-	 * @param numero_tesoros
-	 */
-	public void anadir_tesoros(int f, int c, int numero_tesoros)
-	{
-		//Se anaden los x tesoros a cada mapa en posiciones random
-		for (int tesoros=0; tesoros<numero_tesoros; tesoros++)
-		{
-			
-			int random_x = (int)(Math.random() * (f - min) + min);
-			int random_y = (int)(Math.random() * (c - min) + min);
-			
-			//LOG
-			//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para tesoro");
-			
-			
-			//Si la posicion random seleccionada ya tiene un monstruo o tesoro o puerta se toma esta vuelta como nula restando el numero de vueltas dadas
-			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true || mapa.dungeon[random_x][random_y].puerta == true)
-			{
-				tesoros = tesoros - 1;
-			}
-			
-			//Si la posicion aleatoria no tiene un monstruo o tesoro, entonces le ponemos un tesoro
-			else
-			{
-				mapa.dungeon[random_x][random_y].tesoro = true; 
-				
-				//se guarda la posicion del tesoro en el mapa
-				int[] posicion = {random_x, random_y};
-				mapa.posicion_tesoros.add(mapa.dungeon[posicion[0]][posicion[1]]);
-			}
-		}
-	}
-	
-	
-	
-	/**
-	 * Funcion que anade monstruos al mapa
-	 * @param f filas
-	 * @param c columnas
-	 * @param numero_monstruos
-	 */
-	public void anadir_monstruos(int f, int c, int numero_monstruos)
-	{
-		//Se anaden los x monstruos a cada mapa en posiciones random
-		for (int monstruos=0; monstruos<numero_monstruos; monstruos++)
-		{
-			
-			int random_x = (int)(Math.random() * (f - min) + min);
-			int random_y = (int)(Math.random() * (c - min) + min);
-			
-			//LOG
-			//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para monstruo");
-			
-			//Si la posicion random seleccionada ya tiene un monstruo o tesoro o puerta se toma esta vuelta como nula restando el numero de vueltas dadas
-			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true || mapa.dungeon[random_x][random_y].puerta == true)
-			{
-				monstruos = monstruos - 1;
-			}
-			
-			//Si la posicion aleatoria no tiene un monstruo, entonces le ponemos uno
-			else
-			{
-				mapa.dungeon[random_x][random_y].monstruo = true; 
-				
-				//se guarda la posicion del monstruo en el mapa
-				int[] posicion = {random_x, random_y};
-				mapa.posicion_monstruos.add(mapa.dungeon[posicion[0]][posicion[1]]);
-			}
-		}
-	}
-	
-	/**
-	 * Funcion que se encarga de poner una puerta en la posicion que recibe
-	 * @param f fila donde va a estar la puerta
-	 * @param c columna donde va a estar la puerta
-	 */
-	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, int numero_puertas)
-	{
-		for (int puerta=0; puerta<numero_puertas; puerta++)
-		{
-			mapa.dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
-			
-			//se guarda la posicion del tesoro en el mapa
-			int[] posicion = {pos_puertas.get(puerta)[0], pos_puertas.get(puerta)[1]};
-			mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
-		}
-	}
-	
-	/**
-	 * Funcion que anade puertas al mapa
-	 * @param f filas
-	 * @param c columnas
-	 * @param numero_puertas
-	 */
-	public void anadir_puertas(int f, int c, int numero_puertas)
-	{
-		
-		//Se inicializan las variables para saber si ya hay puerta o no en ese lado por cada individuo
-		hay_puerta_N = false;
-		hay_puerta_S = false;
-		hay_puerta_E = false;
-		hay_puerta_O = false;
-		
-		
-		//Se anaden las x puertas a cada mapa en posiciones random
-		for (int puertas=0; puertas<numero_puertas; puertas++)
-		{
-			
-			
-			int random_x = (int)(Math.random() * (f - min) + min);
-			int random_y = (int)(Math.random() * (c - min) + min);
-			
-			
-			//Si la posicion random seleccionada ya tiene un monstruo o tesoro o puerta se toma esta vuelta como nula restando el numero de vueltas dadas
-			if (mapa.dungeon[random_x][random_y].monstruo == true || mapa.dungeon[random_x][random_y].tesoro == true || mapa.dungeon[random_x][random_y].puerta == true)
-			{
-				puertas = puertas - 1;
-			}
-			
-			//Si la posicion aleatoria no tiene un monstruo o tesoro o puerta, entonces le ponemos una puerta
-			else
-			{
-				//LOG
-				//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para puerta");
-				
-				//si me encuentro en el lado Este que al pintar es el lado Norte
-				if (random_x == 0 && (random_y == 0 || random_y < (c-1)) && hay_puerta_E != true)
-				{
-					mapa.dungeon[random_x][random_y].puerta = true;
-					hay_puerta_E = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
-				}
-				
-				//si me encuentro en el lado Norte que al pintar es el lado Oeste
-				else if ((random_x == 0 || random_x < (f-1)) && random_y == 0 && hay_puerta_N != true)
-				{
-					mapa.dungeon[random_x][random_y].puerta = true;
-					hay_puerta_N = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
-				}
-				
-				//si me encuentro en el lado Oeste que al pintar es el lado Sur
-				else if (random_x == (f-1) && (random_y == 0 || random_y < (c-1)) && hay_puerta_O != true)
-				{
-					mapa.dungeon[random_x][random_y].puerta = true;
-					hay_puerta_O = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
-				}
-				
-				//si me encuentro en el lado Sur que al pintar es el lado Este
-				else if ((random_x == 0 || random_x < (f-1)) && random_y == (c-1) && hay_puerta_S != true)
-				{
-					mapa.dungeon[random_x][random_y].puerta = true;
-					hay_puerta_S = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					mapa.posicion_puertas.add(mapa.dungeon[posicion[0]][posicion[1]]);
-				}
-				
-				//Si ya hay alguna puerta en ese lado, se vuelve a buscar una posicion random
-				else
-				{
-					puertas = puertas -1;
-				}
-				 
-			}
-		}
-	}
 
-	
-	/**
-	 * Funcion que tira paredes de manera random entre las celdas
-	 * @param f filas
-	 * @param c columnas
-	 */
-	public void abrir_paredes(int f, int c, int porcentaje)
-	{
-		//Se abren las paredes entre las celdas de manera random
-		for(int fila = 0; fila < f; fila++)
-		{
-			for(int columna = 0; columna < c; columna++)
-			{
-					
-				//Se obtiene la lista con las direcciones de las paredes que podria tener la celda[fila][columna]
-				lista = mapa.dungeon[fila][columna].getLista();
-				
-
-				//Para cada pared de la lista
-				for(int elemento = 0; elemento < lista.size(); elemento++)
-				{
-					//Variable que almacena la posicion del vecino dada la posicion de la celda y la direccion de la pared
-					int [] siguientePosicion = lista.get(elemento).movement(fila, columna);
-					
-					//LOG
-					//System.out.println("Direccion de la pared " + elemento + ": " + lista.get(elemento).direction);
-					
-					//Se almacena la direccion del elemento x de la lista
-					Direcciones direction = lista.get(elemento).direction;
-					
-					
-					Pared.Direcciones opuesta = null;
-					
-					//Compruebo cual es la celda opuesta
-					if(direction == Pared.Direcciones.ESTE)
-					{
-						opuesta = Pared.Direcciones.OESTE;
-					}
-					
-					else if(direction == Pared.Direcciones.OESTE)
-					{
-						opuesta = Pared.Direcciones.ESTE;
-					}
-					
-					else if(direction == Pared.Direcciones.NORTE)
-					{
-						opuesta = Pared.Direcciones.SUR;
-					}
-					
-					else if(direction == Pared.Direcciones.SUR)
-					{
-						opuesta = Pared.Direcciones.NORTE;
-					}
-					
-					
-					//Lista con todas las direcciones de las puertas de la celda siguiente
-					lista_opuesta = mapa.dungeon[siguientePosicion[0]][siguientePosicion[1]].getLista();
-					
-					
-					//Para cada elemento de la lista de la siguiente posicion busco donde se encuentra la pared opuesta con respecto a la posicion donde me encuentro
-					for (int num_dir_opuesta = 0; num_dir_opuesta < lista_opuesta.size(); num_dir_opuesta++)
-					{
-						//Genero un numero random para ver si abro de manera aleatoria esa pared o no
-						int random = (int)(Math.random() * (100 - 0) + 0);
-						
-						//Si la direccion opuesta coincide con la opuesta de la pared que hemos seleccionado de la celda donde nos encontramos
-						//y el numero random generado es 1 entonces abrimos esa pared
-						if(lista_opuesta.get(num_dir_opuesta).direction == opuesta && random <= porcentaje)
-						{
-							//Abro la puerta de la celda de al lado
-							lista_opuesta.get(num_dir_opuesta).open = true;
-							
-							//Abro la puerta de la celda donde me encuentro
-							lista.get(elemento).open = true;
-							
-						}
-					}
-					
-				}
-		
-			}
-		}
-	}
-	
-	/**
-	 * Funcion calcula la distancia entre las puertas y los tesoros guardando un arraylist con las distancias
-	 * @param Poblacion
-	 * @return 
-	 */
-	public ArrayList<Dungeon> calcular_distancias_PT(ArrayList<Dungeon> Poblacion_, int numero_puertas, int numero_tesoros)
-	{
-		Poblacion = Poblacion_;
-		//por cada individuo de la poblacion calculo las distancias
-		for (int individuo = 0; individuo < Poblacion_.size(); individuo++)
-		{
-			//Se inicializan los arraylist
-			puertas_distancias = new ArrayList<Integer>();
-			tam_dist = new ArrayList<Integer>();
-			
-			//Variable para guardar la distancia entre una puerta y un tesoro
-			int distancia = 0;
-			
-			
-			//Se calculan las distancias entre cada puerta con cada tesoro
-			for(int contador_puertas = 0; contador_puertas < numero_puertas; contador_puertas++)//por cada puerta
-			{
-				
-				//Para cada tesoro con respecto a una puerta se guarda su distancia
-				for(int contador_tesoros = 0; contador_tesoros < numero_tesoros; contador_tesoros++)
-				{
-					
-					//Para cada individuo se calcula la distancia de cada puesta con cada tesoro // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					Poblacion_.get(individuo).llegada_optima(Poblacion_.get(individuo).posicion_puertas.get(contador_puertas).fila, Poblacion_.get(individuo).posicion_puertas.get(contador_puertas).columna, Poblacion_.get(individuo).posicion_tesoros.get(contador_tesoros).fila, Poblacion_.get(individuo).posicion_tesoros.get(contador_tesoros).columna);
-					distancia = Poblacion_.get(individuo).distancia;
-					//se anade una posicion con valor 0 por cada tesoro que haya en el mapa para guardar su distancia con la puerta
-					tam_dist.add(distancia);
-					
-					
-					//se resetea la distancia
-					distancia = 0;
-				}
-				
-				//se anaden las distancias de cada tesoro con respecto a la puerta i
-				puertas_distancias.addAll(tam_dist);
-				
-				
-				//se resetean las distancias para la siguiente puerta
-				tam_dist.clear();
-				
-			}
-			
-			
-			/*
-			//LOG
-			System.out.println("");
-			System.out.println("Puertas_distancias individuo " + individuo);
-			System.out.println(puertas_distancias);
-			System.out.println("");
-			System.out.println("Tamano Puertas_distancias individuo " + individuo + " = " + puertas_distancias.size());
-			*/
-			
-			
-			//Anado las distancias a una variable que va a guardar todo y en el individuo y elimino esa lista para que no de errores en el siguiente individuo
-			puertas_distancias_poblacion.addAll(puertas_distancias);
-			Poblacion.get(individuo).distancias_PT = puertas_distancias;
-			
-		}
-		return Poblacion;
-	}
-	
 
 	/**
 	 * Funcion que se encarga de pintar los mapas de los individuos 
@@ -501,9 +94,21 @@ public class EvPopulation
 				System.out.println("Individuo " + j );
 				Individuo.pintar();
 				
+				/*
 				System.out.println(" ");
 				System.out.println("Distancias (tamano = numero_T ("+ Individuo.posicion_tesoros.size() +") * numero_P ("+ Individuo.posicion_puertas.size() +")) = "+ Individuo.distancias_PT.size() +": ");
 				System.out.println(Individuo.distancias_PT);
+				*/
+				
+				System.out.println(" ");
+				System.out.println("Distancias minimas: "+ Individuo.distancia_min);
+				
+				System.out.println(" ");
+				System.out.println("Media distancias:" + Individuo.media_distancias_PT);
+				
+				System.out.println(" ");
+				System.out.println("Fitness: " + Individuo.fitness);
+				System.out.println(" ");
 			}
 			
 		}
