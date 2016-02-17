@@ -25,22 +25,34 @@ public class Celda
 	int fila;	
 	int columna;
 	
-	//creamos dos variables para guardar que celda es la inicial y la final para el A*
-	
+	//Varibales para saber que es lo que va a conetener dentro la celda
 	public boolean puerta;
 	public boolean tesoro;
 	public boolean monstruo;
+	
+	//Variables para saber en que lado esta la puerta
+	public boolean puerta_N;
+	public boolean puerta_S;
+	public boolean puerta_E;
+	public boolean puerta_O;
 	
 	//Variables para comprobar la distancia entre una puerta y un tesoro
 	public boolean inicio;
 	public boolean destino;
 	public boolean camino;
 	
+	
 	//Lista de las paredes de los vecinos.
 	ArrayList<Pared> lista = new ArrayList<Pared>();
 	
+	//Enum para saber que tipo de puerta hay en esa celda
+	public enum Tipo_puertas
+	{
+		ENTRADA, SALIDA, ENTRADA_SALIDA
+	};
 	
-	
+	//Tipo de puerta
+	public Tipo_puertas tipo_puerta;
 	
 	
 	/** 
@@ -50,14 +62,21 @@ public class Celda
 	{
 		//igualamos las x y las y que recibimos a las variables que tenemos creadas en la clase celda para poder usarlo en otras
 		//funciones de otras clases
-		this.fila = fila;
+		this.fila    = fila;
 		this.columna = columna;
 		
 		
 		//Se inicializa la celda sin contener ningun monstruo ni puerta ni tesoro 
-		puerta = false;
+		puerta   = false;
 		tesoro   = false;
 		monstruo = false;
+		
+		//Se inicializan el lado donde va a estar la puerta a false
+		puerta_N = false;
+		puerta_S = false;
+		puerta_E = false;
+		puerta_O = false;
+		
 		
 		// decimos que la celda ha sido visitada
 		visitada = vista;

@@ -4,6 +4,8 @@ package Dungeon;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Dungeon.Celda.Tipo_puertas;
+
 
 
 /**
@@ -61,7 +63,17 @@ public class main
 		
 		//Calculo el numero de puertas que va a haber
 		int numero_puertas = pos_puertas.size();
-		//int numero_puertas = 4;
+//		int numero_puertas = 4;
+
+		//Arraylist que guarda el tipo de puerta que es cada una de las puertas
+		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();
+		
+		//Anado los tipos de puertas al arraylist
+		
+		t_puertas.add(Celda.Tipo_puertas.ENTRADA); // Puerta Oeste
+		t_puertas.add(Celda.Tipo_puertas.ENTRADA_SALIDA);//puerta Norte
+		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur
+		t_puertas.add(Celda.Tipo_puertas.ENTRADA);//puerta Este
 		
 		
 		/*****************************************************************************************************************************************/
@@ -69,7 +81,7 @@ public class main
 		/*****************************************************************************************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros,pos_puertas, numero_puertas, porcentaje);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje);
 		
 		
 		//Se calculan las distancias de las puertas con los tesoros de cada individuo de la poblacion**********************

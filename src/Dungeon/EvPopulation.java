@@ -2,7 +2,7 @@ package Dungeon;
 
 import java.util.ArrayList;
 
-import Dungeon.Pared.Direcciones;
+import Dungeon.Celda.Tipo_puertas;
 
 /**
  * Clase EvPopulation que se encarga de crear y evolucionar una poblacion
@@ -40,16 +40,17 @@ public class EvPopulation
 	 * @param numero_poblacion individuos en la poblacion
 	 * @param numero_monstruos cuantos monstruos por mapa
 	 * @param numero_tesoros cuantos tesoros por mapa
+	 * @param t_puertas 
 	 * @param numero_puertas cuantas puertas por mapa
 	 */
-	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, ArrayList<int[]> pos_puertas, int numero_puertas, int porcentaje)
+	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas, int numero_puertas, int porcentaje)
 	{
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
 		for(int i = 0; i<numero_poblacion; i++)
 		{
 			
-			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, numero_puertas, porcentaje); //El dungeon se pasa con las dimensiones (x, y)
+			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje); //El dungeon se pasa con las dimensiones (x, y)
 	
 			//Se anade a la poblacion el mapa nuevo generado
 			Poblacion.add(mapa);
@@ -101,10 +102,44 @@ public class EvPopulation
 				*/
 				
 				System.out.println(" ");
+				System.out.println("Tipo puertas: ");
+				
+				for (int f= 0; f < Individuo.f; f++)
+				{
+					for(int c= 0; c < Individuo.c; c++)
+					{
+						if (Individuo.dungeon[f][c].puerta && Individuo.dungeon[f][c].puerta_N) //Si es puerta norte
+						{
+							System.out.print("Puerta Norte "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta + " ");
+							System.out.println(" ");
+						}
+						
+						else if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_S)//Si es puerta sur
+						{
+							System.out.print("Puerta Sur   "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta + " ");
+							System.out.println(" ");
+						}
+						
+						else if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_E)//Si es puerta este
+						{
+							System.out.print("Puerta Este  "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta + " ");
+							System.out.println(" ");
+						}
+						
+						else if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_O)//Si es puerta oeste
+						{
+							System.out.print("Puerta Oeste "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta + " ");
+							System.out.println(" ");
+						}
+					}
+				}
+				System.out.println(" ");
+				
+				System.out.println(" ");
 				System.out.println("Distancias minimas: "+ Individuo.distancia_min);
 				
 				System.out.println(" ");
-				System.out.println("Media distancias:" + Individuo.media_distancias_PT);
+				System.out.println("Media distancias: " + Individuo.media_distancias_PT);
 				
 				System.out.println(" ");
 				System.out.println("Fitness: " + Individuo.fitness);

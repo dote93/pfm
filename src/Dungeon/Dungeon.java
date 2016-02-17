@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import Dungeon.Celda.Tipo_puertas;
 import Dungeon.Pared.Direcciones;
 
 /*
@@ -94,24 +95,24 @@ public class Dungeon
 	/** 
      *	Constructor de Dungeon
      */
-	public Dungeon(int _x, int _y, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, int numero_puertas, int porcentaje)
+	public Dungeon(int _f, int _c, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje)
 	{
 		//Se igualan las dimensiones del dungeon
-		f= _x;
-		c= _y;
+		f= _f;
+		c= _c;
 		
 		//Inicializamos el dungeon para crear primero las dimensiones que va a tener el mapa
 		inicializarDungeon(); 
 		
 		//SE ANADEN LOS OBJETOS AL MAPA***************************
 		//Se anaden las puertas al mapa
-		if(pos_puertas.size() == 0)
+		if(pos_puertas.size() == 0) //Si no se reciben las posiciones de las puertas se colocan de manera aleatoria
 		{
-			anadir_puertas(f, c, numero_puertas);
+			anadir_puertas(t_puertas, numero_puertas);
 		}
 		else
 		{
-			anadir_puertas_posicion(pos_puertas, numero_puertas);
+			anadir_puertas_posicion(pos_puertas, t_puertas, numero_puertas);
 		}
 		
 		//Se anaden los monstruos al mapa
@@ -222,15 +223,37 @@ public class Dungeon
 	 * @param f fila donde va a estar la puerta
 	 * @param c columna donde va a estar la puerta
 	 */
-	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, int numero_puertas)
+	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
 	{
 		for (int puerta=0; puerta<numero_puertas; puerta++)
 		{
 			dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
 			
-			//se guarda la posicion del tesoro en el mapa
+			//se guarda la posicion de la puerta en el mapa
 			int[] posicion = {pos_puertas.get(puerta)[0], pos_puertas.get(puerta)[1]};
 			posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+			
+			
+			dungeon[posicion[0]][posicion[1]].tipo_puerta = t_puertas.get(puerta);
+			
+			if(posicion[0] == 0 && (posicion[1] > 0 && posicion[1] < c ))// Si es lado norte
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_N = true;
+			}
+			else if (posicion[0] == (f - 1) && (posicion[1] > 0 && posicion[1] < c ))// Si es lado sur
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_S = true;
+			}
+			else if (posicion[1] == (c -1) && (posicion[0] > 0 && posicion[0] < f ))// Si es lado este
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_E = true;
+			}
+			else if (posicion[1] == 0 && (posicion[0] > 0 && posicion[0] < f ))// Si es lado oeste
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_O = true;
+			}
+			
+
 		}
 	}
 	
@@ -241,7 +264,7 @@ public class Dungeon
 	 * @param c columnas
 	 * @param numero_puertas
 	 */
-	public void anadir_puertas(int f, int c, int numero_puertas)
+	public void anadir_puertas(ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
 	{
 		
 		//Se inicializan las variables para saber si ya hay puerta o no en ese lado por cada individuo
@@ -249,6 +272,11 @@ public class Dungeon
 		hay_puerta_S = false;
 		hay_puerta_E = false;
 		hay_puerta_O = false;
+		
+		//Variables para comprobar si no hay puertas de entrada y salida establecerlas
+		boolean p_entrada = false;
+		boolean p_salida = false;
+		boolean p_entrada_salida = false;
 		
 		
 		//Se anaden las x puertas a cada mapa en posiciones random
@@ -269,51 +297,283 @@ public class Dungeon
 			//Si la posicion aleatoria no tiene un monstruo o tesoro o puerta, entonces le ponemos una puerta
 			else
 			{
-				//LOG
-				//System.out.println("Random fila: " + random_x + " Random columna: " + random_y + " para puerta");
 				
-				//si me encuentro en el lado Este que al pintar es el lado Norte
-				if (random_x == 0 && (random_y == 0 || random_y < (c-1)) && hay_puerta_E != true)
+				//si me encuentro en el lado Norte
+				if (random_x == 0 && (random_y == 0 || random_y < (c-1)) && hay_puerta_N != true)
 				{
-					dungeon[random_x][random_y].puerta = true;
-					hay_puerta_E = true;
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].puerta_N = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_N = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
 					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_N = true;
+						dungeon[random_x][random_y].puerta_N = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+						
+					}
+					
 				}
 				
-				//si me encuentro en el lado Norte que al pintar es el lado Oeste
-				else if ((random_x == 0 || random_x < (f-1)) && random_y == 0 && hay_puerta_N != true)
+				//si me encuentro en el lado Oeste
+				else if ((random_x == 0 || random_x < (f-1)) && random_y == 0 && hay_puerta_O != true)
 				{
-					dungeon[random_x][random_y].puerta = true;
-					hay_puerta_N = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].puerta_O = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_O = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_O = true;
+						dungeon[random_x][random_y].puerta_O = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
 				}
 				
-				//si me encuentro en el lado Oeste que al pintar es el lado Sur
-				else if (random_x == (f-1) && (random_y == 0 || random_y < (c-1)) && hay_puerta_O != true)
+				//si me encuentro en el lado Sur
+				else if (random_x == (f-1) && (random_y == 0 || random_y < (c-1)) && hay_puerta_S != true)
 				{
-					dungeon[random_x][random_y].puerta = true;
-					hay_puerta_O = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_S = true;
+						dungeon[random_x][random_y].puerta_S = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_S = true;
+						dungeon[random_x][random_y].puerta_S = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
 				}
 				
-				//si me encuentro en el lado Sur que al pintar es el lado Este
-				else if ((random_x == 0 || random_x < (f-1)) && random_y == (c-1) && hay_puerta_S != true)
+				//si me encuentro en el lado Este
+				else if ((random_x == 0 || random_x < (f-1)) && (random_y == (c-1)) && hay_puerta_E != true)
 				{
-					dungeon[random_x][random_y].puerta = true;
-					hay_puerta_S = true;
-					
-					//se guarda la posicion de la puerta en el mapa
-					int[] posicion = {random_x, random_y};
-					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_E = true;
+						dungeon[random_x][random_y].puerta_E = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_E = true;
+						dungeon[random_x][random_y].puerta_E = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
 				}
 				
 				//Si ya hay alguna puerta en ese lado, se vuelve a buscar una posicion random
@@ -669,9 +929,11 @@ public class Dungeon
 		
 		for(int contador_distancias = 0; contador_distancias < distancia_min.size(); contador_distancias++)
 		{
+			/*LOG
 			System.out.println(" ");
 			System.out.println("Distancia " + contador_distancias +":");
 			System.out.println(distancia_min.get(contador_distancias));
+			*/
 			media_distancias = distancia_min.get(contador_distancias) + media_distancias;
 		}
 		
