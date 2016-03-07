@@ -43,14 +43,14 @@ public class EvPopulation
 	 * @param t_puertas 
 	 * @param numero_puertas cuantas puertas por mapa
 	 */
-	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas, int numero_puertas, int porcentaje)
+	public ArrayList<Dungeon> populationInitialization(int f, int c, int numero_poblacion, int numero_monstruos, int numero_tesoros, ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas, int numero_puertas, int porcentaje, int tipo_celdas)
 	{
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
 		for(int i = 0; i<numero_poblacion; i++)
 		{
 			
-			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje); //El dungeon se pasa con las dimensiones (x, y)
+			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, tipo_celdas ); //El dungeon se pasa con las dimensiones (x, y)
 	
 			//Se anade a la poblacion el mapa nuevo generado
 			Poblacion.add(mapa);

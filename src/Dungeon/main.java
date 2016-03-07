@@ -30,7 +30,7 @@ public class main
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
 		int f = 10;
 		int c = 10;
-		int numero_poblacion = 10;
+		int numero_poblacion = 1;
 		
 		int numero_monstruos = 5;
 		int numero_tesoros = 5;
@@ -46,6 +46,10 @@ public class main
 		
 		//Creo una variable de tipo evpopulation
 		EvPopulation evopopulation = new EvPopulation();
+		
+		
+		//Numero del esponente de 2 elevado a N para saber cuantos bits tiene el genotipo
+		int tipo_celdas = 3;
 		
 		
 		//Creo las posiciones de las puertas
@@ -69,19 +73,17 @@ public class main
 		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();
 		
 		//Anado los tipos de puertas al arraylist
-		
-		t_puertas.add(Celda.Tipo_puertas.ENTRADA); // Puerta Oeste
 		t_puertas.add(Celda.Tipo_puertas.ENTRADA_SALIDA);//puerta Norte
-		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur
+		t_puertas.add(Celda.Tipo_puertas.ENTRADA); // Puerta Oeste
 		t_puertas.add(Celda.Tipo_puertas.ENTRADA);//puerta Este
-		
+		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur
 		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, tipo_celdas);
 		
 		
 		//Se calculan las distancias de las puertas con los tesoros de cada individuo de la poblacion**********************
