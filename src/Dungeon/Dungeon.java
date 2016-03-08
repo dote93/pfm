@@ -1,7 +1,6 @@
 package Dungeon;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -37,6 +36,10 @@ public class Dungeon
 	//Variable para saber cuantos tipos de celdas va a haber, es decir, el esponente de 2 elevado a N
 	public int tipo_celdas; 
 	
+	
+	//Variable para guardar cuanto porcenaje queremos que haya de celdas vacias
+	int porcentaje = 0;
+	
 	//Variable para saber la posicion de donde estan las paredes
 	public ArrayList<Celda>  posicion_puertas = new ArrayList<Celda>();
 
@@ -46,16 +49,7 @@ public class Dungeon
 	//Variable para saber la posicion de donde estan los monstruos
 	public ArrayList<Celda>  posicion_monstruos = new ArrayList<Celda>();
 	
-	
-	
-	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
-	public ArrayList<Integer> distancias_PT = new ArrayList<Integer>();
-	
-	//Variable que va a guardar la media de las distancias entre PT de todo el dungeon
-	public double media_distancias_PT = 0.0;
-	
-	//Arraylist que va a guardar las posiciones de los tesoros mas cercanos con respecto a cada puerta
-	public ArrayList<Celda> posiciones_T_cercanos = new ArrayList<Celda>();
+
 	
 	
 	//Arraylist de las distancias minimas 
@@ -87,9 +81,18 @@ public class Dungeon
 	//ArrayList<Pared> lista = new ArrayList<Pared>();
 	//ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
 	
-	
 	//Distancia entre una celda P y una T
 	public int distancia = 0;
+	
+	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
+	public ArrayList<Integer> distancias_PT = new ArrayList<Integer>();
+	
+	//Variable que va a guardar la media de las distancias entre PT de todo el dungeon
+	public double media_distancias_PT = 0.0;
+	
+	//Arraylist que va a guardar las posiciones de los tesoros mas cercanos con respecto a cada puerta
+	public ArrayList<Celda> posiciones_T_cercanos = new ArrayList<Celda>();
+	
 	
 	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
 	public ArrayList<Integer> puertas_distancias = new ArrayList<Integer>();
@@ -98,14 +101,38 @@ public class Dungeon
 	public ArrayList<Integer> tam_dist = new ArrayList<Integer>();
 	
 	//Varible que guarda todas las distancias de todos los individuos de la poblacion
-	public ArrayList<Integer> puertas_distancias_poblacion = new ArrayList<Integer>();
+	public ArrayList<Integer> puertas_distancias_poblacion_PT = new ArrayList<Integer>();
 		
+	
+	
+	//Distancia entre una celda P y un Monstruo
+	public int distancia_PM = 0;
+	
+	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada tesoro)
+	public ArrayList<Integer> distancias_PM = new ArrayList<Integer>();
+	
+	//Variable que va a guardar la media de las distancias entre PM de todo el dungeon
+	public double media_distancias_PM = 0.0;
+	
+	//Arraylist que va a guardar las posiciones de los monstruos mas cercanos con respecto a cada puerta
+	public ArrayList<Celda> posiciones_M_cercanos = new ArrayList<Celda>();
+		
+	
+	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada monstruo)
+	public ArrayList<Integer> puertas_distancias_PM = new ArrayList<Integer>();
+	
+	//Variable que va a guardar una lista de todas las distancias entre las puertas y los monstruos
+	public ArrayList<Integer> tam_dist_PM = new ArrayList<Integer>();
+	
+	//Varible que guarda todas las distancias de todos los individuos de la poblacion
+	public ArrayList<Integer> puertas_distancias_poblacion_PM = new ArrayList<Integer>();
+	
 	
 	
 	/** 
      *	Constructor de Dungeon
      */
-	public Dungeon(int _f, int _c, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje, int tipo_celdas_)
+	public Dungeon(int _f, int _c, int numero_monstruos, int numero_tesoros,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje_, int tipo_celdas_)
 	{
 		//Se igualan las dimensiones del dungeon
 		f= _f;
@@ -113,6 +140,8 @@ public class Dungeon
 		
 		//se guarda el tipo de celdas que va a haber para saber el tamano del genotipo, tanto del individuo como de cada celda
 		tipo_celdas = tipo_celdas_;
+		
+		porcentaje = porcentaje_;
 		
 		//Inicializamos el dungeon para crear primero las dimensiones que va a tener el mapa
 		inicializarDungeon(); 
@@ -123,13 +152,19 @@ public class Dungeon
 		
 		
 		//Se anaden las puertas al mapa
-		anadir_puertas_posicion(pos_puertas, t_puertas, numero_puertas);
+		//anadir_puertas_posicion(pos_puertas, t_puertas, numero_puertas);
+		anadir_puertas(t_puertas, numero_puertas);
 		
 		
-		//Se anaden los tesoros al mapa
+		//Se comprueban los tesoros del mapa
 		numero_tesoros = comprobar_tesoros(f, c);
 		
+		numero_monstruos = comprobar_monstruos(f, c);
 		
+		
+		System.out.println("Numero de monstruos: " + numero_monstruos);
+		
+		//Se establecen los vecinos por cada celda
 		generateDungeon(0,0);
 		
 		/*
@@ -160,9 +195,97 @@ public class Dungeon
 		
 	}
 	
+	
+
+	/** 
+     *	Funcion que crea un dungeon de las dimensiones f c
+     */
+	public void inicializarDungeon()
+	{
+		
+		//creamos el dungeon con las dimensiones que nos han pasado para saber las dimensiones totales
+		dungeon = new Celda[f][c];
+		
+		//Se inicializa el genotipo 
+		int tamano_genotipo = f * c * tipo_celdas;
+		genotipo = new int [tamano_genotipo];
+		
+		//Variables para saber en que celda me encuentro y para poder calcular asi la posicion en la que me encuentro del genotipo
+		int contador_celda = 0;
+		int posicion = 0;
+		
+		//Variables random para crear el genotipo de una celda
+		//int random_genotipo = 0;
+		int random_porcentaje = 0;
+		
+		//Variable que va a guardar el genotipo de la celda en la que nos encontramos
+		int[] genotipo_celda = null;
+		
+	
+		
+		//Inicializamos el dungeon (sin pintarlo).
+		for(int i = 0; i < dungeon.length; i++)
+		{
+			for(int j = 0; j < dungeon[i].length; j++)
+			{
+				
+				//Se genera un numero aleatorio entre el 0 y el 100
+				random_porcentaje = (int)(Math.random() * (100 - 0) + 0);
+
+				//Variable que va a guardar el genotipo de la celda en la que nos encontramos
+				genotipo_celda = new int[tipo_celdas];
+				
+				//Para cada bit del genotipo de cada celda genero un numero aleatorio (0 o 1)
+				for(int n_tipo_celdas = 0; n_tipo_celdas < tipo_celdas; n_tipo_celdas++)
+				{
+					//Si el numero random creado esta dentro del porcentaje, se crean celdas vacias
+					if(random_porcentaje < porcentaje)
+					{
+						
+						posicion = (contador_celda * tipo_celdas) + n_tipo_celdas;
+						
+						//guardo el bit creado en el array con todos los bits del individuo
+						genotipo[posicion] = 0;
+
+						//Se guarda de manera local el genotipo creado para luego pasarle todo el genotipo entero a la celda
+						genotipo_celda[n_tipo_celdas] = genotipo[posicion];
+					}
+					
+					else
+					{
+						//Se crea un random entre el 0 y el 1 inclusives 
+						int random_genotipo = new Random().nextInt(((1 - 0) + 1) + 0);
+						
+						posicion = (contador_celda * tipo_celdas) + n_tipo_celdas;
+						
+						//guardo el bit creado en el array con todos los bits del individuo
+						genotipo[posicion] = random_genotipo;
+
+						//Se guarda de manera local el genotipo creado para luego pasarle todo el genotipo entero a la celda
+						genotipo_celda[n_tipo_celdas] = genotipo[posicion];
+					}
+					
+						
+					
+					
+				}
+				
+				
+				//creamos una celda con las posiciones que recibimos y le ponemos que es falsa la visita, tambien se le envía el genotipo que va a tener la celda
+				dungeon[i][j] = new Celda(i, j, f-1, c-1, false, genotipo_celda);
+				
+				
+				//Incremento el contador de la celda
+				contador_celda++;
+			}
+		
+		}
+		
+	}
+	
 
 	/**
-	 * Funcion que genera el dungeon del tamano que nos han dado y va abriendo las puertas entre las celdas
+	 * Funcion que recorre todo el dungeon para ir poniendo las celdas vecinas en cada celda del dungeon
 	 * @param _x fila de la celda no visitada
 	 * @param _y columna de la celda no visitada
 	 */
@@ -174,11 +297,9 @@ public class Dungeon
 		
 		//Guardamos todas las celdas vecinas de la celda actual recorriendo la lista
 		ArrayList<Celda> vecinos = get_Vecinos(inicio);
-		//Collections.reverse(vecinos);//le damos la vuelta a los vecinos que recibimos
-		//Collections.shuffle(vecinos);//desordenamos los vecinos para generar el siguiente vecino random
-		//le damos la vuelta y luego le damos a desordenar para que haya menos probabilidades de que salga igual el mapa
 		
-		//Recorremos la lista de vecinos para comprobar cuales han sido visitados y cuales no y el primero que no estŽ
+		
+		//Recorremos la lista de vecinos para comprobar cuales han sido visitados y cuales no y el primero que no esta
 		//visitado lo visitamos
 		Iterator<Celda> it =vecinos.iterator();
 		//Mientras haya un vecino siguiente en la lista por el cual no hayamos pasado seguimos dentro del while
@@ -193,7 +314,7 @@ public class Dungeon
 			
 			
 			//si el vecino ha sido visitado o es de tipo muro continuo, sino lo marco como celda visitada en la siguiente iteracion
-			if(neighbour.visitada ) //|| (neighbour.genotipo_celda[0] == 1 && neighbour.genotipo_celda[1] == 1 && neighbour.genotipo_celda[2] == 1) )
+			if(neighbour.visitada )
 			{
 				//Si ha sido visitada continuo sin hacer nada, pues es una celda que ya ha sido abierta por algœn lado
 				continue;
@@ -209,95 +330,9 @@ public class Dungeon
 	}
 	
 	/**
-	 * Funcion que se encarga de poner una puerta en la posicion que recibe
-	 * @param f fila donde va a estar la puerta
-	 * @param c columna donde va a estar la puerta
-	 */
-	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
-	{
-		for (int puerta=0; puerta<numero_puertas; puerta++)
-		{
-			dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
-			
-			//se guarda la posicion de la puerta en el mapa
-			int[] posicion = {pos_puertas.get(puerta)[0], pos_puertas.get(puerta)[1]};
-			posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
-			
-			
-			dungeon[posicion[0]][posicion[1]].tipo_puerta = t_puertas.get(puerta);
-			
-			if(posicion[0] == 0 && (posicion[1] > 0 && posicion[1] < c ))// Si es lado norte
-			{
-				dungeon[posicion[0]][posicion[1]].puerta_N = true;
-			}
-			else if (posicion[0] == (f - 1) && (posicion[1] > 0 && posicion[1] < c ))// Si es lado sur
-			{
-				dungeon[posicion[0]][posicion[1]].puerta_S = true;
-			}
-			else if (posicion[1] == (c -1) && (posicion[0] > 0 && posicion[0] < f ))// Si es lado este
-			{
-				dungeon[posicion[0]][posicion[1]].puerta_E = true;
-			}
-			else if (posicion[1] == 0 && (posicion[0] > 0 && posicion[0] < f ))// Si es lado oeste
-			{
-				dungeon[posicion[0]][posicion[1]].puerta_O = true;
-			}
-			
-
-		}
-	}
-	
-	/**
-	 * Funcion que comprueba los tesoros del mapa
-	 * @param f filas
-	 * @param c columnas
-	 * @param numero_tesoros
-	 */
-	public int comprobar_tesoros(int f, int c)
-	{
-		int numero_tesoros = 0;
-		
-		//Se comprueban los tesoros que se han anadido en el mapa
-		for (int fila=0; fila<f; fila++)
-		{
-			
-			for(int columna = 0; columna< c; columna++)
-			{
-		
-				//Hay una moneda
-				if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 1)
-				{
-					dungeon[fila][columna].tesoro = true; 
-					posicion_tesoros.add(dungeon[fila][columna]);
-					numero_tesoros++;
-				}
-				
-				//Hay una llave
-				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 1)
-				{
-					dungeon[fila][columna].tesoro = true; 
-					posicion_tesoros.add(dungeon[fila][columna]);
-					numero_tesoros++;
-					
-				}
-				
-				//Hay una piedra preciosa
-				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 0)
-				{
-					dungeon[fila][columna].tesoro = true; 
-					posicion_tesoros.add(dungeon[fila][columna]);
-					numero_tesoros++;
-				}
-			}
-			
-		}
-		return numero_tesoros;
-	}
-	
-	
-	/**
-	 * Funcion que se encarga de ver cuales son los vecinos de una celda
-	 * @return
+	 * Funcion que se encarga de guardar en el arraylist las celdas vecinas de la celda que recibe
+	 * @param celda Celda que queremos ver sus vecinos
+	 * @return se devuelve el arraylist que guarda la celda con los correspondientes vecinos
 	 */
 	public ArrayList<Celda> get_Vecinos(Celda celda)
 	{
@@ -369,6 +404,470 @@ public class Dungeon
 		return celda.Vecinos;
 	}
 	
+	/**
+	 * Funcion que se encarga de poner una puerta en la posicion que recibe
+	 * @param f fila donde va a estar la puerta
+	 * @param c columna donde va a estar la puerta
+	 */
+	public void anadir_puertas_posicion(ArrayList<int[]> pos_puertas, ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
+	{
+		for (int puerta=0; puerta<numero_puertas; puerta++)
+		{
+			dungeon[pos_puertas.get(puerta)[0]][pos_puertas.get(puerta)[1]].puerta = true;
+			
+			//se guarda la posicion de la puerta en el mapa
+			int[] posicion = {pos_puertas.get(puerta)[0], pos_puertas.get(puerta)[1]};
+			posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+			
+			
+			dungeon[posicion[0]][posicion[1]].tipo_puerta = t_puertas.get(puerta);
+			
+			if(posicion[0] == 0 && (posicion[1] > 0 && posicion[1] < c ))// Si es lado norte
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_N = true;
+			}
+			else if (posicion[0] == (f - 1) && (posicion[1] > 0 && posicion[1] < c ))// Si es lado sur
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_S = true;
+			}
+			else if (posicion[1] == (c -1) && (posicion[0] > 0 && posicion[0] < f ))// Si es lado este
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_E = true;
+			}
+			else if (posicion[1] == 0 && (posicion[0] > 0 && posicion[0] < f ))// Si es lado oeste
+			{
+				dungeon[posicion[0]][posicion[1]].puerta_O = true;
+			}
+			
+
+		}
+	}
+	
+	
+	/**
+	 * Funcion que anade puertas al mapa
+	 * @param f filas
+	 * @param c columnas
+	 * @param numero_puertas
+	 */
+	public void anadir_puertas(ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
+	{
+		
+		//Se inicializan las variables para saber si ya hay puerta o no en ese lado por cada individuo
+		hay_puerta_N = false;
+		hay_puerta_S = false;
+		hay_puerta_E = false;
+		hay_puerta_O = false;
+		
+		//Variables para comprobar si no hay puertas de entrada y salida establecerlas
+		boolean p_entrada = false;
+		boolean p_salida = false;
+		boolean p_entrada_salida = false;
+		
+		
+		//Se anaden las x puertas a cada mapa en posiciones random
+		for (int puertas=0; puertas<numero_puertas; puertas++)
+		{
+			
+			
+			int random_x = (int)(Math.random() * (f - min) + min);
+			int random_y = (int)(Math.random() * (c - min) + min);
+			
+			
+			//Si la posicion random seleccionada tiene la celda de tipo bloque, toma esta vuelta como nula restando el numero de vueltas dadas
+			if (dungeon[random_x][random_y].genotipo_celda[0] == 1 && dungeon[random_x][random_y].genotipo_celda[1] == 1 && dungeon[random_x][random_y].genotipo_celda[2] == 1)
+			{
+				puertas = puertas - 1;
+			}
+			
+			//Si la posicion aleatoria no tiene un bloque, entonces le ponemos una puerta
+			else
+			{
+				
+				//si me encuentro en el lado Norte
+				if (random_x == 0 && (random_y == 0 || random_y < (c-1)) && hay_puerta_N != true)
+				{
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].puerta_N = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_N = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_N = true;
+						dungeon[random_x][random_y].puerta_N = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+						
+					}
+					
+				}
+				
+				//si me encuentro en el lado Oeste
+				else if ((random_x == 0 || random_x < (f-1)) && random_y == 0 && hay_puerta_O != true)
+				{
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].puerta_O = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_O = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_O = true;
+						dungeon[random_x][random_y].puerta_O = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
+				}
+				
+				//si me encuentro en el lado Sur
+				else if (random_x == (f-1) && (random_y == 0 || random_y < (c-1)) && hay_puerta_S != true)
+				{
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_S = true;
+						dungeon[random_x][random_y].puerta_S = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_S = true;
+						dungeon[random_x][random_y].puerta_S = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
+				}
+				
+				//si me encuentro en el lado Este
+				else if ((random_x == 0 || random_x < (f-1)) && (random_y == (c-1)) && hay_puerta_E != true)
+				{
+					//Si tenemos el tipo de puerta que es lo establecemos
+					if(t_puertas.size() != 0)
+					{
+						dungeon[random_x][random_y].puerta = true;
+						dungeon[random_x][random_y].tipo_puerta = t_puertas.get(puertas);
+						hay_puerta_E = true;
+						dungeon[random_x][random_y].puerta_E = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+					}
+					else
+					{
+						dungeon[random_x][random_y].puerta = true;
+						hay_puerta_E = true;
+						dungeon[random_x][random_y].puerta_E = true;
+						
+						//se guarda la posicion de la puerta en el mapa
+						int[] posicion = {random_x, random_y};
+						posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
+						
+
+						//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+						int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+						
+						if(puertas < (numero_puertas - 1))
+						{
+							if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if (random_tipo_puerta == 1) //Si es 2 decimos que la puerta es de entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+							
+						}
+						else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+						{
+							if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA;
+								p_entrada = true;
+							}
+							else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.SALIDA;
+								p_salida = true;
+							}
+							else if(!p_entrada && !p_salida && !p_entrada_salida)//Si no hay ninguna de las dos se pone como entrada_salida
+							{
+								dungeon[random_x][random_y].tipo_puerta = Tipo_puertas.ENTRADA_SALIDA;
+								p_entrada_salida = true;
+							}
+						}
+					}
+				}
+				
+				//Si ya hay alguna puerta en ese lado, se vuelve a buscar una posicion random
+				else
+				{
+					puertas = puertas -1;
+				}
+				 
+			}
+		}
+	}
+	
+	
+	/**
+	 * Funcion que comprueba los tesoros del mapa
+	 * @param f filas
+	 * @param c columnas
+	 * @param numero_tesoros
+	 */
+	public int comprobar_tesoros(int f, int c)
+	{
+		int numero_tesoros = 0;
+		
+		//Se comprueban los tesoros que se han anadido en el mapa
+		for (int fila=0; fila<f; fila++)
+		{
+			
+			for(int columna = 0; columna< c; columna++)
+			{
+		
+				//Hay una moneda
+				if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 1)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_tesoros++;
+				}
+				
+				//Hay una llave
+				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 1)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_tesoros++;
+					
+				}
+				
+				//Hay una piedra preciosa
+				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 0)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_tesoros++;
+				}
+			}
+			
+		}
+		return numero_tesoros;
+	}
+	
+	
+	/**
+	 * Funcion que comprueba los tesoros del mapa
+	 * @param f filas
+	 * @param c columnas
+	 * @param numero_tesoros
+	 */
+	public int comprobar_monstruos(int f, int c)
+	{
+		int numero_monstruos = 0;
+		
+		//Se comprueban los monstruos que se han anadido en el mapa
+		for (int fila=0; fila<f; fila++)
+		{
+			
+			for(int columna = 0; columna< c; columna++)
+			{
+		
+				//Hay un gigante
+				if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 1)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_monstruos++;
+				}
+				
+				//Hay un murcielago
+				else if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 0)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_monstruos++;
+					
+				}
+				
+				//Hay un soldado
+				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 0)
+				{
+					dungeon[fila][columna].tesoro = true; 
+					posicion_tesoros.add(dungeon[fila][columna]);
+					numero_monstruos++;
+				}
+			}
+			
+		}
+		return numero_monstruos;
+	}
+	
 	
 	/**
 	 * Funcion que realiza la busqueda del camino optimo entre la celda origen y la meta
@@ -382,117 +881,134 @@ public class Dungeon
 		//reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
 		ResetearDungeonCamino();
 		
-		//reseteo la distancia
-		//distancia = 0;
+			//reseteo la distancia
+			//distancia = 0;
 		
-		boolean no_camino = false;
-		
-		//Creamos dos celdas nuevas 
-		 Celda celda_inicio = dungeon[x_inicio][y_inicio];
-		Celda celda_final = dungeon[x_final][y_final];
-		
-		//ponemos a true las celdas de salida y de meta a true 
-		celda_inicio.inicio= true;
-		celda_final.destino= true; 
-		
-		
-		//Nos creamos dos listas de las celdas abiertas y cerradas para poder ir recorriendo el dungeon e ir guardando las celdas 
-		//que estan abiertas(no hemos pasado pero si por un vecino de ellas) y las cerradas(por las q hemos entrado)
-		
-		ArrayList<Celda> celdas_abiertas = new ArrayList<Celda>();
-		ArrayList<Celda> celdas_cerradas = new ArrayList<Celda>();
-		
-		
-		//anadimos la celda inicial en la lista de abiertas
-		celdas_abiertas.add(celda_inicio);
-		
-		
-		//Si la lista de celdas abiertas no esta vacia entonces seguimos en el bucle
-		while(!celdas_abiertas.isEmpty())// Devuelve True si el ArrayList esta vacio. Sino Devuelve False
+		if(x_inicio == x_final && y_inicio == y_final ) //Si el destino es donde me encuentro entonces no hay que buscar ningun camino
 		{
-			//Se calcula el coste de ir desde la celda donde nos encontramos hasta la siguiente
-			int coste = celdas_abiertas.get(0).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(0).fila,celdas_abiertas.get(0).columna);
-			int posicion = 0;
+			//la distancia es 0 
+			distancia = 0;
 			
-			//calculamos el coste de todas las celdas que estan en abierto para ver cual es la de menor coste
-			for(int i= 0; i<celdas_abiertas.size(); i++)
+			ResetearDungeonCamino();
+		}
+		
+		else
+		{
+		
+			boolean no_camino = false;
+		
+			//Creamos dos celdas nuevas 
+		 	Celda celda_inicio = dungeon[x_inicio][y_inicio];
+		 	Celda celda_final = dungeon[x_final][y_final];
+		
+		
+		
+		
+			//ponemos a true las celdas de salida y de meta a true 
+			celda_inicio.inicio= true;
+			celda_final.destino= true; 
+			
+			
+			
+			//Nos creamos dos listas de las celdas abiertas y cerradas para poder ir recorriendo el dungeon e ir guardando las celdas 
+			//que estan abiertas(no hemos pasado pero si por un vecino de ellas) y las cerradas(por las q hemos entrado)
+			
+			ArrayList<Celda> celdas_abiertas = new ArrayList<Celda>();
+			ArrayList<Celda> celdas_cerradas = new ArrayList<Celda>();
+			
+			
+			//anadimos la celda inicial en la lista de abiertas
+			celdas_abiertas.add(celda_inicio);
+			
+			
+			//Si la lista de celdas abiertas no esta vacia entonces seguimos en el bucle
+			while(!celdas_abiertas.isEmpty())// Devuelve True si el ArrayList esta vacio. Sino Devuelve False
 			{
-				int coste_provisional= celdas_abiertas.get(i).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(i).fila,celdas_abiertas.get(i).columna);
-				int posicion_provisional = i;
+				//Se calcula el coste de ir desde la celda donde nos encontramos hasta la siguiente
+				int coste = celdas_abiertas.get(0).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(0).fila,celdas_abiertas.get(0).columna);
+				int posicion = 0;
 				
-				//si el coste provisional es menor que el coste calculado se guarda la posicion de la celda en el array y su coste 
-				//siempre y cuando no sea una celda que no se va a poder transitar
-				// IMPORTANTE NO PONER <= PORQUE SINO SE PISA UN CAMINO MEJOR
-				if(coste_provisional < coste ) //&& celdas_abiertas.get(i).genotipo_celda[0] != 1 && celdas_abiertas.get(i).genotipo_celda[1] != 1 && celdas_abiertas.get(i).genotipo_celda[2] != 1) 
+				//calculamos el coste de todas las celdas que estan en abierto para ver cual es la de menor coste
+				for(int i= 0; i<celdas_abiertas.size(); i++)
 				{
-					coste= coste_provisional;
-					posicion= posicion_provisional;
+					int coste_provisional= celdas_abiertas.get(i).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(i).fila,celdas_abiertas.get(i).columna);
+					int posicion_provisional = i;
+					
+					//si el coste provisional es menor que el coste calculado se guarda la posicion de la celda en el array y su coste 
+					//siempre y cuando no sea una celda que no se va a poder transitar
+					// IMPORTANTE NO PONER <= PORQUE SINO SE PISA UN CAMINO MEJOR
+					if(coste_provisional < coste ) //&& celdas_abiertas.get(i).genotipo_celda[0] != 1 && celdas_abiertas.get(i).genotipo_celda[1] != 1 && celdas_abiertas.get(i).genotipo_celda[2] != 1) 
+					{
+						coste= coste_provisional;
+						posicion= posicion_provisional;
+					}
+					
 				}
 				
-			}
-			
-			//guardamos la celda actual y la marcamos como que tiene el mejor coste
-			Celda celda_A= celdas_abiertas.get(posicion);
-			
-			//si la celda A es el destino se acaba el algoritmo, si no es as’, se a–ade a closed
-			if(celda_A == celda_final)
-			{
-				break; //se sale del bucle while
-			}
-			else
-			{
-				celdas_cerradas.add(celda_A);//a–adimos la celda A a cerradas
-				celdas_abiertas.remove(celda_A);//borramos la celda A de abiertas
+				//guardamos la celda actual y la marcamos como que tiene el mejor coste
+				Celda celda_A= celdas_abiertas.get(posicion);
 				
-				//guardo la lista de vecinos de la celda 
-				ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
-				
-				if(!vecinos.isEmpty()) //Si la lista de vecinos transitables no esta vacia calculo el coste de transitar hacia el
+				//si la celda A es el destino se acaba el algoritmo, si no es as’, se a–ade a closed
+				if(celda_A == celda_final)
 				{
-					for(Celda mi_vecino : vecinos)//para cada vecino
+					break; //se sale del bucle while
+				}
+				else
+				{
+					celdas_cerradas.add(celda_A);//a–adimos la celda A a cerradas
+					celdas_abiertas.remove(celda_A);//borramos la celda A de abiertas
+					
+					//guardo la lista de vecinos de la celda 
+					ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
+					
+					if(!vecinos.isEmpty()) //Si la lista de vecinos transitables no esta vacia calculo el coste de transitar hacia el
 					{
-						if(!celdas_cerradas.contains(mi_vecino))// si V no esta en la lista de cerradas 
+						for(Celda mi_vecino : vecinos)//para cada vecino
 						{
-							int coste_provisional = mi_vecino.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,mi_vecino.fila,mi_vecino.columna);
-							int coste_celda_A = celda_A.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celda_A.fila,celda_A.columna);
-							
-							// Si la lista de celdas abiertas no contiene el vecino o el coste provisional es menor al coste de la celda A,
-							// entonces entramos en este if
-							if(!celdas_abiertas.contains(mi_vecino) || coste_provisional < coste_celda_A)	
+							if(!celdas_cerradas.contains(mi_vecino))// si V no esta en la lista de cerradas 
 							{
-								//guardamos las posiciones de x e y en el vecino de la celda precursora (A)
-								mi_vecino.Posicion_precursor[0]= celda_A.fila;
-								mi_vecino.Posicion_precursor[1]= celda_A.columna;
+								int coste_provisional = mi_vecino.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,mi_vecino.fila,mi_vecino.columna);
+								int coste_celda_A = celda_A.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celda_A.fila,celda_A.columna);
 								
-								// Si la lista de celdas abiertas no contiene al vecino, lo a–adimos a esta
-								if(!celdas_abiertas.contains(mi_vecino))
+								// Si la lista de celdas abiertas no contiene el vecino o el coste provisional es menor al coste de la celda A,
+								// entonces entramos en este if
+								if(!celdas_abiertas.contains(mi_vecino) || coste_provisional < coste_celda_A)	
 								{
-									celdas_abiertas.add(mi_vecino);
+									//guardamos las posiciones de x e y en el vecino de la celda precursora (A)
+									mi_vecino.Posicion_precursor[0]= celda_A.fila;
+									mi_vecino.Posicion_precursor[1]= celda_A.columna;
+									
+									// Si la lista de celdas abiertas no contiene al vecino, lo a–adimos a esta
+									if(!celdas_abiertas.contains(mi_vecino))
+									{
+										celdas_abiertas.add(mi_vecino);
+									}
 								}
 							}
-						}
-
-					}	
-				}
-				
-				else //Si no tenemos ningun vecino transitable entonces no hay camino
-				{
-					no_camino = true;
-					break;
-				}
-			}	
-						
+	
+						}	
+					}
+					
+					else //Si no tenemos ningun vecino transitable entonces no hay camino
+					{
+						no_camino = true;
+						break;
+					}
+				}	
+							
+			}
+			
+			if(no_camino == false) // si existe un camino entonces lo recorro
+			{
+				//Recorremos el camino optimo empezando desde la celda final
+				RecorrerCamino(celda_final);	
+			}
+			
+			//Reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
+			ResetearDungeonCamino();
+		
 		}
 		
-		if(no_camino == false) // si existe un camino entonces lo recorro
-		{
-			System.out.print("Hay camino");
-			//Recorremos el camino optimo empezando desde la celda final
-			RecorrerCamino(celda_final);	
-		}
-		
-		//Reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
-		ResetearDungeonCamino();
 		
 	}
 
@@ -530,13 +1046,17 @@ public class Dungeon
 				//Se calcula la distancia de cada puerta con cada tesoro
 				llegada_optima(posicion_puertas.get(contador_puertas).fila, posicion_puertas.get(contador_puertas).columna, posicion_tesoros.get(contador_tesoros).fila,posicion_tesoros.get(contador_tesoros).columna);
 				
+				if(distancia == 0)
+				{
+					System.out.println("Tesoro en la misma celda");
+				}
 				
 				distancia_ = distancia;
 				//se anade una posicion con valor 0 por cada tesoro que haya en el mapa para guardar su distancia con la puerta
 				tam_dist.add(distancia_);
 				
 				//Si la distancia calculada es inferior a la distancia minima almacenada se guardan los datos
-				if(distancia_ < distancia_minima && distancia > 0)
+				if(distancia_ < distancia_minima && distancia >= 0) //>= 0 si se quiere que en la celda donde se encuentra la puerta pueda haber un tesoro
 				{
 					//Se iguala la distancia minima con la calculada
 					distancia_minima = distancia_;
@@ -570,11 +1090,89 @@ public class Dungeon
 		
 		
 		//Anado las distancias a una variable que va a guardar todo y en el individuo y elimino esa lista para que no de errores en el siguiente individuo
-		puertas_distancias_poblacion.addAll(puertas_distancias);
+		puertas_distancias_poblacion_PT.addAll(puertas_distancias);
 		distancias_PT = puertas_distancias;
 	
 	}
 	
+	
+	/**
+	 * Funcion calcula la distancia entre las puertas y los monstruos guardando un arraylist con las distancias
+	 * @param Poblacion
+	 * @return 
+	 */
+	public void calcular_distancias_PM(int numero_puertas, int numero_monstruos)
+	{
+		//Se inicializan los arraylist
+		puertas_distancias_PM = new ArrayList<Integer>();
+		tam_dist_PM = new ArrayList<Integer>();
+		
+		
+		//Variable para guardar la distancia entre una puerta y un tesoro
+		int distancia_ = 0;
+		distancia_PM = 0;
+		
+		//Variable para guardar la distancia del monstruo mas cercano a la puerta (se inicializa al mayor numero de movimientos que podria hacer que es f x c )
+		int distancia_minima = f * c;
+		
+		//Variable para guardar las caracteristicas de la celda donde se encuentra el M mas cercano a la P
+		Celda posicion_M_minima = null;
+		
+		//Se calculan las distancias entre cada puerta con cada tesoro
+		for(int contador_puertas = 0; contador_puertas < numero_puertas; contador_puertas++)//por cada puerta
+		{
+			
+			//Para cada monstruo con respecto a una puerta se guarda su distancia
+			for(int contador_monstruos = 0; contador_monstruos < numero_monstruos; contador_monstruos++)
+			{
+				
+				//Se calcula la distancia de cada puerta con cada tesoro
+				llegada_optima(posicion_puertas.get(contador_puertas).fila, posicion_puertas.get(contador_puertas).columna, posicion_tesoros.get(contador_monstruos).fila,posicion_tesoros.get(contador_monstruos).columna);
+				
+				
+				distancia_ = distancia_PM;
+				//se anade una posicion con valor 0 por cada tesoro que haya en el mapa para guardar su distancia con la puerta
+				tam_dist.add(distancia_);
+				
+				//Si la distancia calculada es inferior a la distancia minima almacenada se guardan los datos
+				if(distancia_ < distancia_minima && distancia_PM > 0)
+				{
+					//Se iguala la distancia minima con la calculada
+					distancia_minima = distancia_;
+					
+					//Se guarda la posicion del tesoro
+					posicion_M_minima = posicion_monstruos.get(contador_monstruos);
+				}
+				
+				//Se resetea la distancia
+				distancia_ = 0;
+				distancia_PM = 0;
+			}
+			
+			//Se anaden las distancias de cada tesoro con respecto a la puerta i
+			puertas_distancias_PM.addAll(tam_dist);
+				
+			
+			//Guardo en un arraylist las posicion del tesoro mas cercano a la puerta
+			posiciones_M_cercanos.add(posicion_M_minima);
+			
+			//Guardo en un arraylist las distancias minimas
+			distancia_min.add(distancia_minima);
+			
+			
+			//Reseteo la celda que me he guardado, la distancia mínima y las distancias para la siguiente puerta
+			posicion_M_minima = null;
+			distancia_minima = f * c;
+			tam_dist_PM.clear();
+			
+		}
+		
+		
+		//Anado las distancias a una variable que va a guardar todo y en el individuo y elimino esa lista para que no de errores en el siguiente individuo
+		puertas_distancias_poblacion_PM.addAll(puertas_distancias);
+		distancias_PM = puertas_distancias;
+	
+	}
 	
 	/**
 	 * Funcion que calcula el fitness del individuo que recibe
@@ -618,74 +1216,6 @@ public class Dungeon
 		
 	}
 	
-	
-	
-	/** 
-     *	Funcion que crea un dungeon de las dimensiones f c
-     */
-	public void inicializarDungeon()
-	{
-		
-		//creamos el dungeon con las dimensiones que nos han pasado para saber las dimensiones totales
-		dungeon = new Celda[f][c];
-		
-		
-		//Se inicializa el genotipo 
-		int tamano_genotipo = f * c * tipo_celdas;
-		genotipo = new int [tamano_genotipo];
-		
-		/*LOG
-		System.out.println("Tamano genotipo: " + genotipo.length);
-		System.out.println(" ");
-		*/
-		
-		//Variables para saber en que celda me encuentro y para poder calcular asi la posicion en la que me encuentro del genotipo
-		int contador_celda = 0;
-		int posicion = 0;
-		
-		//Inicializamos el dungeon (sin pintarlo).
-		for(int i = 0; i <= dungeon.length-1; i++)
-		{
-			for(int j = 0; j <= dungeon[i].length-1; j++)
-			{
-				
-				//Variable que va a guardar el genotipo de la celda en la que nos encontramos
-				int[] genotipo_celda = new int[tipo_celdas];
-				
-				//Para cada bit del genotipo de cada celda genero un numero aleatorio (0 o 1)
-				for(int n_tipo_celdas = 0; n_tipo_celdas < tipo_celdas; n_tipo_celdas++)
-				{
-					//Se crea un random entre el 0 y el 1 inclusives 
-					int random_genotipo = new Random().nextInt(((1 - 0) + 1) + 0);
-					
-					posicion = (contador_celda * tipo_celdas) + n_tipo_celdas;
-					//guardo el bit creado en el array con todos los bits del individuo
-					genotipo[posicion] = random_genotipo;
-
-					//Se guarda de manera local el genotipo creado para luego pasarle todo el genotipo entero a la celda
-					genotipo_celda[n_tipo_celdas] = genotipo[posicion];
-					
-				}
-				
-				/*LOG
-				System.out.println("Genotipo de la celda: " + contador_celda);
-				System.out.print(genotipo_celda[0]);
-				System.out.print(genotipo_celda[1]);
-				System.out.print(genotipo_celda[2]);
-				System.out.println(" ");
-				*/
-				
-				
-				//creamos una celda con las posiciones que recibimos y le ponemos que es falsa la visita, tambien se le envía el genotipo que va a tener la celda
-				dungeon[i][j] = new Celda(i, j, f-1, c-1, false, genotipo_celda);
-				
-				
-				//Incremento el contador de la celda
-				contador_celda++;
-			}
-		}
-		
-	}
 
 
 	/**
@@ -742,13 +1272,13 @@ public class Dungeon
 	
 			//Si la celda donde nos encontramos no es ni el destino ni el inicio ( teniendo en cuenta que recorremos el camino al reves, entonces contamos como 
 			//que esa celda es un camino
-			if(!celda_camino.destino &&  !celda_camino.inicio)
+			/*if(!celda_camino.destino || !celda_camino.inicio)
 			{
 				
 				//si la siguiente posicion no es la de inicio (puerta) entonces contamos que esta celda donde nos encontramos es un movimiento
 				distancia++;
-			}
-			
+			}*/
+			distancia++;
 			celda_camino = celda_precursora; // continuamos con el recorrrido
 		}
 		
@@ -932,6 +1462,7 @@ public class Dungeon
 			
 		}
 		System.out.println(" ");
+		
 	
 	
 	} // Cierra la funcion pintar

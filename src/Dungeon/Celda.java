@@ -95,6 +95,7 @@ public class Celda
 		// Inicializamos el array de int que luego va a guardar las coordenadas de su precursora
 		Posicion_precursor = new int [2];
 		
+		genotipo_celda = new int [genotipo.length];
 		
 		//se guarda el genotipo de la celda
 		genotipo_celda= genotipo;
