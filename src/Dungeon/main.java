@@ -37,7 +37,7 @@ public class main
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
 		int porcentaje = 30; //25
-		
+		int porcentaje_paredes = 50; 
 		
 		//ArrayList que almacena los individuos de la poblacion
 		ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
@@ -66,24 +66,24 @@ public class main
 		pos_puertas.add(puerta_4);
 		
 		//Calculo el numero de puertas que va a haber
-		int numero_puertas = pos_puertas.size();
-//		int numero_puertas = 4;
+		//int numero_puertas = pos_puertas.size();
+		int numero_puertas = 3;
 
 		//Arraylist que guarda el tipo de puerta que es cada una de las puertas
 		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();
 		
 		//Anado los tipos de puertas al arraylist
-		t_puertas.add(Celda.Tipo_puertas.ENTRADA_SALIDA);//puerta Norte
+		/*t_puertas.add(Celda.Tipo_puertas.ENTRADA_SALIDA);//puerta Norte
 		t_puertas.add(Celda.Tipo_puertas.ENTRADA); // Puerta Oeste
 		t_puertas.add(Celda.Tipo_puertas.ENTRADA);//puerta Este
-		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur
+		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur*/
 		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, tipo_celdas);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas);
 		
 		
 		//Se calculan las distancias de las puertas con los tesoros de cada individuo de la poblacion**********************

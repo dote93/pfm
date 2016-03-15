@@ -1,7 +1,6 @@
 package Dungeon;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Clase que gestiona las celdas
@@ -57,11 +56,24 @@ public class Celda
 		ENTRADA, SALIDA, ENTRADA_SALIDA
 	};
 	
-	//Tipo de puerta
-	public Tipo_puertas tipo_puerta;
+	//Tipo de puerta para cada lado
+	public Tipo_puertas tipo_puerta_N;
+	public Tipo_puertas tipo_puerta_S;
+	public Tipo_puertas tipo_puerta_E;
+	public Tipo_puertas tipo_puerta_O;
 	
 	
+	//Arraylist que guarda los vecinos de la celda
 	public ArrayList<Celda> Vecinos = new ArrayList<Celda>();
+	
+	
+	
+	//Variable que va a guardar una lista de todas las distancias entre la puerta y los tesoros
+	public ArrayList<Integer> tam_dist = new ArrayList<Integer>();
+	
+	// Posicion Tesoro mas cercano
+	public int [] Posicion_T_cercano;
+	
 	
 	/** 
      *	Constructor de Celda
@@ -95,6 +107,11 @@ public class Celda
 		// Inicializamos el array de int que luego va a guardar las coordenadas de su precursora
 		Posicion_precursor = new int [2];
 		
+		// Inicializamos el array de int que luego va a guardar las coordenadas del tesoro mas cercano
+		Posicion_T_cercano = new int[2];
+		
+		
+		//Se inicializa el tamano del genotipo de la celda
 		genotipo_celda = new int [genotipo.length];
 		
 		//se guarda el genotipo de la celda
