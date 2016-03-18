@@ -28,16 +28,16 @@ public class main
 		//****************************************************************************************
 		
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
-		int f = 4;
-		int c = 4;
+		int f = 10;
+		int c = 10;
 		int numero_poblacion = 1;
 		
 		int numero_monstruos = 5;
 		int numero_tesoros = 5;
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 30; //25
-		int porcentaje_paredes = 50; 
+		int porcentaje = 50; //25
+		int porcentaje_paredes = 30; 
 		
 		//ArrayList que almacena los individuos de la poblacion
 		ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
@@ -67,7 +67,7 @@ public class main
 		
 		//Calculo el numero de puertas que va a haber
 		//int numero_puertas = pos_puertas.size();
-		int numero_puertas = 3;
+		int numero_puertas = 2;
 
 		//Arraylist que guarda el tipo de puerta que es cada una de las puertas
 		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();

@@ -144,16 +144,18 @@ public class EvPopulation
 				System.out.println(" ");
 				System.out.println("Distancias minimas PT: "+ Individuo.distancia_min_PT);
 				
+				
 				System.out.println(" ");
 				System.out.println("Status individuo: "+ Individuo.dungeon_valido);
 				
+				/*
 				System.out.println(" ");
 				System.out.println("Media distancias: " + Individuo.media_distancias_PT);
 				
 				System.out.println(" ");
 				System.out.println("Fitness: " + Individuo.fitness);
 				System.out.println(" ");
-				
+				*/
 			}
 			
 		}

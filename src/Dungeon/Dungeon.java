@@ -162,7 +162,7 @@ public class Dungeon
 		anadir_puertas(t_puertas, numero_puertas);
 		
 		
-//		pintar();
+		pintar();
 		
 		/*
 		System.out.println("Puertas anadidas");
@@ -214,6 +214,7 @@ public class Dungeon
 		//SE CALCULA EL FITNESS DEL INDIVIDUO**********************
 		
 		//Se calcula si hay camino entre las puertas o no
+		
 		
 		calcular_camino_PP(numero_puertas);
 		
@@ -1134,7 +1135,7 @@ public class Dungeon
 		if ((dungeon[x_inicio][y_inicio].genotipo_celda[0] == 1 && dungeon[x_inicio][y_inicio].genotipo_celda[1] == 1 && dungeon[x_inicio][y_inicio].genotipo_celda[2] == 1) || (dungeon[x_final][y_final].genotipo_celda[0] == 1 && dungeon[x_final][y_final].genotipo_celda[1] == 1 && dungeon[x_final][y_final].genotipo_celda[2] == 1) )
 		{
 			distancia = -1;
-			ResetearDungeonCamino();
+			//ResetearDungeonCamino();
 		}
 		
 		//Si el destino es donde me encuentro entonces no hay que buscar ningun camino ya que nos encontramos en la meta
@@ -1143,7 +1144,7 @@ public class Dungeon
 			//la distancia es 0 
 			distancia = 0;
 			
-			ResetearDungeonCamino();
+			//ResetearDungeonCamino();
 		}
 			
 		//Sino puede que haya un camino	
@@ -1175,25 +1176,20 @@ public class Dungeon
 			celdas_abiertas.add(celda_inicio);
 			
 			
-			//Inicializo las variables de costes y posiciones
-			int coste = -1;
-			int posicion = 0;
-			int coste_provisional = -1;
-			int posicion_provisional = -1;
-			int coste_celda_A = -1;
+			
 			
 			//Si la lista de celdas abiertas no esta vacia entonces seguimos en el bucle
 			while(!celdas_abiertas.isEmpty())// Devuelve True si el ArrayList esta vacio. Sino Devuelve False
 			{
 				//Se calcula el coste de ir desde la celda donde nos encontramos hasta la siguiente
-				coste = celdas_abiertas.get(0).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(0).fila,celdas_abiertas.get(0).columna);
-				posicion = 0;
+				int coste = celdas_abiertas.get(0).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(0).fila,celdas_abiertas.get(0).columna);
+				int posicion = 0;
 				
 				//calculamos el coste de todas las celdas que estan en abierto para ver cual es la de menor coste
 				for(int i= 0; i<celdas_abiertas.size(); i++)
 				{
-					coste_provisional= celdas_abiertas.get(i).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(i).fila,celdas_abiertas.get(i).columna);
-					posicion_provisional = i;
+					int coste_provisional= celdas_abiertas.get(i).coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celdas_abiertas.get(i).fila,celdas_abiertas.get(i).columna);
+					int posicion_provisional = i;
 					
 					//si el coste provisional es menor que el coste calculado se guarda la posicion de la celda en el array y su coste 
 					//siempre y cuando no sea una celda que no se va a poder transitar
@@ -1207,33 +1203,38 @@ public class Dungeon
 				}
 				
 				//guardamos la celda actual y la marcamos como que tiene el mejor coste
-				Celda celda_A= celdas_abiertas.get(posicion);
+				Celda celda_A = celdas_abiertas.get(posicion);
 				
 				//si la celda A es el destino se acaba el algoritmo, si no es asi, se anade a closed
 				if(celda_A == celda_final)
 				{
+					no_camino = false;
 					break; //se sale del bucle while
 				}
 				else
 				{
-					celdas_cerradas.add(celda_A);//a–adimos la celda A a cerradas
+					no_camino = true; //todavia no se ha encontrado un camino 
+					
+					celdas_cerradas.add(celda_A);//anadimos la celda A a cerradas
 					celdas_abiertas.remove(celda_A);//borramos la celda A de abiertas
 					
 					//guardo la lista de vecinos de la celda 
 					ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
 					
-					if(!vecinos.isEmpty()) //Si la lista de vecinos transitables no esta vacia calculo el coste de transitar hacia el
+					//Si la lista de vecinos transitables no esta vacia calculo el coste de transitar hacia el
+					if(!vecinos.isEmpty()) 
 					{
 						for(Celda mi_vecino : vecinos)//para cada vecino
 						{
-							if(!celdas_cerradas.contains(mi_vecino))// si V no esta en la lista de cerradas 
+							// si V no esta en la lista de cerradas
+							if(!celdas_cerradas.contains(mi_vecino)) 
 							{
-								coste_provisional = mi_vecino.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,mi_vecino.fila,mi_vecino.columna);
-								coste_celda_A = celda_A.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celda_A.fila,celda_A.columna);
+								int coste_provisional = mi_vecino.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,mi_vecino.fila,mi_vecino.columna);
+								int coste_celda_A = celda_A.coste(celda_inicio.fila,celda_inicio.columna,celda_final.fila,celda_final.columna,celda_A.fila,celda_A.columna);
 								
 								// Si la lista de celdas abiertas no contiene el vecino o el coste provisional es menor al coste de la celda A,
 								// entonces entramos en este if
-								if(!celdas_abiertas.contains(mi_vecino) || coste_provisional < coste_celda_A)	
+								if(!celdas_abiertas.contains(mi_vecino) || coste_provisional <= coste_celda_A)	
 								{
 									//guardamos las posiciones de x e y en el vecino de la celda precursora (A)
 									mi_vecino.Posicion_precursor[0]= celda_A.fila;
@@ -1250,23 +1251,34 @@ public class Dungeon
 						}	
 					}
 					
-					else //Si no tenemos ningun vecino transitable entonces no hay camino
+					/*
+					//Si no tenemos ningun vecino transitable entonces no hay camino
+					else 
 					{
 						no_camino = true;
 						distancia = -1;
 						break;
-					}
+					}*/
 				}	
 							
 			}
 			
-			if(no_camino == false) // si existe un camino entonces lo recorro
+	
+			
+			if(no_camino == false ) // si existe un camino entonces lo recorro
 			{
 				/*
 				System.out.println("Hay camino");
 				*/
+				
+				
 				//Recorremos el camino optimo empezando desde la celda final
 				RecorrerCamino(celda_final);	
+			}
+			
+			else //Si no existe un camino entonces la distancia es -1 
+			{
+				distancia = -1;
 			}
 			
 			//Reseteamos los booleanos de salida, meta y camino de todo el dungoen primero
@@ -1391,8 +1403,8 @@ public class Dungeon
 					distancia_minima = - 1;
 				}
 				
-				//distancia_min_PT.add(distancia_minima);
 				
+				//Voy colocando en cada posicion la correspondiente medida
 				if(posicion_puertas.get(contador_puertas).puerta_N)
 				{
 					//Guardo en un arraylist las distancias minimas
@@ -1417,6 +1429,7 @@ public class Dungeon
 					//Guardo en un arraylist las distancias minimas
 					distancia_min_PT.add(3, distancia_minima);
 				}
+				
 				else 
 				{
 					//Guardo en un arraylist las distancias minimas
@@ -1548,31 +1561,35 @@ public class Dungeon
 			//Se resetea la distancia
 			distancia = -1;
 			
-			//Se calcula la distancia de la puerta 0 con las demas
-			llegada_optima(posicion_puertas.get(0).fila, posicion_puertas.get(0).columna, posicion_puertas.get(contador_puertas).fila, posicion_puertas.get(contador_puertas).columna);
+			//si el dungeon es valido se comprueba la distancia, en el momento en el que ya no haya camino entre dos puertas será invalido el camino
+			if(dungeon_valido != false)
+			{
+				//Se calcula la distancia de la puerta 0 con las demas
+				llegada_optima(posicion_puertas.get(0).fila, posicion_puertas.get(0).columna, posicion_puertas.get(contador_puertas).fila, posicion_puertas.get(contador_puertas).columna);
+				
+	
+				//Si solo hay una puerta y la distancia es 0 porque no hay otra puerta; el dungeon es valido
+				if(distancia == 0 && contador_puertas == numero_puertas)
+				{
+					dungeon_valido = true;
+				}
+				
+				//Si hay una distancia es que es un dungeon valido porque hay un camino
+				else if (distancia > 0)
+				{
+					System.out.println("Distancia = " + distancia);
+					
+					dungeon_valido = true;
+				}
+				
+				//si la distancia es -1 entonces es que no hay un camino PP y ya no es un dungeon_valido
+				else if (distancia == -1)
+				{
+					dungeon_valido = false;
+				}
 			
-			//Estamos en la misma puerta por lo que sigue siendo no valido el dungeon (esto solo se cumple con mas de una puerta)
-			if(distancia == 0 && numero_puertas > 1)
-			{
-				dungeon_valido = false;
-			}
-			else if (distancia == 0 && numero_puertas == 1)
-			{
-				//dungeon_valido = true;
 			}
 			
-			//Si la distancia calculada es superior a -1 es que hay camino, de lo contrario es que no lo hay
-			if(distancia == -1 && contador_puertas != 0)
-			{
-
-				dungeon_valido = false;
-				//break;
-			}
-			
-			else if (numero_puertas == 1)
-			{
-				//dungeon_valido = true;
-			}
 
 		
 		}
@@ -1647,8 +1664,8 @@ public class Dungeon
 			{
 				// nos creamos un array unidimensional de integers que va a guardar las coordenadas de la siguiente celda a la que vamos a transitar
 				int [] siguientePosicion = new int[2];
-				siguientePosicion[0] =	(tipo_celda.fila - celda_actual.fila) + celda_actual.fila;
-				siguientePosicion[1] = (tipo_celda.columna - celda_actual.columna) + celda_actual.columna;
+				siguientePosicion[0] =	tipo_celda.fila;
+				siguientePosicion[1] = tipo_celda.columna;
 				// A–adimos a la lista de vecinos posibles a los que podemos transitar pas‡ndole las coordenadas que hemos recibido anteriormentes
 				vecinos_celda_actual.add(dungeon[siguientePosicion[0]][siguientePosicion[1]]);
 			}
@@ -1667,7 +1684,7 @@ public class Dungeon
 		// Creamos una celda y guardamos la posicion de meta en ella ya que empezamos por el final
 		Celda celda_camino = posicion_meta;
 		
-		distancia = 0;
+		distancia = 1;
 		
 		// mientras la celda camino no tenga la variable boolean posicion inicio a true no nos salimos, pues todavia no hemos terminado de recorrer el 
 		// camino hasta llegar a la posicion de inicio viniendo desde la posicion de meta
@@ -1686,17 +1703,19 @@ public class Dungeon
 				distancia++;
 			}*/
 			
-			if(celda_camino == celda_precursora)
+			if(celda_precursora.inicio) //si la celda siguiente es la de inicio no la contamos
 			{
-				distancia = - 1;
-				break;
+				celda_camino = celda_precursora; // continuamos con el recorrrido
 				
 			}
 			else
 			{
 				celda_camino = celda_precursora; // continuamos con el recorrrido
-				distancia++;
+				distancia++; //anado un movimiento a la distancia
 			}
+			
+			
+
 			
 		}
 		
@@ -1824,6 +1843,43 @@ public class Dungeon
 			}
 			
 		}
+		
+		//
+		System.out.println(" ");
+		System.out.println("Tipo puertas: ");
+		
+		for (int fila= 0; fila < f; fila++)
+		{
+			for(int columna= 0; columna < c; columna++)
+			{
+				if (dungeon[fila][columna].puerta && dungeon[fila][columna].puerta_N) //Si es puerta norte
+				{
+					System.out.print("Puerta Norte "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_N + " ");
+					System.out.println(" ");
+				}
+				
+				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_S)//Si es puerta sur
+				{
+					System.out.print("Puerta Sur   "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_S + " ");
+					System.out.println(" ");
+				}
+				
+				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_E)//Si es puerta este
+				{
+					System.out.print("Puerta Este  "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_E + " ");
+					System.out.println(" ");
+				}
+				
+				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_O)//Si es puerta oeste
+				{
+					System.out.print("Puerta Oeste "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_O + " ");
+					System.out.println(" ");
+				}
+			}
+		}
+		System.out.println(" ");
+		//
+		
 		
 		System.out.println("Genotipo del individuo: ");
 		int posicion = 0;
