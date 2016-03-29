@@ -69,11 +69,19 @@ public class Celda
 	
 	
 	//Variable que va a guardar una lista de todas las distancias entre la puerta y los tesoros
-	public ArrayList<Integer> tam_dist = new ArrayList<Integer>();
+	public ArrayList<Integer> tam_dist_T = new ArrayList<Integer>();
+	
+	//Variable que va a guardar una lista de todas las distancias entre la puerta y los monstruos
+	public ArrayList<Integer> tam_dist_M = new ArrayList<Integer>();
 	
 	// Posicion Tesoro mas cercano
 	public int [] Posicion_T_cercano;
 	
+	// Posicion Monstruo mas cercano
+	public int [] Posicion_M_cercano;
+	
+	//Distancia de la puerta mas cercana para calcular luego el fitness (solo se usa cuando la celda es de tipo tesoro)
+	int distancia_P_cercana;
 	
 	/** 
      *	Constructor de Celda
@@ -110,12 +118,15 @@ public class Celda
 		// Inicializamos el array de int que luego va a guardar las coordenadas del tesoro mas cercano
 		Posicion_T_cercano = new int[2];
 		
+		// Inicializamos el array de int que luego va a guardar las coordenadas del monstruo mas cercano
+		Posicion_M_cercano = new int[2];
 		
 		//Se inicializa el tamano del genotipo de la celda
 		genotipo_celda = new int [genotipo.length];
 		
 		//se guarda el genotipo de la celda
 		genotipo_celda= genotipo;
+		
 		
 		//creamos las paredes pasandole las posiciones x,y y el tama–o maximo de x y el tama–o maximo de y 
 		//crearParedes(fila, columna, max_fila, max_columna);

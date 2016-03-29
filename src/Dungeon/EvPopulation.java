@@ -21,14 +21,18 @@ public class EvPopulation
 	//ArrayList que almacena los individuos de la poblacion
 	ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
 	
-	
+	//Variables para saber cuantos individuos de la poblacion son validos y cuantos son invalidos
+	int Validos;
+	int No_validos;
 	
 	/**
 	 * Constructor de EvPopulation
 	 */
 	public EvPopulation ()
 	{
-
+		//inicializo las variables a 0
+		Validos = 0;
+		No_validos = 0;
 	}
 	
 	
@@ -51,10 +55,26 @@ public class EvPopulation
 		{
 			
 			mapa = new Dungeon(f, c,  numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas ); //El dungeon se pasa con las dimensiones (x, y)
-	
+			
+			
+			//Si el individuo es no_valido lo anado a la lista de no validos
+			if(!mapa.dungeon_valido)
+			{
+				No_validos++;
+				
+			}
+			
+			//Si el individuos es valiudo lo anado a la lista de validos
+			if(mapa.dungeon_valido)
+			{
+				Validos++;
+				
+			}
+			
 			//Se anade a la poblacion el mapa nuevo generado
 			Poblacion.add(mapa);
 		}
+		
 		
 		//Se devuelve la poblacion creada
 		return Poblacion;
@@ -95,67 +115,6 @@ public class EvPopulation
 				System.out.println("Individuo " + j );
 				Individuo.pintar();
 				
-				/*
-				System.out.println(" ");
-				System.out.println("Distancias (tamano = numero_T ("+ Individuo.posicion_tesoros.size() +") * numero_P ("+ Individuo.posicion_puertas.size() +")) = "+ Individuo.distancias_PT.size() +": ");
-				System.out.println(Individuo.distancias_PT);
-				*/
-				
-				System.out.println(" ");
-				System.out.println("Tipo puertas: ");
-				
-				for (int f= 0; f < Individuo.f; f++)
-				{
-					for(int c= 0; c < Individuo.c; c++)
-					{
-						if (Individuo.dungeon[f][c].puerta && Individuo.dungeon[f][c].puerta_N) //Si es puerta norte
-						{
-							System.out.print("Puerta Norte "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta_N + " ");
-							System.out.println(" ");
-						}
-						
-						if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_S)//Si es puerta sur
-						{
-							System.out.print("Puerta Sur   "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta_S + " ");
-							System.out.println(" ");
-						}
-						
-						if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_E)//Si es puerta este
-						{
-							System.out.print("Puerta Este  "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta_E + " ");
-							System.out.println(" ");
-						}
-						
-						if (Individuo.dungeon[f][c].puerta  && Individuo.dungeon[f][c].puerta_O)//Si es puerta oeste
-						{
-							System.out.print("Puerta Oeste "+ f +" "+ c + ": " + Individuo.dungeon[f][c].tipo_puerta_O + " ");
-							System.out.println(" ");
-						}
-					}
-				}
-				System.out.println(" ");
-				
-				
-				System.out.println(" ");
-				System.out.println("Numero de monstruos: " + Individuo.numero_monstruos);
-				System.out.println("Numero de tesoros: " + Individuo.numero_tesoros);
-				System.out.println(" ");
-				
-				System.out.println(" ");
-				System.out.println("Distancias minimas PT: "+ Individuo.distancia_min_PT);
-				
-				
-				System.out.println(" ");
-				System.out.println("Status individuo: "+ Individuo.dungeon_valido);
-				
-				/*
-				System.out.println(" ");
-				System.out.println("Media distancias: " + Individuo.media_distancias_PT);
-				
-				System.out.println(" ");
-				System.out.println("Fitness: " + Individuo.fitness);
-				System.out.println(" ");
-				*/
 			}
 			
 		}

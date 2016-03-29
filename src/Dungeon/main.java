@@ -28,8 +28,8 @@ public class main
 		//****************************************************************************************
 		
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
-		int f = 10;
-		int c = 10;
+		int f = 4;
+		int c = 4;
 		int numero_poblacion = 1;
 		
 		int numero_monstruos = 5;
@@ -37,7 +37,9 @@ public class main
 		
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
 		int porcentaje = 50; //25
-		int porcentaje_paredes = 30; 
+		int porcentaje_paredes = 20; 
+		int numero_puertas = 1;
+		
 		
 		//ArrayList que almacena los individuos de la poblacion
 		ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
@@ -66,8 +68,8 @@ public class main
 		pos_puertas.add(puerta_4);
 		
 		//Calculo el numero de puertas que va a haber
-		//int numero_puertas = pos_puertas.size();
-		int numero_puertas = 2;
+//		//int numero_puertas = pos_puertas.size();
+		
 
 		//Arraylist que guarda el tipo de puerta que es cada una de las puertas
 		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();
@@ -93,6 +95,12 @@ public class main
 		//Pinta la poblacion**************************************************************************
 		evopopulation.pintar_poblacion(Poblacion);
 		
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------------------------");
+		System.out.println("Individuos validos: " + evopopulation.Validos);
+		System.out.println("Individuos no validos: " + evopopulation.No_validos);
 
 
 		/*
