@@ -31,29 +31,36 @@ public class Dungeon
 	public int tipo_celdas; 
 	
 	
-	public int numero_monstruos; 
-	public int numero_tesoros; 
+	public int numero_monstruos = 0; 
+	public int numero_tesoros = 0; 
+	
+	public int celdas_Paredes = 0; //variable para saber cuantas paredes se han colocado en el mapa
+	
+	public int celdas_Vacias = 0; //variable para saber cuantas celdas vacias se han colocado en el mapa
+	
+	
 	
 	//Variable para guardar cuanto porcenaje queremos que haya de celdas vacias
 	int porcentaje = 0;
 	
 	//Variable para guardar cuanto porcenaje queremos que haya de celdas pared
-	int porcentaje_paredes =0;
+	int porcentaje_paredes = 0;
 	
 	//Variable para saber la posicion de donde estan las paredes
-	public ArrayList<Celda>  posicion_puertas = new ArrayList<Celda>();
+	ArrayList<Celda>  posicion_puertas = new ArrayList<Celda>();
 
 	//Variable para saber la posicion de donde estan los tesoros
-	public ArrayList<Celda>  posicion_tesoros = new ArrayList<Celda>();
+	ArrayList<Celda>  posicion_tesoros = new ArrayList<Celda>();
 		
 	//Variable para saber la posicion de donde estan los monstruos
-	public ArrayList<Celda>  posicion_monstruos = new ArrayList<Celda>();
-	
-
+	ArrayList<Celda>  posicion_monstruos = new ArrayList<Celda>();
 	
 	
-	//Arraylist de las distancias minimas PT
-	public ArrayList<Integer> distancia_min_PM = new ArrayList<Integer>();
+	//Arraylist de las distancias minimas PT de todas las puertas
+	ArrayList<Integer> distancia_min_PT = new ArrayList<Integer>();
+	
+	//Arraylist de las distancias minimas PM
+	ArrayList<Integer> distancia_min_PM = new ArrayList<Integer>();
 	
 	//Fitness del individuo
 	public double fitness = 0.0;
@@ -72,55 +79,9 @@ public class Dungeon
 	boolean hay_puerta_E;
 	boolean hay_puerta_O;
 	
-	
-	
-	
-	
-	//Arraylist que guardan las paredes de la celda donde nos encontramos y de la opuesta a la pared seleccionada
-	//ArrayList<Pared> lista = new ArrayList<Pared>();
-	//ArrayList<Pared> lista_opuesta = new ArrayList<Pared>();
-	
 	//Distancia entre una celda P y una T
 	public int distancia = -1;
-	
 		
-	//Variable que va a guardar la media de las distancias entre PT de todo el dungeon
-	public double media_distancias_PT = 0.0;
-	
-	//Arraylist que va a guardar las posiciones de los tesoros mas cercanos con respecto a cada puerta
-	public ArrayList<Celda> posiciones_T_cercanos = new ArrayList<Celda>();
-	
-	
-	
-	//Arraylist de las distancias minimas PT de todas las puertas
-	public ArrayList<Integer> distancia_min_PT = new ArrayList<Integer>();
-		
-		
-	
-	//Distancia entre una celda P y un Monstruo
-	public int distancia_PM = 0;
-	
-	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada monstruo)
-	public ArrayList<Integer> distancias_PM = new ArrayList<Integer>();
-	
-	//Variable que va a guardar la media de las distancias entre PM de todo el dungeon
-	public double media_distancias_PM = 0.0;
-	
-	//Arraylist que va a guardar las posiciones de los monstruos mas cercanos con respecto a cada puerta
-	public ArrayList<Celda> posiciones_M_cercanos = new ArrayList<Celda>();
-		
-	
-	//Variable que va a guardar una lista cada puerta (que esta almacena las distancias con cada monstruo)
-	public ArrayList<Integer> puertas_distancias_PM = new ArrayList<Integer>();
-	
-	//Variable que va a guardar una lista de todas las distancias entre las puertas y los monstruos
-	public ArrayList<Integer> tam_dist_PM = new ArrayList<Integer>();
-	
-	//Varible que guarda todas las distancias de todos los individuos de la poblacion
-	public ArrayList<Integer> puertas_distancias_poblacion_PM = new ArrayList<Integer>();
-	
-	
-	
 	//Variable para saber si el dungeon es valido o no
 	public boolean dungeon_valido;
 	
@@ -140,6 +101,9 @@ public class Dungeon
 		
 		porcentaje = porcentaje_;
 		porcentaje_paredes = porcentaje_paredes_;
+		
+		celdas_Paredes = (porcentaje_paredes * (f * c)) / 100;
+		celdas_Vacias = (porcentaje * (f * c)) / 100; 
 		
 		//Inicializamos el dungeon para crear primero las dimensiones que va a tener el mapa
 		inicializarDungeon(); 
@@ -164,17 +128,17 @@ public class Dungeon
 		//Se comprueban los tesoros del mapa
 		numero_tesoros = comprobar_tesoros();
 		
-		
+		/*//LOG
 		System.out.println(" ");
 		System.out.println("tesoros colocados: " + numero_tesoros);
-		
+		*/
 		
 		numero_monstruos = comprobar_monstruos();
 		
-		
+		/*//LOG
 		System.out.println(" ");
 		System.out.println("monstruos colocados: " + numero_monstruos);
-		
+		*/
 		
 		//Se establecen los vecinos por cada celda
 		generateDungeon(0,0);
@@ -204,8 +168,12 @@ public class Dungeon
 		*/
 		
 		
+		
+		
 		//SE CALCULA EL FITNESS DEL INDIVIDUO**********************
 		calcularfitness(numero_puertas);
+		
+
 		
 	}
 	
@@ -1070,7 +1038,7 @@ public class Dungeon
 				//Hay un gigante
 				if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 1)
 				{
-					dungeon[fila][columna].tesoro = true; 
+					dungeon[fila][columna].monstruo = true; 
 					posicion_monstruos.add(dungeon[fila][columna]);
 					numero_monstruos++;
 				}
@@ -1078,7 +1046,7 @@ public class Dungeon
 				//Hay un murcielago
 				else if(dungeon[fila][columna].genotipo_celda[0] == 0 && dungeon[fila][columna].genotipo_celda[1] == 1 && dungeon[fila][columna].genotipo_celda[2] == 0)
 				{
-					dungeon[fila][columna].tesoro = true; 
+					dungeon[fila][columna].monstruo = true; 
 					posicion_monstruos.add(dungeon[fila][columna]);
 					numero_monstruos++;
 					
@@ -1087,7 +1055,7 @@ public class Dungeon
 				//Hay un soldado
 				else if(dungeon[fila][columna].genotipo_celda[0] == 1 && dungeon[fila][columna].genotipo_celda[1] == 0 && dungeon[fila][columna].genotipo_celda[2] == 0)
 				{
-					dungeon[fila][columna].tesoro = true; 
+					dungeon[fila][columna].monstruo = true; 
 					posicion_monstruos.add(dungeon[fila][columna]);
 					numero_monstruos++;
 				}
@@ -1595,8 +1563,7 @@ public class Dungeon
 				//Si hay una distancia es que es un dungeon valido porque hay un camino
 				else if (distancia > 0)
 				{
-					System.out.println("Distancia = " + distancia);
-					
+
 					dungeon_valido = true;
 				}
 				
@@ -1683,9 +1650,7 @@ public class Dungeon
 				{
 					st = valor;
 				}
-			}
-			
-			
+			}	
 			
 			//sumo el st del tesoro al fitness de los tesoros 
 			fitness_tesoros = fitness_tesoros + st;
@@ -1696,8 +1661,10 @@ public class Dungeon
 			
 		}
 		
+		double num_tesoros = numero_tesoros;
+		
 		//hago la media del fitness de los tesoros
-		fitness_tesoros =  fitness_tesoros/ numero_tesoros;
+		fitness_tesoros =  fitness_tesoros / num_tesoros;
 		
 		
 		return fitness_tesoros;
@@ -1706,10 +1673,164 @@ public class Dungeon
 	
 	/**
 	 * Funcion que se encarga de calcular el fitness de las puertas, para ello lo que hace es ver si tiene objetos cerca 
+	 * (se hace con busqueda en anchura)
 	 */
-	public void calcular_fitness_puertas()
+	public double calcular_fitness_puertas()
 	{
+		//TODO calcular el fitness de las puertas, para ello hay que empezar por la posicion de la puerta 0 y obtener sus vecinos, si ninguno
+		//es de tipo tesoro o monstruo entonces el area de seguridad es esa y se buscan los vecinos de los vecinos hasta dar con un monstruo
 		
+		//variable que va a almacenar la media de los fitness de las puertas
+		double fitness_puertas = 0;
+		
+		//variable que va a guardar el fitness de cada puerta para luego hacer la media
+		double[] fitness_puerta = new double[posicion_puertas.size()];
+	
+		//listas que van a guardar las celdas que se han visitado y las celdas que quedan por visitar
+		ArrayList<Celda> celdas_abiertas = new ArrayList<Celda>();
+		ArrayList<Celda> celdas_cerradas = new ArrayList<Celda>();
+		
+		//lista que va a guardar el area de las celdas que son seguras para la puerta
+		ArrayList<Celda> celdas_recorridas = new ArrayList<Celda>();
+		
+		
+		//variable que va a guardar el numero de las celdas seguras
+		double area = 0.0;
+		
+		//variables para calcular el numerador y el denominador del fitness
+		double numerador = 0.0;
+		double denominador = 0.0;
+		double division = 0.0;
+		
+		
+		int contador_puertas = 0; //variable para saber en que posicion guardar el fitness de cada puerta
+		
+		boolean objeto_detectado = false;
+		
+		//Para cada puerta que hay almacenada en el array de posiciones
+		for (Celda puerta: posicion_puertas)
+		{
+			
+			//si en la celda donde se encuentra la puerta no hay un monstruo entonces continuo, sino el fitness es 0
+			if(!puerta.monstruo || !puerta.tesoro)
+			{
+				
+				celdas_abiertas.add(puerta); //se anade el nodo inicial como celda visitada
+				
+			
+				//Mientras no se encuentre un monstruo u objeto se sigue buscando
+				while(!objeto_detectado)
+				{
+					
+					//guardo la primera posicion del array como la siguiente celda a la que voy a transitar
+					Celda celda_A = celdas_abiertas.get(0);
+					
+					celdas_cerradas.add(celda_A);//anadimos la celda A a cerradas
+					celdas_abiertas.remove(0);//borramos la celda A de abiertas
+					
+					//guardo la lista de vecinos de la celda 
+					ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
+					
+					//Si la lista de vecinos transitables no esta vacia continuo
+					if(!vecinos.isEmpty()) 
+					{
+						for(Celda mi_vecino : vecinos)//para cada vecino
+						{
+							// si el vecino no esta en la lista de cerradas
+							if(!celdas_cerradas.contains(mi_vecino)) 
+							{
+							
+								// Si la lista de celdas abiertas no contiene el vecino entonces se anade a la lista de abiertas
+								if(!celdas_abiertas.contains(mi_vecino))	
+								{
+									//si la celda vecina contiene un monstruo o tesoro, entonces se para el bucle ya que se termina de calcular el area
+									if(mi_vecino.monstruo || mi_vecino.tesoro)
+									{
+										objeto_detectado = true;
+										break;
+									}
+									
+									else
+									{
+										celdas_abiertas.add(mi_vecino);
+									}
+								}
+							}
+	
+						}//cierra el for de para cada vecino
+						
+						//si nos encontramos en la celda de la puerta y ya hemos detectado un monstruo en sus vecinos guardamos en celdas recorridas la celda_A que se encuentra en las celdas
+						//cerradas
+						if(celda_A == puerta && objeto_detectado)
+						{
+							celdas_recorridas = celdas_cerradas;
+						}
+						
+						//si de todos los vecinos ninguno es de tipo monstruo, entonces el area de seguridad de la puerta es igual al de las celdas cerradas
+						if(!objeto_detectado)
+						{
+							
+							celdas_recorridas = celdas_cerradas;
+						}
+						
+					}//cierra el if de la lista de vecinos	
+								
+				}//cierra el while
+				
+				
+				area = celdas_recorridas.size();
+				
+				numerador = 1.0;
+				denominador = (f * c) - celdas_Paredes;
+				
+				division = numerador / denominador;
+				
+				//se anade a la puerta correspondiente su fitness
+				fitness_puerta[contador_puertas] = division * area;
+				
+				
+			}//cierra el if de monstruos
+			
+			else
+			{
+				area = -1;
+				
+				numerador = 1.0;
+				denominador = (f * c) - celdas_Paredes;
+				
+				division = numerador / denominador;
+				
+				//se anade a la puerta correspondiente su fitness
+				fitness_puerta[contador_puertas] = division * area;
+				
+			}
+			
+			
+			//se incrementa el contador de las puertas
+			contador_puertas++;
+		}
+
+		
+		/*//LOG
+		System.out.println("");
+		
+		System.out.println("Numerador: " + numerador);
+		System.out.println( "(f * c) - " + celdas_Paredes + " = " + denominador);
+		System.out.println("Division: " + division);
+		
+		System.out.println("Area: " + area);
+		*/
+		
+		//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
+		for(double fitness : fitness_puerta)
+		{
+			fitness_puertas = fitness_puertas + fitness;
+		}
+		
+		//se hace la media de los fitness de las puertas
+		fitness_puertas = fitness_puertas / fitness_puerta.length;
+		
+		return fitness_puertas;
 	}
 	
 	
@@ -1718,9 +1839,6 @@ public class Dungeon
 	 */
 	public void calcularfitness(int numero_puertas) 
 	{
-		
-		//TODO ejemplo 
-		
 		
 		//calculo el camino que hay entre la puerta 0 y el resto
 		calcular_camino_PP(numero_puertas);
@@ -1742,22 +1860,23 @@ public class Dungeon
 		}*/
 		
 		
-		//Calculo el fitness del dungeon
+		//Calculo el fitness del dungeon siempre y cuando sea 
 		if(numero_monstruos != 0 && numero_tesoros != 0 && dungeon_valido == true) //calculo el fitness siempre y cuando haya tesoros y monstruos en el mapa y haya camino entre la/s puerta/s y los objetos, sino tiene un fitness negativo
 		{
 			//calculo el fitness de los tesoros
 			double fitness_tesoros = calcular_fitness_tesoros();
 			
-			//se suma los fitness calculados para obtener el fitness final
-			fitness = fitness_tesoros;
+			//calculo el fitness de las puertas
+			double fitness_puertas = calcular_fitness_puertas();
+			
+			//se suman los fitness calculados para obtener el fitness final
+			fitness = fitness_tesoros + fitness_puertas;
 		}
 		else 
 		{
-			fitness = -1;
+			fitness = -100;
 		}
-		
-		
-		
+				
 		
 	}
 	
@@ -1965,7 +2084,7 @@ public class Dungeon
 		
 		
 		//SE PINTAN LAS CARACTERISTICAS DE LA HABITACION
-		
+		/*
 		System.out.println(" ");
 		System.out.println("-------------");
 		System.out.println("Genotipo del individuo: ");
@@ -1982,7 +2101,7 @@ public class Dungeon
 		}
 		System.out.println(" ");
 		System.out.println("-------------");
-		
+		*/
 				
 		System.out.println(" ");
 		System.out.println("-------------");
@@ -1990,13 +2109,13 @@ public class Dungeon
 		System.out.println("Numero de tesoros: " + numero_tesoros);
 		System.out.println("-------------");
 		
-		
+		/*
 		System.out.println(" ");
 		System.out.println("-------------");
 		System.out.println("Distancias minimas PT: "+ distancia_min_PT);
 		System.out.println("Distancias minimas PM: "+ distancia_min_PM);
 		System.out.println("-------------");
-		
+		*/
 		
 		System.out.println(" ");
 		System.out.println("-------------");
@@ -2009,45 +2128,45 @@ public class Dungeon
 				if (dungeon[fila][columna].puerta && dungeon[fila][columna].puerta_N) //Si es puerta norte
 				{
 					System.out.println("Puerta Norte "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_N + " ");
-					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
-					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
+//					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
+//					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
 					System.out.println(" ");
 				}
 				
 				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_S)//Si es puerta sur
 				{
 					System.out.println("Puerta Sur   "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_S + " ");
-					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
-					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
+//					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
+//					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
 					System.out.println(" ");
 				}
 				
 				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_E)//Si es puerta este
 				{
 					System.out.println("Puerta Este  "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_E + " ");
-					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
-					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
+//					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
+//					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
 					System.out.println(" ");
 				}
 				
 				if (dungeon[fila][columna].puerta  && dungeon[fila][columna].puerta_O)//Si es puerta oeste
 				{
 					System.out.println("Puerta Oeste "+ fila +" "+ columna + ": " + dungeon[fila][columna].tipo_puerta_O + " ");
-					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
-					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
+//					System.out.println("Distancias PT: "+ dungeon[fila][columna].tam_dist_T);
+//					System.out.println("Distancias PM: "+ dungeon[fila][columna].tam_dist_M);
 					System.out.println(" ");
 				}
 			}
 		}
 		System.out.println("-------------");
 		
-		
+		/*
 		System.out.println(" ");
 		System.out.println("Status individuo: "+ dungeon_valido);
-		
+		*/
 		System.out.println(" ");
 		System.out.println("Fitness: "+ fitness);
-	
+		
 	
 	} // Cierra la funcion pintar
 	

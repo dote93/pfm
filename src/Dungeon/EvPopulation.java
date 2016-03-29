@@ -21,6 +21,9 @@ public class EvPopulation
 	//ArrayList que almacena los individuos de la poblacion
 	ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
 	
+	//ArrayList que almacena los individuos de la poblacion
+		ArrayList<Dungeon> Poblacion_noValidos = new ArrayList<Dungeon>();
+	
 	//Variables para saber cuantos individuos de la poblacion son validos y cuantos son invalidos
 	int Validos;
 	int No_validos;
@@ -62,6 +65,11 @@ public class EvPopulation
 			{
 				No_validos++;
 				
+				//Anado el no valido a la lista de la poblacion de no validos
+				Poblacion_noValidos.add(mapa);
+		
+				
+				
 			}
 			
 			//Si el individuos es valiudo lo anado a la lista de validos
@@ -69,10 +77,11 @@ public class EvPopulation
 			{
 				Validos++;
 				
+				//Se anade a la poblacion de validos el mapa nuevo generado
+				Poblacion.add(mapa);
 			}
 			
-			//Se anade a la poblacion el mapa nuevo generado
-			Poblacion.add(mapa);
+			
 		}
 		
 		
