@@ -22,7 +22,7 @@ public class EvPopulation
 	ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
 	
 	//ArrayList que almacena los individuos de la poblacion
-		ArrayList<Dungeon> Poblacion_noValidos = new ArrayList<Dungeon>();
+	ArrayList<Dungeon> Poblacion_noValidos = new ArrayList<Dungeon>();
 	
 	//Variables para saber cuantos individuos de la poblacion son validos y cuantos son invalidos
 	int Validos;
@@ -101,26 +101,27 @@ public class EvPopulation
 		
 		for(int j= 0; j<Poblacion_.size(); j++)
 		{
-			pintar_individuo(Poblacion_.get(j));
+			pintar_individuo(Poblacion_.get(j), Poblacion_);
 		}
 	}
-	
-	
 	
 	
 	/**
 	 * Funcion que pinta a un individuo
 	 * @param Individuo
+	 * @param Poblacion_
 	 */
-	public void pintar_individuo(Dungeon Individuo)
+	public void pintar_individuo(Dungeon Individuo, ArrayList<Dungeon> Poblacion_)
 	{
 		//Recorro la poblacion
-		for(int j= 0; j<Poblacion.size(); j++)
+		for(int j= 0; j<Poblacion_.size(); j++)
 		{
 			//Compruebo que individuo es de la poblacion para pintar en que posicion se encuentra
-			if(Individuo == Poblacion.get(j))
+			if(Individuo == Poblacion_.get(j))
 			{
 				System.out.println(" ");
+				System.out.println(" ");
+				System.out.println("-----------------------");
 				System.out.println("Individuo " + j );
 				Individuo.pintar();
 				

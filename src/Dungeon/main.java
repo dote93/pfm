@@ -89,20 +89,34 @@ public class main
 		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas);
 		
 		
-		//Se calculan las distancias de las puertas con los tesoros de cada individuo de la poblacion**********************
-		//Poblacion = evopopulation.calcular_distancias_PT(Poblacion, numero_puertas, numero_tesoros);
-		
-		
-		//Pinta la poblacion**************************************************************************
+		System.out.println("");
+		System.out.println("-------------------------------------------------------");
+		System.out.println("                POBLACION VALIDOS                      ");
+		System.out.println("-------------------------------------------------------");
+		//Pinta la poblacion de validos **************************************************************************
 		evopopulation.pintar_poblacion(Poblacion);
 		
 		
 		System.out.println("");
 		System.out.println("");
 		System.out.println("-------------------------------------------------------");
-		System.out.println("Individuos validos: " + evopopulation.Validos);
-		System.out.println("Individuos no validos: " + evopopulation.No_validos);
+		System.out.println("              POBLACION NO VALIDOS                     ");
+		System.out.println("-------------------------------------------------------");
+		
+		//Pinta la poblacion de no validos ************************************************************************
+		evopopulation.pintar_poblacion(evopopulation.Poblacion_noValidos);
+		
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------------------------");
+		System.out.println("-------------------------------------------------------");
+		System.out.println("");
+		System.out.println("Individuos validos   : " + evopopulation.Validos);
+		System.out.println("Individuos NO validos: " + evopopulation.No_validos);
 
+		
+		
 
 		/*
 		//Pinta un individuo**************************************************************************

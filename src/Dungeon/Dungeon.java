@@ -222,69 +222,9 @@ public class Dungeon
 		{
 			for(int j = 0; j < dungeon[i].length; j++)
 			{
-				/*
-				System.out.println(" ");
-				System.out.println("Paredes restantes: " + numero_celdas_Paredes);
-				System.out.println("Vacias restantes: " + numero_celdas_Vacias);
-				*/
-				
-				//Si el numero de celdas pared y vacias es igual a las celdas que quedan por ocupar, entonces las ocupo
-				if((numero_celdas_Paredes + numero_celdas_Vacias) == ((f * c) - contador_celda))
-				{
-					//Si quedan paredes por colocar coloco una pared
-					if (numero_celdas_Paredes != 0)
-					{
-						//Se genera un numero aleatorio entre el 0 y el 100
-						random_porcentaje = (int)(Math.random() * ((porcentaje + porcentaje_paredes) - porcentaje) + porcentaje);
-					}
-					//si quedan vacias por colocar coloco una vacia
-					else if (numero_celdas_Vacias != 0)
-					{
-						//Se genera un numero aleatorio entre el 0 y el 100
-						random_porcentaje = (int)(Math.random() * (porcentaje - 0) + 0);
-					}
-					
-				}
-
-				
-				
-				//Si se han colocado todas las paredes, generame un numero aleatorio que no sea de tipo pared y podemos poner vacias		
-				else if (numero_celdas_Paredes == 0 && numero_celdas_Vacias != 0)
-				{
-					//Se genera un numero aleatorio entre el vacias y objetos excluyendo a las paredes
-					while (random_porcentaje < porcentaje && random_porcentaje >= (porcentaje + porcentaje_paredes))
-					{
-						random_porcentaje = (int)(Math.random() * (100 - 0) + 0);
-					}
-					
-				}
-				
-				//Si se han colocado todas las vacias, generame un numero aleatorio que no sea de tipo vacia y podemos poner paredes
-				else if (numero_celdas_Vacias == 0 && numero_celdas_Paredes != 0)
-				{
-					//Se genera un numero aleatorio entre el vacias y objetos excluyendo a las paredes
-					random_porcentaje = (int)(Math.random() * (100 - porcentaje) + porcentaje);
-					
-				}
-				
-				//Si se han colocado todas las celdas vacias y las paredes entonces genero objetos
-				else if(numero_celdas_Vacias == 0 && numero_celdas_Paredes == 0)
-				{
-					//Se genera un numero aleatorio entre el 0 y el 100
-					random_porcentaje = (int)(Math.random() * (100 - (porcentaje + porcentaje_paredes)) + (porcentaje + porcentaje_paredes));
-				}
-				
-				//Si no estoy en riesgo, genero lo que sea
-				else
-				{
-					//Se genera un numero aleatorio entre el 0 y el 100
-					random_porcentaje = (int)(Math.random() * (100 - 0) + 0);
-				}
-				
-				/*
-				System.out.println(" ");
-				System.out.println("random_porcentaje: " + random_porcentaje);
-				 */
+				//Genero un numero aleatorio de 0 a 100
+				random_porcentaje = (int)(Math.random() * (100 - 0) + 0);
+								
 				
 				//Variable que va a guardar el genotipo de la celda en la que nos encontramos
 				genotipo_celda = new int[tipo_celdas];
@@ -295,18 +235,15 @@ public class Dungeon
 					//posicion del array del genotipo donde se tiene que guardar cada bit
 					posicion = (contador_celda * tipo_celdas) + n_tipo_celdas;
 					
-					/*
-					System.out.println("Celda_posicion: " + (posicion / 3) );
-					*/
 					
-					//Si el numero random creado esta dentro de 0 y porcentaje y se pueden colocar celdas vacias, se crea celda vacia
+					//Si el numero random creado esta dentro de 0 y porcentaje y no se han puesto todas las celdas vacias, se crea celda vacia
 					if(random_porcentaje >= 0 && random_porcentaje < porcentaje && numero_celdas_Vacias != 0) //porcentaje
 					{
 						//Si me encuentro en el ultimo bit elimino una posible celda que tenia que estar vacia
-						if ((n_tipo_celdas == 2))
+						if (n_tipo_celdas == 2)
 						{
-							//Resto al total de celdas vacias que tienen que haber ya que estoy creando una
-							numero_celdas_Vacias = numero_celdas_Vacias - 1;
+							//Resto una celda de las vacias que deberia de colocar como maximo
+							numero_celdas_Vacias--;
 							
 							//guardo el bit creado en el array con todos los bits del individuo
 							genotipo[posicion] = 0;
@@ -327,14 +264,14 @@ public class Dungeon
 						}
 					}
 					
-					//Si el numero random creado esta entre porcentaje y el porcentaje de paredes + porcentaje, y quedan paredes por colocar, se crea una pared
-					else if(random_porcentaje < (porcentaje + porcentaje_paredes) &&  random_porcentaje >= porcentaje && numero_celdas_Paredes != 0 )
+					//Si el numero random creado esta entre porcentaje y el porcentaje de paredes + porcentaje y puedo colocar mas paredes, se crea una pared
+					else if(random_porcentaje < (porcentaje + porcentaje_paredes) &&  random_porcentaje >= porcentaje && numero_celdas_Paredes != 0)
 					{
-						//Si me encuentro en el ultimo bit elimino una posible celda que tenia que ser pared
-						if ((n_tipo_celdas == 2))
+						//Si me encuentro en el ultimo bit pongo el genotipo igual a 1 para que sea 111
+						if (n_tipo_celdas == 2)
 						{
-							//Resto al total de celdas pared que tienen que haber ya que estoy creando una
-							numero_celdas_Paredes = numero_celdas_Paredes - 1;
+							//Resto una celda de las paredes que deberia de colocar como maximo
+							numero_celdas_Paredes--;
 							
 							//guardo el bit creado en el array con todos los bits del individuo
 							genotipo[posicion] = 1;
@@ -343,7 +280,7 @@ public class Dungeon
 							genotipo_celda[n_tipo_celdas] = genotipo[posicion];
 						}
 						
-						//Si no es el ultimo bit entonces se pone a 1 la posicion 0 y 1
+						//Si no es el ultimo bit entonces se pone a 1 al ultimo bit
 						else
 						{
 							//guardo el bit creado en el array con todos los bits del individuo
@@ -356,12 +293,12 @@ public class Dungeon
 						
 					}
 					
-					//Si el numero random creado esta entre (porcentaje + porcentaje_pared) y 100% entonces hacemos que sea de tipo objeto 
+					//Si el numero random creado esta entre (porcentaje + porcentaje_pared) y 100% o ya he colocado todas las celdas vacias o paredes posibles, entonces hacemos que sea de tipo objeto 
 					else
 					{
 					
 						//Si me encuentro en el ultimo bit del genotipo y es igual a vacio la transcripcion, entonces cambio el ultimo bit para que no sea celda vacia
-						if (((posicion - 2) >= 0) && (genotipo[posicion - 2] == 0 && genotipo[posicion - 1] == 0) && (n_tipo_celdas == 2))
+						if ((genotipo_celda[0] == 0 && genotipo_celda[1] == 0) && (n_tipo_celdas == 2))
 						{
 							
 							//guardo el bit creado en el array con todos los bits del individuo
@@ -383,7 +320,7 @@ public class Dungeon
 						}
 						
 						//Si el genotipo es todo 1 generamos el ultimo bit a 0 para que no sea de tipo pared
-						else if(((posicion - 2) >= 0) && (genotipo[posicion - 2] == 1 && genotipo[posicion - 1] == 1) && (n_tipo_celdas == 2))
+						else if((genotipo_celda[0] == 1 && genotipo_celda[1] == 1) && (n_tipo_celdas == 2))
 						{
 							
 							//guardo el bit creado en el array con todos los bits del individuo
@@ -405,7 +342,7 @@ public class Dungeon
 						//Genero un bit aleatorio ya que no ha cumplido ninguna de las reglas anteriores
 						else
 						{
-							//Se crea un random entre el 0 y el 1 inclusives 
+							//Se crea un random entre el 0 y el 1 (ya que devuelve un entero solo van a ser esos dos)
 							int random_genotipo = new Random().nextInt(((1 - 0) + 1) + 0);
 							
 							//guardo el bit creado en el array con todos los bits del individuo
@@ -2106,7 +2043,7 @@ public class Dungeon
 		System.out.println(" ");
 		System.out.println("-------------");
 		System.out.println("Numero de monstruos: " + numero_monstruos);
-		System.out.println("Numero de tesoros: " + numero_tesoros);
+		System.out.println("Numero de tesoros  : " + numero_tesoros);
 		System.out.println("-------------");
 		
 		/*
@@ -2166,7 +2103,7 @@ public class Dungeon
 		*/
 		System.out.println(" ");
 		System.out.println("Fitness: "+ fitness);
-		
+		System.out.println("-----------------------");
 	
 	} // Cierra la funcion pintar
 	
