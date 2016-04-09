@@ -53,7 +53,7 @@ public class Celda
 	//Enum para saber que tipo de puerta hay en esa celda
 	public enum Tipo_puertas
 	{
-		ENTRADA, SALIDA, ENTRADA_SALIDA
+		SALIDA, ENTRADA_SALIDA
 	};
 	
 	//Tipo de puerta para cada lado

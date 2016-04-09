@@ -2,6 +2,7 @@
 package Dungeon;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import Dungeon.Celda.Tipo_puertas;
@@ -28,10 +29,10 @@ public class main
 		//****************************************************************************************
 		
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
-		int f = 4;
-		int c = 4;
-		int numero_puertas = 1;
-		int numero_poblacion = 1;
+		int f = 10;
+		int c = 10;
+		int numero_puertas = 4;
+		int numero_poblacion = 10;
 		
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
@@ -89,7 +90,9 @@ public class main
 		//Inicializo la poblacion*********************************************************************
 		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas);
 		
+
 		
+	
 		System.out.println("");
 		System.out.println("-------------------------------------------------------");
 		System.out.println("                POBLACION VALIDOS                      ");
@@ -116,7 +119,7 @@ public class main
 		System.out.println("Individuos validos   : " + evopopulation.Validos);
 		System.out.println("Individuos NO validos: " + evopopulation.No_validos);
 
-		
+	
 		
 
 		/*

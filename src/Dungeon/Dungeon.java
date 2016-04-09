@@ -222,13 +222,17 @@ public class Dungeon
 		
 	
 		
+		//reseteo la variable de celdas pared para saber cuantas se han colocado al final al igual que de las celdas en blanco
+		celdas_Paredes = 0;
+		celdas_Vacias = 0;
+		
 		//Inicializamos el dungeon (sin pintarlo).
 		for(int i = 0; i < dungeon.length; i++)
 		{
 			for(int j = 0; j < dungeon[i].length; j++)
 			{
-				//Genero un numero aleatorio de 0 a 100
-				random_porcentaje = (int)(Math.random() * (100 - 0) + 0);
+				//Genero un numero aleatorio de 0 a 100 
+				random_porcentaje = new Random().nextInt(((100 - 0) + 1) + 0);
 								
 				
 				//Variable que va a guardar el genotipo de la celda en la que nos encontramos
@@ -249,6 +253,9 @@ public class Dungeon
 						{
 							//Resto una celda de las vacias que deberia de colocar como maximo
 							numero_celdas_Vacias--;
+							
+							//sumo una a las celdas vacias que se han colocado
+							celdas_Vacias++;
 							
 							//guardo el bit creado en el array con todos los bits del individuo
 							genotipo[posicion] = 0;
@@ -277,6 +284,11 @@ public class Dungeon
 						{
 							//Resto una celda de las paredes que deberia de colocar como maximo
 							numero_celdas_Paredes--;
+							
+							
+							//sumo una a las celdas pared que se han colocado
+							celdas_Paredes++;
+							
 							
 							//guardo el bit creado en el array con todos los bits del individuo
 							genotipo[posicion] = 1;
@@ -551,25 +563,20 @@ public class Dungeon
 		hay_puerta_E = false;
 		hay_puerta_O = false;
 		
-		//Variables para comprobar si no hay puertas de entrada y salida establecerlas
-		boolean p_entrada = false;
+		//Variables para comprobar si no hay puertas de entrada_salida y salida establecerlas
 		boolean p_salida = false;
 		boolean p_entrada_salida = false;
 		
+		//Variables para generar la posicion random donde voy a colocar la puerta
+		int random_x = 0;
+		int random_y = 0;
 		
 		//Se anaden las x puertas a cada mapa en posiciones random
 		for (int puertas=0; puertas<numero_puertas; puertas++)
 		{
-			//LOG
-			/*
-			System.out.println(" ");
-			System.out.println("Puertas restantes: " + (numero_puertas - puertas));
-			*/
 			
-			
-			//Variables para generar la posicion random donde voy a colocar la puerta
-			int random_x = 0;
-			int random_y = 0;
+			random_x = 0;
+			random_y = 0;
 			
 			//Si no hay puerta norte
 			if (!hay_puerta_N)
@@ -578,11 +585,6 @@ public class Dungeon
 				random_x = 0;
 				random_y = (int)(Math.random() * (c - min) + min);
 				
-				//LOG
-				/*
-				System.out.println("Posicion Norte: X: " + random_x + " Y: " + random_y);
-				System.out.println(" ");
-				*/
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
 				if(t_puertas.size() != 0)
@@ -607,47 +609,36 @@ public class Dungeon
 					int[] posicion = {random_x, random_y};
 					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
 					
-					//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
-					int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+					//Creo un random que va del 0 al 1 (Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+					int random_tipo_puerta = (int)(Math.random()*(0-(2))+(2)); //se usa de 0 al 2 ya que redondea para abajo y saldria siempre 0
 					
 					if((numero_puertas - puertas) > 1)
 					{
-						if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						else if (random_tipo_puerta == 2) //Si es 2 decimos que la puerta es de entrada_salida
+						if(random_tipo_puerta == 1 && !p_entrada_salida) //Si es 1 y no se ha colocado una puerta entrada_salida decimos que la puerta es de entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
-						
-					}
-					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
-					{
-						if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.ENTRADA;
-							p_entrada = true;
+						else //Si es 0 o ya se ha colocado una puerta de entrada_salida decimos que la puerta es de salida 
+						{	
+							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.SALIDA;
+							p_salida = true;
 						}
-						else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+												
+					}
+					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida, entonces esta puerta sera de entrada_salida
+					{
+						if(!p_entrada_salida) //Si no hay entrada_salida ponemos una entrada_salida
+						{
+							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.ENTRADA_SALIDA;
+							p_entrada_salida = true;
+						}
+						else //Si hay entrada_salida ponemos una salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.SALIDA;
 							p_salida = true;
 						}
 
-						//Si no hay ninguna de las dos se pone como entrada_salida o si estan las dos
-						else if((!p_entrada && !p_salida && !p_entrada_salida) || (p_entrada && p_salida) )
-						{
-							dungeon[random_x][random_y].tipo_puerta_N = Tipo_puertas.ENTRADA_SALIDA;
-							p_entrada_salida = true;
-						}
 					}
 					
 				}
@@ -659,11 +650,6 @@ public class Dungeon
 				random_x = f - 1;
 				random_y = (int)(Math.random() * (c - min) + min);
 				
-				//LOG
-				/*
-				System.out.println("Posicion Sur: X: " + random_x + " Y: " + random_y);
-				System.out.println(" ");
-				*/
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
 				if(t_puertas.size() != 0)
@@ -687,49 +673,36 @@ public class Dungeon
 					int[] posicion = {random_x, random_y};
 					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
 					
-
-					//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
-					int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
-					
-					//Si es la ultima puerta que se coloca se comprueba de que tipo tiene que ser
+					//Creo un random que va del 0 al 1 (Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+					int random_tipo_puerta = (int)(Math.random()*(0-(2))+(2)); //se usa de 0 al 2 ya que redondea para abajo y saldria siempre 0
+										
 					if((numero_puertas - puertas) > 1)
 					{
-						if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						else if (random_tipo_puerta == 2) //Si es 2 decimos que la puerta es de entrada_salida
+						if(random_tipo_puerta == 1 && !p_entrada_salida) //Si es 1 y no se ha colocado una puerta entrada_salida decimos que la puerta es de entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
-						
-					}
-					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
-					{
-						if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.ENTRADA;
-							p_entrada = true;
+						else //Si es 0 o ya se ha colocado una puerta de entrada_salida decimos que la puerta es de salida 
+						{	
+							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.SALIDA;
+							p_salida = true;
 						}
-						else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
+												
+					}
+					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida, entonces esta puerta sera de entrada_salida
+					{
+						if(!p_entrada_salida) //Si no hay entrada_salida ponemos una entrada_salida
+						{
+							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.ENTRADA_SALIDA;
+							p_entrada_salida = true;
+						}
+						else //Si hay entrada_salida ponemos una salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.SALIDA;
 							p_salida = true;
 						}
 
-						//Si no hay ninguna de las dos se pone como entrada_salida o si estan las dos
-						else if((!p_entrada && !p_salida && !p_entrada_salida) || (p_entrada && p_salida) )
-						{
-							dungeon[random_x][random_y].tipo_puerta_S = Tipo_puertas.ENTRADA_SALIDA;
-							p_entrada_salida = true;
-						}
 					}
 				}
 				
@@ -740,13 +713,7 @@ public class Dungeon
 			{
 				random_x = (int)(Math.random() * (f - min) + min);
 				random_y = c - 1;
-				
-				
-				//LOG
-				/*
-				System.out.println("Posicion Este: X: " + random_x + " Y: " + random_y);
-				System.out.println(" ");
-				*/
+			
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
 				if(t_puertas.size() != 0)
@@ -770,49 +737,36 @@ public class Dungeon
 					int[] posicion = {random_x, random_y};
 					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
 					
-					
-					//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
-					int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
-					
+					//Creo un random que va del 0 al 1 (Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+					int random_tipo_puerta = (int)(Math.random()*(0-(2))+(2)); //se usa de 0 al 2 ya que redondea para abajo y saldria siempre 0
 					
 					if((numero_puertas - puertas) > 1)
 					{
-						if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						else if (random_tipo_puerta == 2) //Si es 2 decimos que la puerta es de entrada_salida
+						if(random_tipo_puerta == 1 && !p_entrada_salida) //Si es 1 y no se ha colocado una puerta entrada_salida decimos que la puerta es de entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
-						
+						else //Si es 0 o ya se ha colocado una puerta de entrada_salida decimos que la puerta es de salida 
+						{	
+							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.SALIDA;
+							p_salida = true;
+						}
+												
 					}
-					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida, entonces esta puerta sera de entrada_salida
 					{
-						if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						
-						//Si no hay ninguna de las dos se pone como entrada_salida o si estan las dos
-						else if((!p_entrada && !p_salida && !p_entrada_salida) || (p_entrada && p_salida) )
+						if(!p_entrada_salida) //Si no hay entrada_salida ponemos una entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
+						else //Si hay entrada_salida ponemos una salida
+						{
+							dungeon[random_x][random_y].tipo_puerta_E = Tipo_puertas.SALIDA;
+							p_salida = true;
+						}
+
 					}
 				}
 				
@@ -820,16 +774,9 @@ public class Dungeon
 			
 			//Si no hay puerta oeste
 			else if (!hay_puerta_O)
-			{	
-				
+			{		
 				random_x = (int)(Math.random() * (f - min) + min);
 				random_y = 0;
-				
-				//LOG
-				/*
-				System.out.println("Posicion Oeste: X: " + random_x + " Y: " + random_y);
-				System.out.println(" ");
-				*/
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
 				if(t_puertas.size() != 0)
@@ -853,48 +800,36 @@ public class Dungeon
 					int[] posicion = {random_x, random_y};
 					posicion_puertas.add(dungeon[posicion[0]][posicion[1]]);
 					
-
-					//Creo un random que va del 0 al 2 (Entrada, Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
-					int random_tipo_puerta = (int)(Math.random() * (2 - 0) + 0);
+					//Creo un random que va del 0 al 1 (Salida, Entrada-Salida) y que va a elegir de que tipo va a ser la puerta
+					int random_tipo_puerta = (int)(Math.random()*(0-(2))+(2)); //se usa de 0 al 2 ya que redondea para abajo y saldria siempre 0
 					
 					if((numero_puertas - puertas) > 1)
 					{
-						if(random_tipo_puerta == 0) //Si es 0 decimos que la puerta es de entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (random_tipo_puerta == 1) //Si es 1 decimos que la puerta es de salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						else if (random_tipo_puerta == 2) //Si es 2 decimos que la puerta es de entrada_salida
+						if(random_tipo_puerta == 1 && !p_entrada_salida) //Si es 1 y no se ha colocado una puerta entrada_salida decimos que la puerta es de entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
-						
+						else //Si es 0 o ya se ha colocado una puerta de entrada_salida decimos que la puerta es de salida 
+						{	
+							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.SALIDA;
+							p_salida = true;
+						}
+												
 					}
-					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida o de entrada, entonces esta puerta sera de entrada_salida o de la que falte
+					else //Si nos encontramos en la ultima vuelta y no se ha puesto una puerta de salida, entonces esta puerta sera de entrada_salida
 					{
-						if(!p_entrada && p_salida) //Si no hay entrada pero si hay salida ponemos una entrada
-						{
-							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.ENTRADA;
-							p_entrada = true;
-						}
-						else if (!p_salida && p_entrada) //Si no hay salida pero si hay entrada ponemos una salida
-						{
-							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.SALIDA;
-							p_salida = true;
-						}
-						
-						//Si no hay ninguna de las dos se pone como entrada_salida o si estan las dos
-						else if((!p_entrada && !p_salida && !p_entrada_salida) || (p_entrada && p_salida) )
+						if(!p_entrada_salida) //Si no hay entrada_salida ponemos una entrada_salida
 						{
 							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.ENTRADA_SALIDA;
 							p_entrada_salida = true;
 						}
+						else //Si hay entrada_salida ponemos una salida
+						{
+							dungeon[random_x][random_y].tipo_puerta_O = Tipo_puertas.SALIDA;
+							p_salida = true;
+						}
+
 					}
 				}
 				
@@ -1225,11 +1160,12 @@ public class Dungeon
 					llegada_optima(posicion_puertas.get(contador_puertas).fila, posicion_puertas.get(contador_puertas).columna, posicion_tesoros.get(contador_tesoros).fila,posicion_tesoros.get(contador_tesoros).columna);
 					
 					
-					//si me encuentro en la primera puerta o la distancia que he calculado es inferior a la almacenada la seteo para luego calcular el fitness con esa distancia
-					if (posicion_tesoros.get(contador_tesoros).distancia_P_cercana > distancia || contador_puertas == 0)
+					//si la puerta es de tipo entrada salida entonces guardo su distancia para luego calcular el fitness con esa distancia
+					if(posicion_puertas.get(contador_puertas).tipo_puerta_N == Tipo_puertas.ENTRADA_SALIDA || posicion_puertas.get(contador_puertas).tipo_puerta_S == Tipo_puertas.ENTRADA_SALIDA || posicion_puertas.get(contador_puertas).tipo_puerta_E == Tipo_puertas.ENTRADA_SALIDA || posicion_puertas.get(contador_puertas).tipo_puerta_O == Tipo_puertas.ENTRADA_SALIDA)
 					{
 						posicion_tesoros.get(contador_tesoros).distancia_P_cercana = distancia;
 					}
+
 					
 					//Si no hay camino entre un tesoro y una puerta la habitacion no es valida
 					if(distancia == -1)
@@ -1527,11 +1463,11 @@ public class Dungeon
 	 * Funcion que calcula el fitness de los tesoros con respecto a la puerta mas cercana de dicho tesoro
 	 * @return
 	 */
-	public double calcular_fitness_tesoros()
+	public double[] calcular_fitness_tesoros()
 	{
 		
-		//varibale que va a guardar la media del fitness de los tesoros
-		double fitness_tesoros = 0;	
+		//varibale que va a guardar el fitness de cada tesoro
+		double[] fitness_tesoros = new double[numero_tesoros];	
 		
 		//Variables para calcular el st
 		float st_resta = 0; //Es float porque sino la division no la da con decimales
@@ -1546,6 +1482,12 @@ public class Dungeon
 		//Por cada tesoro que hay en el mapa calculo su fitness
 		for (int tesoro= 0; tesoro < numero_tesoros; tesoro++)
 		{
+			
+			//inicializo el array
+			st_provisional = new float[numero_monstruos];
+			
+			System.out.println("Distancia P_T tesoro "+ tesoro +":            " + posicion_tesoros.get(tesoro).distancia_P_cercana);
+			
 			//por cada monstruo que hay en el mapa calculo las distancias entre ese monstruo y el tesoro i
 			for(int monstruo = 0; monstruo < numero_monstruos; monstruo++)
 			{
@@ -1556,6 +1498,9 @@ public class Dungeon
 				//calculo el numerador y el denominador (hay que hacer esto para convertirlo a float y poder hacer una division con decimales)
 				st_resta = posicion_tesoros.get(tesoro).distancia_P_cercana - distancia; //caso2  //distancia  - posicion_tesoros.get(tesoro).distancia_P_cercana; //caso 1
 				st_suma = posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso2  //distancia  + posicion_tesoros.get(tesoro).distancia_P_cercana; //caso 1
+				
+				
+				System.out.println("Distancia T_M tesoro "+ tesoro +" monstruo "+ monstruo + ": " + distancia);
 				
 				//obtengo el st
 				st = st_resta / st_suma;
@@ -1581,6 +1526,8 @@ public class Dungeon
 				
 			}
 			
+			System.out.println(" ");
+			
 			//reseteo el st para guardar el valor minimo del st
 			st = f * c;
 			
@@ -1594,21 +1541,13 @@ public class Dungeon
 				}
 			}	
 			
-			//sumo el st del tesoro al fitness de los tesoros 
-			fitness_tesoros = fitness_tesoros + st;
-			
-			
-			//reseteo el array
-			st_provisional = new float[numero_monstruos];
-			
+			//guardo en la posicion correspondiente el fitness minimo para ese tesoro
+			fitness_tesoros[tesoro] = st;
+						
 		}
 		
-		double num_tesoros = numero_tesoros;
 		
-		//hago la media del fitness de los tesoros
-		fitness_tesoros =  fitness_tesoros / num_tesoros;
-		
-		
+		//devuelvo el array con los fitness calculados de cada tesoro
 		return fitness_tesoros;
 	}
 	
@@ -1620,8 +1559,8 @@ public class Dungeon
 	public double[] calcular_fitness_puertas()
 	{
 		
-		//array que vamos a pasar con los dos fitness de las puertas, el de los monstruos y el de los tesoros 
-		double[] fitness_puertas_total = new double[2];
+		//array que vamos a pasar con los dos fitness de las puertas, el de los monstruos y el de los tesoros por cada puerta
+		double[] fitness_puertas_total = new double[2 * posicion_puertas.size()];
 		
 		//TODO Separar paso a paso el fitness y hacer dos fitness de la seguridad de las puertas, uno para monstruos y otro para objetos
 		
@@ -1774,6 +1713,8 @@ public class Dungeon
 					
 					//area = celdas_recorridas.size();
 					
+					System.out.println("Area " + i + ": " + area);
+					
 					numerador = 1.0;
 					denominador = (f * c) - celdas_Paredes;
 					
@@ -1782,6 +1723,7 @@ public class Dungeon
 					//se anade a la puerta correspondiente su fitness
 					fitness_puerta[contador_puertas] = division * area;
 					
+					System.out.println("fitness " + contador_puertas +": " + fitness_puerta[contador_puertas]);
 					
 				}//cierra el if de monstruos y tesoros
 				
@@ -1789,6 +1731,8 @@ public class Dungeon
 				{
 					area = 0;
 					
+					System.out.println("Area " + i + ": " + area);
+					
 					numerador = 1.0;
 					denominador = (f * c) - celdas_Paredes;
 					
@@ -1796,6 +1740,8 @@ public class Dungeon
 					
 					//se anade a la puerta correspondiente su fitness
 					fitness_puerta[contador_puertas] = division * area;
+					
+					System.out.println("Fitness " + contador_puertas +": " + fitness_puerta[contador_puertas]);
 					
 				}
 				
@@ -1807,7 +1753,8 @@ public class Dungeon
 				celdas_cerradas = null;
 				celdas_recorridas = null;
 			}
-	
+			
+			System.out.println(" ");
 			
 			/*//LOG
 			System.out.println("");
@@ -1819,18 +1766,37 @@ public class Dungeon
 			System.out.println("Area: " + area);
 			*/
 			
+			int posicion = 0; //variable para saber en que posicion tengo que guardar cada fitness
+			
 			//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
 			for(double fitness : fitness_puerta)
 			{
 				fitness_puertas = fitness_puertas + fitness;
+				
+												
+				if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
+				{
+					//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
+					fitness_puertas_total[posicion] = fitness;
+				}
+				else //lo guardo a continuacion de los monstruos los fitness de los tesoros
+				{
+					//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
+					fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
+				}
+				
+				//incremento la posicion
+				posicion++;
+				
 			}
 			
 			//se hace la media de los fitness de las puertas
-			fitness_puertas = fitness_puertas / fitness_puerta.length;
+//			fitness_puertas = fitness_puertas / fitness_puerta.length;
+			
 			
 			
 			//anado el fitness de los monstruos y los tesoros en la posicion correspondiente del array 
-			fitness_puertas_total[i] = fitness_puertas;
+//			fitness_puertas_total[i] = fitness_puertas;
 		
 		
 			
@@ -1879,23 +1845,43 @@ public class Dungeon
 		if(numero_monstruos != 0 && numero_tesoros != 0 && dungeon_valido == true)
 		{
 			//calculo el fitness de los tesoros
-			fitness_por_partes[0] = calcular_fitness_tesoros();
+			double[] fitness_tesoros = calcular_fitness_tesoros();
 			
+			for(int tesoro= 0; tesoro < numero_tesoros; tesoro++)
+			{
+				fitness_por_partes[0] = fitness_por_partes[0] + fitness_tesoros[tesoro];
+				System.out.println("Fitness tesoro "+ tesoro +": " + fitness_tesoros[tesoro]);
+			}
+			System.out.println(" ");
+			
+			fitness_por_partes[0] = fitness_por_partes[0] / numero_tesoros;
 			//ponderaciones para los fitness para incrementar que salga un tipo de habitacion u otra
-			double ponderacion_fit_seg_tesoros = 100.0;
+			double ponderacion_fit_seg_tesoros = 1.0;
 			double ponderacion_fit_seg_pu_mons = 1.0;
 			double ponderacion_fit_seg_pu_teso = 1.0;
 			
 			//calculo el fitness de las puertas
 			double[] fitness_puertas = calcular_fitness_puertas();
 			
-			//guardo en el array de todo los fitness
-			fitness_por_partes[1] = fitness_puertas[0];
-			fitness_por_partes[2] = fitness_puertas[1];
+			//por cada puerta que hay en el mapa cojo su fitness con el tesoro y con el monstruo y hago la media
+			for(int puerta= 0; puerta < numero_puertas; puerta++)
+			{
+				//para calcular el fitness de los monstruos
+				fitness_por_partes[1] = fitness_por_partes[1] + fitness_puertas[puerta];
+				
+				//para calcular el fitness de los tesoros
+				fitness_por_partes[2] = fitness_por_partes[2] + fitness_puertas[puerta + numero_puertas];
+			}
+			
+			//hago la media de los fitness de seguridad de las puertas
+			fitness_por_partes[1] = fitness_por_partes[1]/ numero_puertas;
+			fitness_por_partes[2] = fitness_por_partes[2]/ numero_puertas;
 			
 			
-			System.out.println("Fitness monstruos: " + fitness_puertas[0]);
-			System.out.println("Fitness tesoros: " + fitness_puertas[1]);
+			
+			System.out.println("Fitness seguridad tesoros:          " + fitness_por_partes[0]);
+			System.out.println("Fitness seguridad puerta monstruos: " + fitness_por_partes[1]);
+			System.out.println("Fitness seguridad puerta tesoros:   " + fitness_por_partes[2]);
 			
 			
 			//se suman los fitness calculados para obtener el fitness final
