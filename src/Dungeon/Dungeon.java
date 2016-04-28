@@ -1024,7 +1024,7 @@ public class Dungeon
 					//si el coste provisional es menor que el coste calculado se guarda la posicion de la celda en el array y su coste 
 					//siempre y cuando no sea una celda que no se va a poder transitar
 					// IMPORTANTE NO PONER <= PORQUE SINO SE PISA UN CAMINO MEJOR
-					if(coste_provisional < coste && celdas_abiertas.get(i).genotipo_celda[0] != 1 && celdas_abiertas.get(i).genotipo_celda[1] != 1 && celdas_abiertas.get(i).genotipo_celda[2] != 1) 
+					if(coste_provisional < coste) 
 					{
 						coste= coste_provisional;
 						posicion= posicion_provisional;
@@ -1496,8 +1496,8 @@ public class Dungeon
 				
 								
 				//calculo el numerador y el denominador (hay que hacer esto para convertirlo a float y poder hacer una division con decimales)
-				st_resta = posicion_tesoros.get(tesoro).distancia_P_cercana - distancia; //caso2  //distancia  - posicion_tesoros.get(tesoro).distancia_P_cercana; //caso 1
-				st_suma = posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso2  //distancia  + posicion_tesoros.get(tesoro).distancia_P_cercana; //caso 1
+				st_resta = distancia  - posicion_tesoros.get(tesoro).distancia_P_cercana;  //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana - distancia; //caso 2
+				st_suma = distancia + posicion_tesoros.get(tesoro).distancia_P_cercana;    //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso 2
 				
 				
 				System.out.println("Distancia T_M tesoro "+ tesoro +" monstruo "+ monstruo + ": " + distancia);
@@ -1692,11 +1692,24 @@ public class Dungeon
 									
 					}//cierra el while
 					
+					if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+					{
+						System.out.println("Distancia monstruo con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area_max);
+					}
+					else if(i == 1) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+					{
+						System.out.println("Distancia tesoro con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area_max);
+					}
+					
+					
 					//para cada celda de las recorridas que tenga la misma distancia entre el monstruo/tesoro y la puerta se elimina de la lista
 					for(Celda celda_segura:celdas_recorridas) 
 					{
-						//se calcula la distancia entre la celda y la puerta
+						
+						//se calcula la distancia entre la celda tesoro/monstruo y la puerta
 						llegada_optima(puerta.fila, puerta.columna, celda_segura.fila, celda_segura.columna);
+						
+						//System.out.println("Distancia celda_puerta: " + distancia);
 						
 						//si la distancia entre la celda segura y la celda donde se encuentra el monstruo/tesoro es la misma, no se cuenta para calcular el area
 						//a no ser que solo haya una celda en recorridas(la de la puerta)
@@ -1711,25 +1724,6 @@ public class Dungeon
 							
 					}
 					
-					//area = celdas_recorridas.size();
-					
-					System.out.println("Area " + i + ": " + area);
-					
-					numerador = 1.0;
-					denominador = (f * c) - celdas_Paredes;
-					
-					division = numerador / denominador;
-					
-					//se anade a la puerta correspondiente su fitness
-					fitness_puerta[contador_puertas] = division * area;
-					
-					System.out.println("fitness " + contador_puertas +": " + fitness_puerta[contador_puertas]);
-					
-				}//cierra el if de monstruos y tesoros
-				
-				else
-				{
-					area = 0;
 					
 					System.out.println("Area " + i + ": " + area);
 					
@@ -1742,6 +1736,26 @@ public class Dungeon
 					fitness_puerta[contador_puertas] = division * area;
 					
 					System.out.println("Fitness " + contador_puertas +": " + fitness_puerta[contador_puertas]);
+					System.out.println(" ");
+					
+				}//cierra el if de monstruos y tesoros
+				
+				else
+				{
+					area = 0.0;
+					
+					System.out.println("Area " + i + ": " + area);
+					
+					numerador = 1.0;
+					denominador = (f * c) - celdas_Paredes;
+					
+					division = numerador / denominador;
+					
+					//se anade a la puerta correspondiente su fitness
+					fitness_puerta[contador_puertas] = division * area;
+					
+					System.out.println("Fitness " + contador_puertas +": " + fitness_puerta[contador_puertas]);
+					System.out.println(" ");
 					
 				}
 				

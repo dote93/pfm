@@ -31,13 +31,13 @@ public class main
 		//Se inicializan los parametros que van a tener los individuos de la poblacion
 		int f = 10;
 		int c = 10;
-		int numero_puertas = 4;
-		int numero_poblacion = 10;
+		int numero_puertas = 1;
+		int numero_poblacion = 1;
 		
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 80; //50 para 4 * 4
-		int porcentaje_paredes = 10;  //20 para 4 * 4
+		int porcentaje = 50; //50 para 4 * 4
+		int porcentaje_paredes = 40;  //20 para 4 * 4
 		
 		
 		
