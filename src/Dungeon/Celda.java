@@ -44,6 +44,10 @@ public class Celda
 	public boolean destino;
 	public boolean camino;
 	
+	//Variable para saber si ya se ha calculado el area de ese monstruo o de ese tesoro
+	
+	public boolean area_calculado;
+	
 	
 	public int[] genotipo_celda;
 	
