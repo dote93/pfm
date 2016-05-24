@@ -1486,7 +1486,7 @@ public class Dungeon
 			//inicializo el array
 			st_provisional = new float[numero_monstruos];
 			
-			System.out.println("Distancia P_T tesoro "+ tesoro +":            " + posicion_tesoros.get(tesoro).distancia_P_cercana);
+			System.out.println("Distancia P_T tesoro " + posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ":             " + " " + + posicion_tesoros.get(tesoro).distancia_P_cercana);
 			
 			//por cada monstruo que hay en el mapa calculo las distancias entre ese monstruo y el tesoro i
 			for(int monstruo = 0; monstruo < numero_monstruos; monstruo++)
@@ -1500,17 +1500,20 @@ public class Dungeon
 				st_suma = distancia + posicion_tesoros.get(tesoro).distancia_P_cercana;    //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso 2
 				
 				
-				System.out.println("Distancia T_M tesoro "+ tesoro +" monstruo "+ monstruo + ": " + distancia);
+				System.out.println("Distancia T_M tesoro "+ posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna +" monstruo "+ posicion_monstruos.get(monstruo).fila + " " + posicion_monstruos.get(monstruo).columna + ": " + distancia);
 				
 				//obtengo el st
 				st = st_resta / st_suma;
 				
+				System.out.println("(" + distancia + "-" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")/(" +  distancia + "+" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")= " + st);
 				
 				//si el resultado obtenido es mayor o igual a 0 entonces guardamos el resultado, sino guardamos un 0
 				if(st >= 0)
 				{
 					//guardo el resultado en un array
 					st_provisional[monstruo] = st;
+					
+					
 				}
 				else
 				{
@@ -1540,6 +1543,8 @@ public class Dungeon
 					st = valor;
 				}
 			}	
+			
+			
 			
 			//guardo en la posicion correspondiente el fitness minimo para ese tesoro
 			fitness_tesoros[tesoro] = st;
@@ -1596,9 +1601,29 @@ public class Dungeon
 		boolean objeto_detectado;
 
 		
+		
+		
 		//Se realiza este bucle 2 veces para poner el fitness de los monstruos y de los tesoros en el array que vamos a devolver
 		for(int i= 0; i < 2; i++)
 		{
+			
+			if(i == 0)
+			{
+				System.out.println(" ");
+				System.out.println("----------------");
+				System.out.println("FITNESS DE SEGURIDAD DE LAS PUERTAS (MONSTRUOS)");
+				System.out.println(" ");
+			}
+			
+			else
+			{
+				System.out.println(" ");
+				System.out.println("----------------");
+				System.out.println("FITNESS DE SEGURIDAD DE LAS PUERTAS (TESOROS)");
+				System.out.println(" ");
+			}
+			
+			
 			//reseteo la variable para saber en que posicion guardar el fitness de cada puerta
 			contador_puertas = 0;
 			
@@ -1624,7 +1649,8 @@ public class Dungeon
 				
 				ResetearDungeonArea(); //reseteo las celdas para calcular el area
 				
-				pintar ();
+				
+				//pintar (); //SOLO PARA DEBUG
 				
 				//Bucle para calcular el fitness del area de cada monstruo o tesoro con respecto a cada puerta
 				for(int each_MT = 0; each_MT < posiciones; each_MT++)
@@ -1640,10 +1666,85 @@ public class Dungeon
 					//reseteo la variable para que vuelva a buscar el objeto en la nueva puerta
 					objeto_detectado = false;
 					
+					//Variable que va a guardar la posicion del objeto
+					int[] posicion_objeto_encontrado = new int[2];
 					
-					//si en la celda donde se encuentra la puerta no hay un monstruo o tesoro y ya ha sido calculado ese area entonces continuo, sino el fitness es 0
-					if(((!puerta.monstruo && i== 0) || (!puerta.tesoro&& i== 1)) && !dungeon[puerta.fila][puerta.columna].area_calculado)
+		
+					//Si en la puerta se encuentra un monstruo o tesoro y no se ha calculado su area, se calcula, sino, continuamos con el resto de areas
+					if(((puerta.monstruo && i== 0) || (puerta.tesoro&& i== 1)) && !dungeon[puerta.fila][puerta.columna].area_calculado)
 					{
+						
+						area = 0.0;
+						
+						if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+						{
+							System.out.println("Area monstruo " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+						}
+						else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+						{
+							System.out.println("Area tesoro " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+						}
+						
+						//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
+						numerador = 1.0;
+						denominador = (f * c) - celdas_Paredes;
+						
+						division = numerador / denominador;
+						
+						//Independientemente de la vuelta en la que me encuentre, la celda de la puerta la establecemos como que hemos calculado su area
+						dungeon[puerta.fila][puerta.columna].area_calculado = true;
+						
+						//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
+						if (i == 0)
+						{
+							
+							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+							fitness_puerta_M[contador_puertas] = (division * area) + fitness_puerta_M[contador_puertas];
+							
+							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
+							System.out.println(" ");
+							
+							
+							//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
+							if(each_MT == ( posiciones - 1))
+							{
+								
+								System.out.println(" ");
+								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
+								System.out.println(" ");
+								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
+								
+							}
+							
+							
+						}
+						else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
+						{
+							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+							fitness_puerta_T[contador_puertas] = (division * area) + fitness_puerta_T[contador_puertas];
+							
+							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
+							System.out.println(" ");
+							
+							//si ya hemos calculado todos los fitness de area hacemos la media
+							if(each_MT == ( posiciones - 1))
+							{
+								
+								System.out.println(" ");
+								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_T[contador_puertas] /posiciones));
+								System.out.println(" ");
+								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;	
+								
+							}
+							
+						}
+					}
+					
+					
+					else
+					{
+						area_max = 0.0;
+						area = 0.0;
 						
 						celdas_abiertas.add(puerta); //se anade el nodo inicial como celda visitada
 						
@@ -1677,6 +1778,11 @@ public class Dungeon
 											if(((mi_vecino.monstruo && i== 0) || (mi_vecino.tesoro && i== 1)) && !objeto_detectado && !dungeon[mi_vecino.fila][mi_vecino.columna].area_calculado)
 											{
 												objeto_detectado = true;
+												
+												//guardo la posicion del objeto para los comentarios
+												posicion_objeto_encontrado[0] = mi_vecino.fila;
+												posicion_objeto_encontrado[1] = mi_vecino.columna;
+												
 												
 												//calculo el area maximo
 												llegada_optima(puerta.fila, puerta.columna, mi_vecino.fila, mi_vecino.columna);
@@ -1715,15 +1821,6 @@ public class Dungeon
 										
 						}//cierra el while
 						
-						if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Distancia monstruo con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area_max);
-						}
-						else if(i == 1) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Distancia tesoro con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area_max);
-						}
-						
 						
 						//para cada celda de las recorridas que tenga la misma distancia entre el monstruo/tesoro y la puerta se elimina de la lista
 						for(Celda celda_segura:celdas_recorridas) 
@@ -1747,14 +1844,22 @@ public class Dungeon
 								
 						}
 						
+						if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+						{
+							System.out.println("Area monstruo " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+						}
+						else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+						{
+							System.out.println("Area tesoro " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+						}
 						
-						System.out.println("Area " + i + ": " + area);
 						
 						//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
 						numerador = 1.0;
 						denominador = (f * c) - celdas_Paredes;
 						
 						division = numerador / denominador;
+						
 						
 						//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
 						if (i == 0)
@@ -1763,16 +1868,18 @@ public class Dungeon
 							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
 							fitness_puerta_M[contador_puertas] = (division * area) + fitness_puerta_M[contador_puertas];
 							
-							System.out.println("Fitness " + contador_puertas +": " + fitness_puerta_M[contador_puertas]);
+							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
 							System.out.println(" ");
 							
-							//si ya hemos calculado todos los fitness de area hacemos la media 
+							
+							//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
 							if(each_MT == ( posiciones - 1))
 							{
+								System.out.println(" ");
+								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
+								System.out.println(" ");
 								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
 								
-								System.out.println("Fitness total " + contador_puertas +": " + fitness_puerta_M[contador_puertas]);
-								System.out.println(" ");
 							}
 							
 							
@@ -1782,82 +1889,31 @@ public class Dungeon
 							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
 							fitness_puerta_T[contador_puertas] = (division * area) + fitness_puerta_T[contador_puertas];
 							
-							System.out.println("Fitness " + contador_puertas + ": " + fitness_puerta_T[contador_puertas]);
+							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
 							System.out.println(" ");
 							
-							//si ya hemos calculado todos los fitness de area hacemos la media 
+							//si ya hemos calculado todos los fitness de area hacemos la media
 							if(each_MT == ( posiciones - 1))
 							{
-								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;
-								
-								System.out.println("Fitness total " + contador_puertas +": " + fitness_puerta_T[contador_puertas]);
 								System.out.println(" ");
+								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_T[contador_puertas] /posiciones));
+								System.out.println(" ");
+								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;	
+								
 							}
+							
 						}
 						
 						
-					}//cierra el if de monstruos y tesoros
+					}//cierra el else de monstruos y tesoros
 					
-					else
-					{
-						area = 0.0;
-						
-						System.out.println("Area " + i + ": " + area);
-						
-						//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
-						numerador = 1.0;
-						denominador = (f * c) - celdas_Paredes;
-						
-						division = numerador / denominador;
-						
-						//Independientemente de la vuelta en la que me encuentre, la celda de la puerta la establecemos como que hemos calculado su area
-						dungeon[puerta.fila][puerta.columna].area_calculado = true;
-						
-						//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
-						if (i == 0)
-						{
-							
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_M[contador_puertas] = (division * area) + fitness_puerta_M[contador_puertas];
-							
-							System.out.println("Fitness " + contador_puertas +": " + fitness_puerta_M[contador_puertas]);
-							System.out.println(" ");
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media 
-							if(each_MT == ( posiciones - 1))
-							{
-								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
-								
-								System.out.println("Fitness total " + contador_puertas +": " + fitness_puerta_M[contador_puertas]);
-								System.out.println(" ");
-							}
-							
-							
-						}
-						else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
-						{
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_T[contador_puertas] = (division * area) + fitness_puerta_T[contador_puertas];
-							
-							System.out.println("Fitness " + contador_puertas + ": " + fitness_puerta_T[contador_puertas]);
-							System.out.println(" ");
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media 
-							if(each_MT == ( posiciones - 1))
-							{
-								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;
-								
-								System.out.println("Fitness total " + contador_puertas +": " + fitness_puerta_T[contador_puertas]);
-								System.out.println(" ");
-							}
-						}
-						
-					}
 				
 					//se resetean las variables
 					celdas_abiertas = null;
 					celdas_cerradas = null;
 					celdas_recorridas = null;
+					
+					posicion_objeto_encontrado = null;
 					
 				}//se cierra el for para cada monstruo o cada tesoro
 				
@@ -1869,41 +1925,79 @@ public class Dungeon
 			
 			System.out.println(" ");
 			
-			/*//LOG
-			System.out.println("");
-			
-			System.out.println("Numerador: " + numerador);
-			System.out.println( "(f * c) - " + celdas_Paredes + " = " + denominador);
-			System.out.println("Division: " + division);
-			
-			System.out.println("Area: " + area);
-			*/
-			
 			int posicion = 0; //variable para saber en que posicion tengo que guardar cada fitness
 			
 			
 			//TODO REVISAR ESTE FOR PORQUE TIENE QUE SER CON EL FITNESS DE LOS MONSTRUOS Y CON EL FITNESS DE LOS TESOROS
 			
-			//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
-			for(double fitness : fitness_puerta_M)
+			//si estamos en la vuelta de los monstruos guardo los correspondientes fitness de cada puerta en su correspondiente posicion
+			if(i == 0)
 			{
-				fitness_puertas = fitness_puertas + fitness;
+				System.out.print("Media del fitness de seguridad de los monstruos de todas las puertas = ");
 				
-												
-				if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
+				//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
+				for(double fitness : fitness_puerta_M)
 				{
-					//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
-					fitness_puertas_total[posicion] = fitness;
+					
+					//TODO REVISAR LO DE LA SUMA Y PONER YA LA MEDIA AQUI SI SE PUEDE 
+					System.out.print(" + " + fitness);
+					fitness_puertas = fitness_puertas + fitness;
+					
+													
+					if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
+					{
+						//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
+						fitness_puertas_total[posicion] = fitness;
+
+					}
+					else //lo guardo a continuacion de los monstruos los fitness de los tesoros
+					{
+						//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
+						fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
+					}
+					
+					//incremento la posicion
+					posicion++;
+					
 				}
-				else //lo guardo a continuacion de los monstruos los fitness de los tesoros
+				System.out.println(" / " + posicion + " = " +(fitness_puertas/posicion));
+			}
+			
+			//si estamos en la vuelta de los tesoros guardo los correspondientes fitness de cada puerta en su correspondiente posicion
+			else
+			{
+				//Reseteo las variables
+				fitness_puertas = 0;
+				posicion = 0;
+				
+				System.out.print("Media del fitness de seguridad de los tesoros de todas las puertas = ");
+				
+				//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
+				for(double fitness : fitness_puerta_T)
 				{
-					//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
-					fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
+					
+					//TODO REVISAR LO DE LA SUMA Y PONER YA LA MEDIA AQUI SI SE PUEDE 
+					System.out.print(" + " + fitness);
+					fitness_puertas = fitness_puertas + fitness;
+					
+													
+					if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
+					{
+						//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
+						fitness_puertas_total[posicion] = fitness;
+
+					}
+					else //lo guardo a continuacion de los monstruos los fitness de los tesoros
+					{
+						//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
+						fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
+					}
+					
+					//incremento la posicion
+					posicion++;
+					
 				}
-				
-				//incremento la posicion
-				posicion++;
-				
+				System.out.println(" / " + posicion + " = " +(fitness_puertas/posicion));
 			}
 			
 			
@@ -1971,7 +2065,10 @@ public class Dungeon
 			}
 			System.out.println(" ");
 			
+			System.out.println("Media del fitness de seguridad de los tesoros: " + fitness_por_partes[0] + " / " + numero_tesoros + " = " + (fitness_por_partes[0] / numero_tesoros));
+			
 			fitness_por_partes[0] = fitness_por_partes[0] / numero_tesoros;
+			
 			//ponderaciones para los fitness para incrementar que salga un tipo de habitacion u otra
 			double ponderacion_fit_seg_tesoros = 1.0;
 			double ponderacion_fit_seg_pu_mons = 1.0;
@@ -1995,11 +2092,12 @@ public class Dungeon
 			fitness_por_partes[2] = fitness_por_partes[2]/ numero_puertas;
 			
 			
-			
-			System.out.println("Fitness seguridad tesoros:          " + fitness_por_partes[0]);
-			System.out.println("Fitness seguridad puerta monstruos: " + fitness_por_partes[1]);
-			System.out.println("Fitness seguridad puerta tesoros:   " + fitness_por_partes[2]);
-			
+			System.out.println(" ");
+			System.out.println("-----------------------------------------------------------");
+			System.out.println("Fitness seguridad tesoros:           " + fitness_por_partes[0] + " * " + ponderacion_fit_seg_tesoros + " = " + (ponderacion_fit_seg_tesoros * fitness_por_partes[0]));
+			System.out.println("Fitness seguridad puertas monstruos: " + fitness_por_partes[1] + " * " + ponderacion_fit_seg_pu_mons + " = " + (ponderacion_fit_seg_pu_mons * fitness_por_partes[1]));
+			System.out.println("Fitness seguridad puertas tesoros:   " + fitness_por_partes[2] + " * " + ponderacion_fit_seg_pu_teso + " = " + (ponderacion_fit_seg_pu_teso * fitness_por_partes[2]));
+		
 			
 			//se suman los fitness calculados para obtener el fitness final
 			fitness = (ponderacion_fit_seg_tesoros * fitness_por_partes[0]) + (ponderacion_fit_seg_pu_mons * fitness_por_partes[1]) + (ponderacion_fit_seg_pu_teso * fitness_por_partes[2]);
