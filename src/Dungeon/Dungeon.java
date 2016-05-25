@@ -1876,7 +1876,7 @@ public class Dungeon
 							if(each_MT == ( posiciones - 1))
 							{
 								System.out.println(" ");
-								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
+								System.out.println("Media del fitness monstruos de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
 								System.out.println(" ");
 								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
 								

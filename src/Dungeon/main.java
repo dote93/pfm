@@ -37,7 +37,7 @@ public class main
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
 		int porcentaje = 50; //50 para 4 * 4 //50 para 10 * 10
-		int porcentaje_paredes = 30;  //20 para 4 * 4 //40 para 10 * 10
+		int porcentaje_paredes = 25;  //20 para 4 * 4 //40 para 10 * 10 //AHORA CON UN 20% funciona, si es mayor para 10*10 alguna puerta acaba cayendo donde hay una pared
 		
 		
 		
