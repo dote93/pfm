@@ -1470,8 +1470,8 @@ public class Dungeon
 		double[] fitness_tesoros = new double[numero_tesoros];	
 		
 		//Variables para calcular el st
-		float st_resta = 0; //Es float porque sino la division no la da con decimales
-		float st_suma = 0; //Es float porque sino la division no la da con decimales
+		//float st_resta = 0; //Es float porque sino la division no la da con decimales
+		//float st_suma = 0; //Es float porque sino la division no la da con decimales
 		
 		//metrica de seguridad del tesoro con respecto a la puerta y al monstruo
 		float st = 0;
@@ -1486,7 +1486,7 @@ public class Dungeon
 			//inicializo el array
 			st_provisional = new float[numero_monstruos];
 			
-			System.out.println("Distancia P_T tesoro " + posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ":             " + " " + + posicion_tesoros.get(tesoro).distancia_P_cercana);
+			//System.out.println("Distancia P_T tesoro " + posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ":             " + " " + + posicion_tesoros.get(tesoro).distancia_P_cercana);
 			
 			//por cada monstruo que hay en el mapa calculo las distancias entre ese monstruo y el tesoro i
 			for(int monstruo = 0; monstruo < numero_monstruos; monstruo++)
@@ -1496,16 +1496,16 @@ public class Dungeon
 				
 								
 				//calculo el numerador y el denominador (hay que hacer esto para convertirlo a float y poder hacer una division con decimales)
-				st_resta = distancia  - posicion_tesoros.get(tesoro).distancia_P_cercana;  //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana - distancia; //caso 2
-				st_suma = distancia + posicion_tesoros.get(tesoro).distancia_P_cercana;    //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso 2
+				//st_resta = distancia  - posicion_tesoros.get(tesoro).distancia_P_cercana;  //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana - distancia; //caso 2
+				//st_suma = distancia + posicion_tesoros.get(tesoro).distancia_P_cercana;    //caso 1  //posicion_tesoros.get(tesoro).distancia_P_cercana + distancia; //caso 2
 				
 				
 				System.out.println("Distancia T_M tesoro "+ posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna +" monstruo "+ posicion_monstruos.get(monstruo).fila + " " + posicion_monstruos.get(monstruo).columna + ": " + distancia);
 				
 				//obtengo el st
-				st = st_resta / st_suma;
+				st = distancia; //st_resta / st_suma;
 				
-				System.out.println("(" + distancia + "-" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")/(" +  distancia + "+" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")= " + st);
+				//System.out.println("(" + distancia + "-" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")/(" +  distancia + "+" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")= " + st);
 				
 				//si el resultado obtenido es mayor o igual a 0 entonces guardamos el resultado, sino guardamos un 0
 				if(st >= 0)
@@ -1522,8 +1522,8 @@ public class Dungeon
 				}
 				
 				//reseteo las variables
-				st_resta = 0;
-				st_suma = 0;
+				//st_resta = 0;
+				//st_suma = 0;
 				st = 0;
 				
 				
@@ -1547,6 +1547,7 @@ public class Dungeon
 			
 			
 			//guardo en la posicion correspondiente el fitness minimo para ese tesoro
+			dungeon[posicion_tesoros.get(tesoro).fila][posicion_tesoros.get(tesoro).columna].distancia_seguridad_M = st;
 			fitness_tesoros[tesoro] = st;
 						
 		}
@@ -1567,14 +1568,13 @@ public class Dungeon
 		//array que vamos a pasar con los dos fitness de las puertas, el de los monstruos y el de los tesoros por cada puerta
 		double[] fitness_puertas_total = new double[2 * posicion_puertas.size()];
 		
-		//TODO Separar paso a paso el fitness y hacer dos fitness de la seguridad de las puertas, uno para monstruos y otro para objetos
-		
+	
 		//variable que va a almacenar la media de los fitness de las puertas
 		double fitness_puertas = 0;
 		
 		//variable que va a guardar el fitness de cada puerta para luego hacer la media entre las puertas
-		double[] fitness_puerta_M = new double[posicion_puertas.size()];
-		double[] fitness_puerta_T = new double[posicion_puertas.size()];
+		double fitness_puerta_M = -1;//new double[posicion_puertas.size()];
+		double fitness_puerta_T = -1;//new double[posicion_puertas.size()];
 	
 		//listas que van a guardar las celdas que se han visitado y las celdas que quedan por visitar
 		ArrayList<Celda> celdas_abiertas;
@@ -1629,387 +1629,322 @@ public class Dungeon
 			
 			//reseteo el contador del fitness para hacer la media y el array del fitness de todas las puertas
 			fitness_puertas = 0.0;
-			fitness_puerta_M = new double[posicion_puertas.size()];
-			fitness_puerta_T = new double[posicion_puertas.size()];
+			fitness_puerta_M = -1;//new double[posicion_puertas.size()];
+			fitness_puerta_T = -1;//new double[posicion_puertas.size()];
 			
 			//Para cada puerta que hay almacenada en el array de posiciones
 			for (Celda puerta: posicion_puertas)
 			{
-				//variable que va a guardar el numero de monstruos o tesoros que hay para hacer el bucle correspodiente dependiendo de si es de monstruos o de tesoros
-				int posiciones= 0; 
 				
-				if (i == 0) //si estamos en la vuelta de los montruos seteo posiciones al numero de monstruos en el mapa, sino lo seteo al de tesoros
+				//SOLO SE CALCULA EL AREA DE LA PUERTA QUE ES DE TIPO ENTRADA
+				if (puerta.tipo_puerta_N == Tipo_puertas.ENTRADA_SALIDA || puerta.tipo_puerta_S == Tipo_puertas.ENTRADA_SALIDA || puerta.tipo_puerta_E == Tipo_puertas.ENTRADA_SALIDA || puerta.tipo_puerta_O == Tipo_puertas.ENTRADA_SALIDA)
 				{
-					posiciones = posicion_monstruos.size();
-				}
-				else
-				{
-					posiciones = posicion_tesoros.size();
-				}
-				
-				ResetearDungeonArea(); //reseteo las celdas para calcular el area
-				
-				
-				//pintar (); //SOLO PARA DEBUG
-				
-				//Bucle para calcular el fitness del area de cada monstruo o tesoro con respecto a cada puerta
-				for(int each_MT = 0; each_MT < posiciones; each_MT++)
-				{
-					//inicializo de las variables para resetearlas
-					celdas_abiertas = new ArrayList<Celda>();
-					celdas_cerradas = new ArrayList<Celda>();
-					celdas_recorridas = new ArrayList<Celda>();
+						
+					//variable que va a guardar el numero de monstruos o tesoros que hay para hacer el bucle correspodiente dependiendo de si es de monstruos o de tesoros
+					int posiciones= 0; 
 					
-					area_max = 0.0;
-					area = 0.0;
-					
-					//reseteo la variable para que vuelva a buscar el objeto en la nueva puerta
-					objeto_detectado = false;
-					
-					//Variable que va a guardar la posicion del objeto
-					int[] posicion_objeto_encontrado = new int[2];
-					
-		
-					//Si en la puerta se encuentra un monstruo o tesoro y no se ha calculado su area, se calcula, sino, continuamos con el resto de areas
-					if(((puerta.monstruo && i== 0) || (puerta.tesoro&& i== 1)) && !dungeon[puerta.fila][puerta.columna].area_calculado)
+					if (i == 0) //si estamos en la vuelta de los montruos seteo posiciones al numero de monstruos en el mapa, sino lo seteo al de tesoros
 					{
-						
-						area = 0.0;
-						
-						if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Area monstruo " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
-						}
-						else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Area tesoro " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
-						}
-						
-						//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
-						numerador = 1.0;
-						denominador = (f * c) - celdas_Paredes;
-						
-						division = numerador / denominador;
-						
-						//Independientemente de la vuelta en la que me encuentre, la celda de la puerta la establecemos como que hemos calculado su area
-						dungeon[puerta.fila][puerta.columna].area_calculado = true;
-						
-						//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
-						if (i == 0)
-						{
-							
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_M[contador_puertas] = (division * area) + fitness_puerta_M[contador_puertas];
-							
-							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
-							System.out.println(" ");
-							
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
-							if(each_MT == ( posiciones - 1))
-							{
-								
-								System.out.println(" ");
-								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
-								System.out.println(" ");
-								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
-								
-							}
-							
-							
-						}
-						else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
-						{
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_T[contador_puertas] = (division * area) + fitness_puerta_T[contador_puertas];
-							
-							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
-							System.out.println(" ");
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media
-							if(each_MT == ( posiciones - 1))
-							{
-								
-								System.out.println(" ");
-								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_T[contador_puertas] /posiciones));
-								System.out.println(" ");
-								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;	
-								
-							}
-							
-						}
+						posiciones = posicion_monstruos.size();
 					}
-					
-					
 					else
 					{
+						posiciones = posicion_tesoros.size();
+					}
+					
+					ResetearDungeonArea(); //reseteo las celdas para calcular el area
+					
+					
+					//pintar (); //SOLO PARA DEBUG
+					
+					//Bucle para calcular el fitness del area de cada monstruo o tesoro con respecto a cada puerta
+					for(int each_MT = 0; each_MT < posiciones; each_MT++)
+					{
+						//inicializo de las variables para resetearlas
+						celdas_abiertas = new ArrayList<Celda>();
+						celdas_cerradas = new ArrayList<Celda>();
+						celdas_recorridas = new ArrayList<Celda>();
+						
 						area_max = 0.0;
 						area = 0.0;
 						
-						celdas_abiertas.add(puerta); //se anade el nodo inicial como celda visitada
+						//reseteo la variable para que vuelva a buscar el objeto en la nueva puerta
+						objeto_detectado = false;
 						
-					
-						//Mientras no se encuentre un monstruo u objeto se sigue buscando
-						while(!celdas_abiertas.isEmpty())
+						//Variable que va a guardar la posicion del objeto
+						int[] posicion_objeto_encontrado = new int[2];
+						
+			
+						//Si en la puerta se encuentra un monstruo o tesoro y no se ha calculado su area, se calcula, sino, continuamos con el resto de areas
+						if(((puerta.monstruo && i== 0) || (puerta.tesoro&& i== 1)) && !dungeon[puerta.fila][puerta.columna].area_calculado)
 						{
 							
-							//guardo la primera posicion del array como la siguiente celda a la que voy a transitar
-							Celda celda_A = celdas_abiertas.get(0);
+							area = 0.0;
 							
-							celdas_cerradas.add(celda_A);//anadimos la celda A a cerradas
-							celdas_abiertas.remove(0);//borramos la celda A de abiertas
-							
-							//guardo la lista de vecinos de la celda 
-							ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
-							
-							//Si la lista de vecinos transitables no esta vacia continuo
-							if(!vecinos.isEmpty()) 
+							if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
 							{
-								for(Celda mi_vecino : vecinos)//para cada vecino
+								System.out.println("Area monstruo " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+							}
+							else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+							{
+								System.out.println("Area tesoro " + puerta.fila + " " + puerta.columna + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+							}
+							
+							//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
+							numerador = 1.0;
+							denominador = (f * c) - celdas_Paredes;
+							
+							division = numerador / denominador;
+							
+							//Independientemente de la vuelta en la que me encuentre, la celda de la puerta la establecemos como que hemos calculado su area
+							dungeon[puerta.fila][puerta.columna].area_calculado = true;
+							
+							//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
+							if (i == 0)
+							{
+								
+								//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+								fitness_puerta_M = (division * area) + fitness_puerta_M;
+								
+								System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
+								System.out.println(" ");
+								
+								
+								//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
+								if(each_MT == ( posiciones - 1))
 								{
-									// si el vecino no esta en la lista de cerradas
-									if(!celdas_cerradas.contains(mi_vecino)) 
-									{
 									
-										// Si la lista de celdas abiertas no contiene el vecino entonces se anade a la lista de abiertas
-										if(!celdas_abiertas.contains(mi_vecino))	
+									System.out.println(" ");
+									System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M + " / " + posiciones + " = " + (fitness_puerta_M / numero_monstruos));
+									System.out.println(" ");
+									fitness_puerta_M = fitness_puerta_M / numero_monstruos;
+									
+								}
+								
+								
+							}
+							else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
+							{
+								//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+								fitness_puerta_T = (division * area) + fitness_puerta_T;
+								
+								System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
+								System.out.println(" ");
+								
+								//si ya hemos calculado todos los fitness de area hacemos la media
+								if(each_MT == ( posiciones - 1))
+								{
+									
+									System.out.println(" ");
+									System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T + " / " + posiciones + " = " + (fitness_puerta_T / numero_tesoros));
+									System.out.println(" ");
+									fitness_puerta_T = fitness_puerta_T / numero_tesoros;	
+									
+								}
+								
+							}
+						}
+						
+						
+						else
+						{
+							area_max = 0.0;
+							area = 0.0;
+							
+							celdas_abiertas.add(puerta); //se anade el nodo inicial como celda visitada
+							
+						
+							//Mientras no se encuentre un monstruo u objeto se sigue buscando
+							while(!celdas_abiertas.isEmpty())
+							{
+								
+								//guardo la primera posicion del array como la siguiente celda a la que voy a transitar
+								Celda celda_A = celdas_abiertas.get(0);
+								
+								celdas_cerradas.add(celda_A);//anadimos la celda A a cerradas
+								celdas_abiertas.remove(0);//borramos la celda A de abiertas
+								
+								//guardo la lista de vecinos de la celda 
+								ArrayList<Celda> vecinos =  getlistaVecinos(celda_A);
+								
+								//Si la lista de vecinos transitables no esta vacia continuo
+								if(!vecinos.isEmpty()) 
+								{
+									for(Celda mi_vecino : vecinos)//para cada vecino
+									{
+										// si el vecino no esta en la lista de cerradas
+										if(!celdas_cerradas.contains(mi_vecino)) 
 										{
-											//si la celda vecina contiene un monstruo o tesoro y no se habia detectado antes (no se ha calculado su area) se calcula el area maxima
-											if(((mi_vecino.monstruo && i== 0) || (mi_vecino.tesoro && i== 1)) && !objeto_detectado && !dungeon[mi_vecino.fila][mi_vecino.columna].area_calculado)
+										
+											// Si la lista de celdas abiertas no contiene el vecino entonces se anade a la lista de abiertas
+											if(!celdas_abiertas.contains(mi_vecino))	
 											{
-												objeto_detectado = true;
-												
-												//guardo la posicion del objeto para los comentarios
-												posicion_objeto_encontrado[0] = mi_vecino.fila;
-												posicion_objeto_encontrado[1] = mi_vecino.columna;
-												
-												
-												//calculo el area maximo
-												llegada_optima(puerta.fila, puerta.columna, mi_vecino.fila, mi_vecino.columna);
-												area_max = distancia;	
-												
-												//se pone ese vecino como true ya que se ha calculado su area
-												dungeon[mi_vecino.fila][mi_vecino.columna].area_calculado = true;
-											
-											}
-											
-											else
-											{
-												//TODO REVISAR SI ESTO ES NECESARIO O NO
-												//Si todavia no se ha detectado un objeto se anade a la lista de abiertas el vecino
-												if(!objeto_detectado)
+												//si la celda vecina contiene un monstruo o tesoro y no se habia detectado antes (no se ha calculado su area) se calcula el area maxima
+												if(((mi_vecino.monstruo && i== 0) || (mi_vecino.tesoro && i== 1)) && !objeto_detectado && !dungeon[mi_vecino.fila][mi_vecino.columna].area_calculado)
 												{
-													celdas_abiertas.add(mi_vecino);
+													objeto_detectado = true;
+													
+													//guardo la posicion del objeto para los comentarios
+													posicion_objeto_encontrado[0] = mi_vecino.fila;
+													posicion_objeto_encontrado[1] = mi_vecino.columna;
+													
+													
+													//calculo el area maximo
+													llegada_optima(puerta.fila, puerta.columna, mi_vecino.fila, mi_vecino.columna);
+													area_max = distancia;	
+													
+													//se pone ese vecino como true ya que se ha calculado su area
+													dungeon[mi_vecino.fila][mi_vecino.columna].area_calculado = true;
+												
+												}
+												
+												else
+												{
+													//TODO REVISAR SI ESTO ES NECESARIO O NO
+													//Si todavia no se ha detectado un objeto se anade a la lista de abiertas el vecino
+													if(!objeto_detectado)
+													{
+														celdas_abiertas.add(mi_vecino);
+													}
 												}
 											}
 										}
+				
+									}//cierra el for de para cada vecino
+									
+									//si nos encontramos en la celda de la puerta y ya hemos detectado un monstruo en sus vecinos guardamos en celdas recorridas la celda_A que se encuentra en las celdas
+									//cerradas
+									if(celda_A == puerta && objeto_detectado)
+									{
+										celdas_recorridas = celdas_cerradas;
 									}
-			
-								}//cierra el for de para cada vecino
-								
-								//si nos encontramos en la celda de la puerta y ya hemos detectado un monstruo en sus vecinos guardamos en celdas recorridas la celda_A que se encuentra en las celdas
-								//cerradas
-								if(celda_A == puerta && objeto_detectado)
-								{
+									
+									//El area de seguridad de la puerta es igual al de las celdas cerradas (luego se eliminan las que estan a la misma distancia)
 									celdas_recorridas = celdas_cerradas;
+									
+								}//cierra el if de la lista de vecinos	
+											
+							}//cierra el while
+							
+							
+							//para cada celda de las recorridas que tenga la misma distancia entre el monstruo/tesoro y la puerta se elimina de la lista
+							for(Celda celda_segura:celdas_recorridas) 
+							{
+								
+								//se calcula la distancia entre la celda tesoro/monstruo y la puerta
+								llegada_optima(puerta.fila, puerta.columna, celda_segura.fila, celda_segura.columna);
+								
+								//System.out.println("Distancia celda_puerta: " + distancia);
+								
+								//si la distancia entre la celda segura y la celda donde se encuentra el monstruo/tesoro es la misma, no se cuenta para calcular el area
+								//a no ser que solo haya una celda en recorridas(la de la puerta)
+								if (distancia >= area_max && celdas_recorridas.size() != 1)
+								{
+									continue;
+								}
+								else
+								{
+									area = area + 1.0;
+								}
+									
+							}
+							
+							if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+							{
+								System.out.println("Area monstruo " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+							}
+							else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
+							{
+								System.out.println("Area tesoro " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
+							}
+							
+							
+							//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
+							numerador = 1.0;
+							denominador = (f * c) - celdas_Paredes;
+							
+							division = numerador / denominador;
+							
+							
+							//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
+							if (i == 0)
+							{
+								
+								//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+								fitness_puerta_M = (division * area) + fitness_puerta_M;
+								
+								System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
+								System.out.println(" ");
+								
+								
+								//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
+								if(each_MT == ( posiciones - 1))
+								{
+									System.out.println(" ");
+									System.out.println("Media del fitness monstruos de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M + " / " + posiciones + " = " + (fitness_puerta_M / numero_monstruos));
+									System.out.println(" ");
+									fitness_puerta_M = fitness_puerta_M / numero_monstruos ;
+									
 								}
 								
-								//El area de seguridad de la puerta es igual al de las celdas cerradas (luego se eliminan las que estan a la misma distancia)
-								celdas_recorridas = celdas_cerradas;
 								
-							}//cierra el if de la lista de vecinos	
-										
-						}//cierra el while
-						
-						
-						//para cada celda de las recorridas que tenga la misma distancia entre el monstruo/tesoro y la puerta se elimina de la lista
-						for(Celda celda_segura:celdas_recorridas) 
-						{
-							
-							//se calcula la distancia entre la celda tesoro/monstruo y la puerta
-							llegada_optima(puerta.fila, puerta.columna, celda_segura.fila, celda_segura.columna);
-							
-							//System.out.println("Distancia celda_puerta: " + distancia);
-							
-							//si la distancia entre la celda segura y la celda donde se encuentra el monstruo/tesoro es la misma, no se cuenta para calcular el area
-							//a no ser que solo haya una celda en recorridas(la de la puerta)
-							if (distancia >= area_max && celdas_recorridas.size() != 1)
-							{
-								continue;
 							}
-							else
+							else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
 							{
-								area = area + 1.0;
-							}
+								//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
+								fitness_puerta_T = (division * area) + fitness_puerta_T;
 								
-						}
-						
-						if (i == 0) // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Area monstruo " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
-						}
-						else // si la vuelta en la que me encuentro es la del fitness puerta - monstruo
-						{
-							System.out.println("Area tesoro " + posicion_objeto_encontrado[0] + " " + posicion_objeto_encontrado[1] + " con la puerta " + puerta.fila + " " + puerta.columna + ": "+ area);
-						}
-						
-						
-						//TODO MODIFICAR EL NUMERADOR Y SUSTITUIRLO POR EL AREA
-						numerador = 1.0;
-						denominador = (f * c) - celdas_Paredes;
-						
-						division = numerador / denominador;
-						
-						
-						//si me encuentro en la vuelta del fitness de los monstruos lo almaceno en su variables
-						if (i == 0)
-						{
-							
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_M[contador_puertas] = (division * area) + fitness_puerta_M[contador_puertas];
-							
-							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
-							System.out.println(" ");
-							
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media y pasamos a calcular el fitness de seguridad de las puertas con los tesoros
-							if(each_MT == ( posiciones - 1))
-							{
+								System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
 								System.out.println(" ");
-								System.out.println("Media del fitness monstruos de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_M[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_M[contador_puertas] /posiciones));
-								System.out.println(" ");
-								fitness_puerta_M[contador_puertas] = fitness_puerta_M[contador_puertas] /posiciones;
+								
+								//si ya hemos calculado todos los fitness de area hacemos la media
+								if(each_MT == ( posiciones - 1))
+								{
+									System.out.println(" ");
+									System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T + " / " + posiciones + " = " + (fitness_puerta_T / numero_tesoros));
+									System.out.println(" ");
+									fitness_puerta_T = fitness_puerta_T / numero_tesoros;	
+									
+								}
 								
 							}
 							
 							
-						}
-						else //si me encuentro en la vuelta de los tesoros lo guardo en su variable 
-						{
-							//se anade a la puerta correspondiente su fitness sumandole los calculados anteriormente
-							fitness_puerta_T[contador_puertas] = (division * area) + fitness_puerta_T[contador_puertas];
-							
-							System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
-							System.out.println(" ");
-							
-							//si ya hemos calculado todos los fitness de area hacemos la media
-							if(each_MT == ( posiciones - 1))
-							{
-								System.out.println(" ");
-								System.out.println("Media del fitness tesoros de la puerta " + puerta.fila + " " + puerta.columna + ": " + fitness_puerta_T[contador_puertas] + " / " + posiciones + " = " + (fitness_puerta_T[contador_puertas] /posiciones));
-								System.out.println(" ");
-								fitness_puerta_T[contador_puertas] = fitness_puerta_T[contador_puertas] /posiciones;	
-								
-							}
-							
-						}
+						}//cierra el else de monstruos y tesoros
 						
+					
+						//se resetean las variables
+						celdas_abiertas = null;
+						celdas_cerradas = null;
+						celdas_recorridas = null;
 						
-					}//cierra el else de monstruos y tesoros
+						posicion_objeto_encontrado = null;
+						
+					}//se cierra el for para cada monstruo o cada tesoro
 					
-				
-					//se resetean las variables
-					celdas_abiertas = null;
-					celdas_cerradas = null;
-					celdas_recorridas = null;
+					//se incrementa el contador de las puertas
+					contador_puertas++;
 					
-					posicion_objeto_encontrado = null;
-					
-				}//se cierra el for para cada monstruo o cada tesoro
-				
-				//se incrementa el contador de las puertas
-				contador_puertas++;
-				
-				
-			}
-			
-			System.out.println(" ");
-			
-			int posicion = 0; //variable para saber en que posicion tengo que guardar cada fitness
-			
-			
-			//TODO REVISAR ESTE FOR PORQUE TIENE QUE SER CON EL FITNESS DE LOS MONSTRUOS Y CON EL FITNESS DE LOS TESOROS
-			
-			//si estamos en la vuelta de los monstruos guardo los correspondientes fitness de cada puerta en su correspondiente posicion
-			if(i == 0)
-			{
-				System.out.print("Media del fitness de seguridad de los monstruos de todas las puertas = ");
-				
-				//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
-				for(double fitness : fitness_puerta_M)
-				{
-					
-					//TODO REVISAR LO DE LA SUMA Y PONER YA LA MEDIA AQUI SI SE PUEDE 
-					System.out.print(" + " + fitness);
-					fitness_puertas = fitness_puertas + fitness;
-					
-													
-					if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
-					{
-						//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
-						fitness_puertas_total[posicion] = fitness;
-
-					}
-					else //lo guardo a continuacion de los monstruos los fitness de los tesoros
-					{
-						//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
-						fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
-					}
-					
-					//incremento la posicion
-					posicion++;
 					
 				}
-				System.out.println(" / " + posicion + " = " +(fitness_puertas/posicion));
-			}
+				
+				System.out.println(" ");
 			
-			//si estamos en la vuelta de los tesoros guardo los correspondientes fitness de cada puerta en su correspondiente posicion
-			else
-			{
-				//Reseteo las variables
-				fitness_puertas = 0;
-				posicion = 0;
 				
-				System.out.print("Media del fitness de seguridad de los tesoros de todas las puertas = ");
-				
-				//para cada elemento del array que se ha guardado de los fitness de las puertas se suman para luego hacer la media
-				for(double fitness : fitness_puerta_T)
+				//SI estamos en la vuelta de los montruos lo guardamos en la posicion 0, sino en la 1 (para los tesoros)
+				if (i == 0)
 				{
-					
-					//TODO REVISAR LO DE LA SUMA Y PONER YA LA MEDIA AQUI SI SE PUEDE 
-					System.out.print(" + " + fitness);
-					fitness_puertas = fitness_puertas + fitness;
-					
-													
-					if(i == 0)//si me encuentro en la vuelta de los monstruos lo guardo en las primeras x posiciones
-					{
-						//guardo en cada posicion del array el fitness de cada puerta con respecto a los monstruos
-						fitness_puertas_total[posicion] = fitness;
-
-					}
-					else //lo guardo a continuacion de los monstruos los fitness de los tesoros
-					{
-						//guardo en cada posicion del array el fitness de cada puerta con respecto a los tesoros
-						fitness_puertas_total[posicion + posicion_puertas.size()] = fitness;
-					}
-					
-					//incremento la posicion
-					posicion++;
-					
+					fitness_puertas_total[0] = fitness_puerta_M;
 				}
-				System.out.println(" / " + posicion + " = " +(fitness_puertas/posicion));
+				else
+				{
+					fitness_puertas_total[1] = fitness_puerta_T;
+				}
+				
+				
+			
+		
 			}
-			
-			
-			//se hace la media de los fitness de las puertas
-//			fitness_puertas = fitness_puertas / fitness_puerta.length;
-			
-			
-			
-			//anado el fitness de los monstruos y los tesoros en la posicion correspondiente del array 
-//			fitness_puertas_total[i] = fitness_puertas;
-		
-		
 			
 		}//se acaba el for para rellenar el array
 
@@ -2061,13 +1996,15 @@ public class Dungeon
 			for(int tesoro= 0; tesoro < numero_tesoros; tesoro++)
 			{
 				fitness_por_partes[0] = fitness_por_partes[0] + fitness_tesoros[tesoro];
-				System.out.println("Fitness tesoro "+ tesoro +": " + fitness_tesoros[tesoro]);
+				System.out.println("Fitness tesoro "+ posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ": " + posicion_tesoros.get(tesoro).distancia_seguridad_M);
 			}
 			System.out.println(" ");
 			
 			System.out.println("Media del fitness de seguridad de los tesoros: " + fitness_por_partes[0] + " / " + numero_tesoros + " = " + (fitness_por_partes[0] / numero_tesoros));
 			
 			fitness_por_partes[0] = fitness_por_partes[0] / numero_tesoros;
+			
+		
 			
 			//ponderaciones para los fitness para incrementar que salga un tipo de habitacion u otra
 			double ponderacion_fit_seg_tesoros = 1.0;
@@ -2077,20 +2014,23 @@ public class Dungeon
 			//calculo el fitness de las puertas
 			double[] fitness_puertas = calcular_fitness_puertas();
 			
+			fitness_por_partes[1] = fitness_puertas[0];
+			fitness_por_partes[2] = fitness_puertas[1];
+			
 			//por cada puerta que hay en el mapa cojo su fitness con el tesoro y con el monstruo y hago la media
-			for(int puerta= 0; puerta < numero_puertas; puerta++)
+			/*for(int puerta= 0; puerta < numero_puertas; puerta++)
 			{
 				//para calcular el fitness de los monstruos
 				fitness_por_partes[1] = fitness_por_partes[1] + fitness_puertas[puerta];
 				
 				//para calcular el fitness de los tesoros
 				fitness_por_partes[2] = fitness_por_partes[2] + fitness_puertas[puerta + numero_puertas];
-			}
+			}*/
 			
 			//hago la media de los fitness de seguridad de las puertas
-			fitness_por_partes[1] = fitness_por_partes[1]/ numero_puertas;
-			fitness_por_partes[2] = fitness_por_partes[2]/ numero_puertas;
-			
+			/*fitness_por_partes[1] = fitness_por_partes[1] / numero_puertas;
+			fitness_por_partes[2] = fitness_por_partes[2] / numero_puertas;
+			*/
 			
 			System.out.println(" ");
 			System.out.println("-----------------------------------------------------------");

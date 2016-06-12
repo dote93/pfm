@@ -13,16 +13,16 @@ import java.util.ArrayList;
 
 public class Celda 
 {
+	//Coordenadas x,y de la celda.	
+	int fila;	
+	int columna;
+	
 	
 	//Si la celda ha sido visitada.
 	public boolean visitada;
 	
 	// Posicion de su precursora
 	public int [] Posicion_precursor;
-	
-	//Coordenadas x,y de la celda.	
-	int fila;	
-	int columna;
 	
 	//Maximas coordenadas del mapa
 	int max_fila;
@@ -47,7 +47,7 @@ public class Celda
 	//Variable para saber si ya se ha calculado el area de ese monstruo o de ese tesoro
 	
 	public boolean area_calculado;
-	
+	public float distancia_seguridad_M; //Variable para guardar cual es el monstruo mas cercano al tesoro
 	
 	public int[] genotipo_celda;
 	
@@ -131,6 +131,8 @@ public class Celda
 		//se guarda el genotipo de la celda
 		genotipo_celda= genotipo;
 		
+		//Se inicializa a -1 la distancia con el monstruo mas cercano
+		distancia_seguridad_M = -1;
 		
 		//creamos las paredes pasandole las posiciones x,y y el tama–o maximo de x y el tama–o maximo de y 
 		//crearParedes(fila, columna, max_fila, max_columna);
