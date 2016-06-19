@@ -83,12 +83,42 @@ public class main
 		t_puertas.add(Celda.Tipo_puertas.ENTRADA);//puerta Este
 		t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur*/
 		
+		
+		
+		//variable para luego comprobar el fitness de la habitacion
+		double [] nivel_facil = {
+				5,  //numero de monstruos
+				5,  //numero de tesoros
+				
+				20, //area segura 1er monstruo
+				30, //area segura 2do monstruo
+				40, //area segura 3er monstruo
+				50, //area segura 4to monstruo
+				60, //area segura 5to monstruo
+				
+				20, //area segura 1er tesoro
+				30, //area segura 2do tesoro
+				40, //area segura 3er tesoro
+				50, //area segura 4to tesoro
+				60, //area segura 5to tesoro
+				
+				10, //seguridad 1er tesoro
+				10, //seguridad 2do tesoro
+				10, //seguridad 3er tesoro
+				10, //seguridad 4to tesoro
+				10, //seguridad 5to tesoro
+				
+		};
+		
+		
+		double [] dificultad_nivel = nivel_facil;
+		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel);
 		
 
 		
