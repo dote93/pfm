@@ -132,7 +132,7 @@ public class Celda
 		genotipo_celda= genotipo;
 		
 		//Se inicializa a -1 la distancia con el monstruo mas cercano
-		distancia_seguridad_M = -1;
+		//distancia_seguridad_M = -1;
 		
 		//creamos las paredes pasandole las posiciones x,y y el tama–o maximo de x y el tama–o maximo de y 
 		//crearParedes(fila, columna, max_fila, max_columna);

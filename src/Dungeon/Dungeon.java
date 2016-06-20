@@ -1906,7 +1906,7 @@ public class Dungeon
 								//se guarda el area calculado del monstruo
 								area_puerta_M[each_MT] = area;
 								
-								area_T_posicion.add(dungeon[posicion_objeto_encontrado[0]][posicion_objeto_encontrado[1]]); //se anade la celda donde hemos encontrado el monstruo
+								area_M_posicion.add(dungeon[posicion_objeto_encontrado[0]][posicion_objeto_encontrado[1]]); //se anade la celda donde hemos encontrado el monstruo
 								
 								System.out.println(area + "/" + "((" + f + "*" + c +")" + "-" + celdas_Paredes + ") = " +  (division * area));
 								System.out.println(" ");
@@ -2236,9 +2236,10 @@ public class Dungeon
 			
 			//Seguridad tesoros con los monstruos ----------------------------------------------
 		
+			
 			if (posicion_tesoros.size() >= 1)
 			{
-				System.out.println("Seguridad 1er tesoro |" + area_T_posicion.get(0).distancia_seguridad_M + " - " + dificultad_nivel[12] + "| * " + "0.05" + " = " +  Math.abs(area_T_posicion.get(0).distancia_seguridad_M - dificultad_nivel[12]) * 0.05);
+				System.out.println("Seguridad 1er tesoro |" + dungeon[area_T_posicion.get(0).fila][area_T_posicion.get(0).columna].distancia_seguridad_M + " - " + dificultad_nivel[12] + "| * " + "0.05" + " = " +  Math.abs(dungeon[area_T_posicion.get(0).fila][area_T_posicion.get(0).columna].distancia_seguridad_M - dificultad_nivel[12]) * 0.05);
 				resultados [12] = Math.abs(area_T_posicion.get(0).distancia_seguridad_M - dificultad_nivel[12]) * 0.05;
 			}
 			else
