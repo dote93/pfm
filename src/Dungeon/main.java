@@ -19,7 +19,6 @@ import Dungeon.Celda.Tipo_puertas;
  */
 public class main
 {
-	
 
 	@SuppressWarnings({ "resource", "unused" })
 	public static void main(String[] args) 
@@ -32,7 +31,7 @@ public class main
 		int f = 10;
 		int c = 10;
 		int numero_puertas = 4;
-		int numero_poblacion = 1;
+		int numero_poblacion = 10;
 		
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random

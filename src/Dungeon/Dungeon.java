@@ -591,6 +591,9 @@ public class Dungeon
 		int random_x = 0;
 		int random_y = 0;
 		
+		//variable para contar cuantas veces hemos intentado poner la puerta en una celda que estuviera sin pared
+		int iteraciones = 0;
+		
 		//Se anaden las x puertas a cada mapa en posiciones random
 		for (int puertas=0; puertas<numero_puertas; puertas++)
 		{
@@ -598,12 +601,30 @@ public class Dungeon
 			random_x = 0;
 			random_y = 0;
 			
+			
+			
 			//Si no hay puerta norte
 			if (!hay_puerta_N)
 			{
 								
 				random_x = 0;
+				
+				iteraciones = 0;
+				
 				random_y = (int)(Math.random() * (c - min) + min);
+				
+				while((dungeon[random_x][random_y].genotipo_celda[0] == 1 && dungeon[random_x][random_y].genotipo_celda[1] == 1 && dungeon[random_x][random_y].genotipo_celda[2] == 1))
+				{
+					random_y = (int)(Math.random() * (c - min) + min);
+					
+					if (iteraciones == (f * c))
+					{
+						break;
+					}
+					
+					iteraciones++;
+				}
+				
 				
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
@@ -669,7 +690,22 @@ public class Dungeon
 			else if (!hay_puerta_S)
 			{
 				random_x = f - 1;
+				
+				iteraciones = 0;
+				
 				random_y = (int)(Math.random() * (c - min) + min);
+				
+				while((dungeon[random_x][random_y].genotipo_celda[0] == 1 && dungeon[random_x][random_y].genotipo_celda[1] == 1 && dungeon[random_x][random_y].genotipo_celda[2] == 1))
+				{
+					random_y = (int)(Math.random() * (c - min) + min);
+					
+					if (iteraciones == (f * c))
+					{
+						break;
+					}
+					
+					iteraciones++;
+				}
 				
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
@@ -732,8 +768,26 @@ public class Dungeon
 			//Si no hay puerta este
 			else if (!hay_puerta_E)
 			{
-				random_x = (int)(Math.random() * (f - min) + min);
+				
 				random_y = c - 1;
+				
+				iteraciones = 0;
+				
+				random_x = (int)(Math.random() * (f - min) + min);
+				
+				while((dungeon[random_x][random_y].genotipo_celda[0] == 1 && dungeon[random_x][random_y].genotipo_celda[1] == 1 && dungeon[random_x][random_y].genotipo_celda[2] == 1))
+				{
+					random_x = (int)(Math.random() * (f - min) + min);
+					
+					if (iteraciones == (f * c))
+					{
+						break;
+					}
+					
+					iteraciones++;
+				}
+				
+				
 			
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
@@ -795,9 +849,27 @@ public class Dungeon
 			
 			//Si no hay puerta oeste
 			else if (!hay_puerta_O)
-			{		
-				random_x = (int)(Math.random() * (f - min) + min);
+			{	
+				
 				random_y = 0;
+				
+				iteraciones = 0;
+				
+				random_x = (int)(Math.random() * (f - min) + min);
+				
+				while((dungeon[random_x][random_y].genotipo_celda[0] == 1 && dungeon[random_x][random_y].genotipo_celda[1] == 1 && dungeon[random_x][random_y].genotipo_celda[2] == 1))
+				{
+					random_x = (int)(Math.random() * (f - min) + min);
+					
+					if (iteraciones == (f * c))
+					{
+						break;
+					}
+					
+					iteraciones++;
+				}
+				
+				
 				
 				//Si tenemos el tipo de puerta que es lo establecemos
 				if(t_puertas.size() != 0)
@@ -2020,12 +2092,12 @@ public class Dungeon
 		calcular_camino_PP(numero_puertas);
 		
 		//Si hay al menos un tesoro calculo las distancias entre P y T para comprobar cual es la puerta mas cercana a cada tesoro
-		if(numero_tesoros != 0)
+		/*if(numero_tesoros != 0)
 		{
 			//Se calcula las distancias PT
 			calcular_distancias_PT(numero_puertas, numero_tesoros);
 			
-		}
+		}*/
 		
 		//Si hay al menos un monstruo calculo las distancias entre P y M
 		/*if(numero_monstruos != 0)
