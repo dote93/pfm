@@ -36,8 +36,8 @@ public class main
 		
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 50; //50 para 4 * 4 //50 para 10 * 10
-		int porcentaje_paredes = 25;  //20 para 4 * 4 //40 para 10 * 10 //AHORA CON UN 20% funciona, si es mayor para 10*10 alguna puerta acaba cayendo donde hay una pared
+		int porcentaje = 70; //50 para 4 * 4 //50 para 10 * 10
+		int porcentaje_paredes = 20; //25  //20 para 4 * 4 //40 para 10 * 10 //AHORA CON UN 20% funciona, si es mayor para 10*10 alguna puerta acaba cayendo donde hay una pared
 		
 		
 		
@@ -85,40 +85,44 @@ public class main
 		
 		
 		
-		//variable para luego comprobar el fitness de la habitacion
-		double [] nivel_facil = {
-				5,  //numero de monstruos
-				5,  //numero de tesoros
-				
-				20, //area segura 1er monstruo
-				30, //area segura 2do monstruo
-				40, //area segura 3er monstruo
-				50, //area segura 4to monstruo
-				60, //area segura 5to monstruo
-				
-				20, //area segura 1er tesoro
-				30, //area segura 2do tesoro
-				40, //area segura 3er tesoro
-				50, //area segura 4to tesoro
-				60, //area segura 5to tesoro
-				
-				10, //seguridad 1er tesoro
-				10, //seguridad 2do tesoro
-				10, //seguridad 3er tesoro
-				10, //seguridad 4to tesoro
-				10, //seguridad 5to tesoro
+		//variable para luego comprobar el fitness de la habitacion (ya estan divididas entre 100 (son porcentajes))
+		double [] nivel_facil_m_t = {
+				0.06,  //numero de monstruos         6% de monstruos
+				0.04,  //numero de tesoros           4% de tesoros
+				0.20, //area segura 1er monstruo    20% de las celdas libres para el 1er monstruo
+				0.15, //area segura 1er tesoro      15% de las celdas libres para el 1er tesoro
+				0.10, //seguridad 1er tesoro         5% de las celdas libres de distancia entre el monstruo y el 1er tesoro
+		};
+		
+		//variable que va a guardar las ponderaciones que vamos a establecer (a que variables vamos a querer dar mas importancia
+		//para el fitness (todo tiene que sumar 1)
+		double [] ponderaciones_facil_m_t = {
+				0.26,  //numero de monstruos
+				0.26,  //numero de tesoros
+				0.16, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
+				0.16, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
+				0.16, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
 				
 		};
 		
 		
-		double [] dificultad_nivel = nivel_facil;
+		double [] dificultad_nivel = nivel_facil_m_t;
+		/*double [] dificultad_nivel_facil_s_p_monstruos = nivel_facil_s_p_monstruos;
+		double [] dificultad_nivel_facil_s_p_tesoros = nivel_facil_s_p_tesoros;
+		double [] dificultad_nivel_facil_s_tesoros = nivel_facil_s_tesoros;
+		*/
+		double [] ponderaciones_nivel = ponderaciones_facil_m_t;
+		/*double [] ponderaciones_nivel_facil_s_p_monstruos = ponderaciones_facil_s_p_monstruos;
+		double [] ponderaciones_nivel_facil_s_p_tesoros = ponderaciones_facil_s_p_tesoros;
+		double [] ponderaciones_nivel_facil_s_tesoros = ponderaciones_facil_s_tesoros;
+		*/
 		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
 		
 		//Inicializo la poblacion*********************************************************************
-		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel);
+		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		
 
 		

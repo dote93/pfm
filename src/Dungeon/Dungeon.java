@@ -94,6 +94,9 @@ public class Dungeon
 	//variable que va a guardar la dificultad que se espera en el nivel para calcular el fitness
 	double [] dificultad_nivel; 
 	
+	//Variable para guardar las ponderaciones a las que queremos establecer para calcular el fitnes (a que variables se les quiere dar mas importancia)
+	double [] ponderaciones_nivel;
+	
 	//variables que van a guardar el area de seguridad de la puerta con los tesoros y con los monstruos
 	double [] area_puerta_M;
 	double [] area_puerta_T;
@@ -106,7 +109,7 @@ public class Dungeon
 	/** 
      *	Constructor de Dungeon
      */
-	public Dungeon(int _f, int _c, int numero_monstruos_, int numero_tesoros_,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje_, int porcentaje_paredes_, int tipo_celdas_, double [] _dificultad_nivel)
+	public Dungeon(int _f, int _c, int numero_monstruos_, int numero_tesoros_,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje_, int porcentaje_paredes_, int tipo_celdas_, double [] _dificultad_nivel, double [] _ponderaciones_nivel)
 	{
 		//Se igualan las dimensiones del dungeon
 		f= _f;
@@ -123,6 +126,7 @@ public class Dungeon
 		
 		
 		dificultad_nivel = _dificultad_nivel;
+		ponderaciones_nivel = _ponderaciones_nivel;
 		
 		
 		//Inicializamos el dungeon para crear primero las dimensiones que va a tener el mapa
@@ -569,6 +573,7 @@ public class Dungeon
 	 * @param c columnas
 	 * @param numero_puertas
 	 */
+	@SuppressWarnings("unused")
 	public void anadir_puertas(ArrayList<Celda.Tipo_puertas> t_puertas, int numero_puertas)
 	{
 		
@@ -616,6 +621,7 @@ public class Dungeon
 				}
 				else
 				{
+					
 					dungeon[random_x][random_y].puerta = true;
 					hay_puerta_N = true;
 					dungeon[random_x][random_y].puerta_N = true;
@@ -1522,7 +1528,7 @@ public class Dungeon
 				
 				//System.out.println("(" + distancia + "-" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")/(" +  distancia + "+" + posicion_tesoros.get(tesoro).distancia_P_cercana + ")= " + st);
 				
-				//si el resultado obtenido es mayor o igual a 0 entonces guardamos el resultado, sino guardamos un 0
+				//si el resultado obtenido es mayor o igual a 0 entonces guardamos el resultado, sino guardamos un numero alto debido a que esa distancia no se puede calcular
 				if(st >= 0)
 				{
 					//guardo el resultado en un array
@@ -1533,7 +1539,7 @@ public class Dungeon
 				else
 				{
 					//guardo el resultado en un array
-					st_provisional[monstruo] = 0;
+					st_provisional[monstruo] = (f * c) + 1;
 				}
 				
 				//reseteo las variables
@@ -2095,206 +2101,189 @@ public class Dungeon
 			//fitness = (ponderacion_fit_seg_tesoros * fitness_por_partes[0]) + (ponderacion_fit_seg_pu_mons * fitness_por_partes[1]) + (ponderacion_fit_seg_pu_teso * fitness_por_partes[2]);
 		
 			
-			double [] resultados = new double [dificultad_nivel.length]; //variable que va a almacenar los resultados de las operaciones
+			int tamano_resultados = (int) (Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes)) + (Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)) * 2) + 2);
 			
+			double [] resultados = new double [tamano_resultados]; //variable que va a almacenar los resultados de las operaciones
 			
 			
 			System.out.println(" ");
 			System.out.println(" ");
 			
 			//numero de monstruos ----------------------------------------------
-			System.out.println("Numero de monstruos |" + posicion_monstruos.size() + " - " + dificultad_nivel[0] + "| * " + "0.125" + " = " +  Math.abs(posicion_monstruos.size() - dificultad_nivel[0]) * 0.125);
-			resultados [0] = Math.abs(posicion_monstruos.size() - dificultad_nivel[0]) * 0.125;
+			System.out.println("Numero de monstruos |" + posicion_monstruos.size() + " - " + Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes)) + "| * " + ponderaciones_nivel[0] + " = " +  Math.abs(posicion_monstruos.size() - Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes))) * ponderaciones_nivel[0]);
+			resultados [0] = Math.abs(posicion_monstruos.size() - Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes))) * ponderaciones_nivel[0];
 			
 			//numero de tesoros ----------------------------------------------
-			System.out.println("Numero de tesoros |" + posicion_tesoros.size() + " - " + dificultad_nivel[1] + "| * " + "0.125" + " = " +  Math.abs(posicion_tesoros.size() - dificultad_nivel[1]) * 0.125);
-			resultados [1] = Math.abs(posicion_tesoros.size() - dificultad_nivel[1]) * 0.125;
+			System.out.println("Numero de tesoros |" + posicion_tesoros.size() + " - " + Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)) + "| * " + ponderaciones_nivel[1] + " = " +  Math.abs(posicion_tesoros.size() - Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes))) * ponderaciones_nivel[1]);
+			resultados [1] = Math.abs(posicion_tesoros.size() - Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes))) * ponderaciones_nivel[1];
 			
 			System.out.println(" ");
 			
 			
 			//Seguridad montruos con la puerta de entrada ----------------------------------------------
 			
-			if (posicion_monstruos.size() >= 1)
+			
+			int posicion = 1; //variable para saber en la posicion del array que hay que poner las cosas
+			
+			
+			//inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+			double ponderacion_restante_s_m = ponderaciones_nivel[2] * 0.5;
+			
+			double distancia_esperada_s_m = Math.round(((f * c) - celdas_Paredes) * dificultad_nivel[2]);
+			
+			for(int s_monstruos = 0; s_monstruos < Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes)); s_monstruos++)
 			{
-				System.out.println("Area de seguridad 1er monstruo |" + area_puerta_M[0] + " - " + dificultad_nivel[2] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_M[0] - dificultad_nivel[2]) * 0.05);
-				resultados [2] = Math.abs(area_puerta_M[0] - dificultad_nivel[2]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 1er monstruo |" + "cero" + " - " + dificultad_nivel[2] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[2]) * 0.05);
-				resultados [2] = Math.abs(0 - dificultad_nivel[2]) * 0.05;
+				posicion = posicion + 1;
+				
+				
+				//si la ponderacion llega hasta 0 dejamos de decrementarla 
+				if (ponderacion_restante_s_m <= 0.0)
+				{
+					ponderacion_restante_s_m = 0.0;
+				}
+				
+				//si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero
+				if(distancia_esperada_s_m >= ((f * c) - celdas_Paredes))
+				{
+					distancia_esperada_s_m = (f * c) - celdas_Paredes;
+				}
+				
+				
+				if (s_monstruos <  posicion_monstruos.size())
+				{
+					
+					System.out.println("Area de seguridad " + (s_monstruos + 1) +" monstruo |" + area_puerta_M[s_monstruos] + " - " + distancia_esperada_s_m + "| * " + ponderacion_restante_s_m + " = " +  Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
+					resultados [posicion] = Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m ) * ponderacion_restante_s_m; //se pone el 50 por ciento de la ponderacion
+				}
+				else
+				{
+					
+					System.out.println("Area de seguridad " + (s_monstruos + 1) +" monstruo |" + "cero" + " - " + distancia_esperada_s_m + "| * " + ponderacion_restante_s_m + " = " +  Math.abs(0 - distancia_esperada_s_m) * ponderacion_restante_s_m);
+					resultados [posicion] = Math.abs(0 - distancia_esperada_s_m) * ponderacion_restante_s_m; //se pone el 50 por ciento de la ponderacion
+				}
+				
+				//si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+				if(s_monstruos < (Math.round(dificultad_nivel[0] * ((f * c) - celdas_Paredes)) - 2))
+				{
+					ponderacion_restante_s_m = ponderacion_restante_s_m - (ponderacion_restante_s_m * 0.5);
+					
+				}
+				
+				//se incrementa la distancia a la que se espera el siguiente monstruo
+				distancia_esperada_s_m = Math.round(distancia_esperada_s_m + (0.5 * distancia_esperada_s_m)); 
+
 			}
 			
-			if (posicion_monstruos.size() >= 2)
-			{
-				System.out.println("Area de seguridad 2do monstruo |" + area_puerta_M[1] + " - " + dificultad_nivel[3] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_M[1] - dificultad_nivel[3]) * 0.05);
-				resultados [3] = Math.abs(area_puerta_M[1] - dificultad_nivel[3]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 2do monstruo |" + "cero" + " - " + dificultad_nivel[3] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[3]) * 0.05);
-				resultados [3] = Math.abs(0 - dificultad_nivel[3]) * 0.05;
-			}
-			
-			if (posicion_monstruos.size() >= 3)
-			{
-				System.out.println("Area de seguridad 3ro monstruo |" + area_puerta_M[2] + " - " + dificultad_nivel[4] + "| * " + "0.05" + " = " + Math.abs(area_puerta_M[2] - dificultad_nivel[4]) * 0.05);
-				resultados [4] = Math.abs(area_puerta_M[2] - dificultad_nivel[4]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 3ro monstruo |" + "cero" + " - " + dificultad_nivel[4] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[4]) * 0.05);
-				resultados [4] = Math.abs(0 - dificultad_nivel[4]) * 0.05;
-			}
-			
-			if (posicion_monstruos.size() >= 4)
-			{
-				System.out.println("Area de seguridad 4to monstruo |" + area_puerta_M[3] + " - " + dificultad_nivel[5] + "| * " + "0.05" + " = " + Math.abs(area_puerta_M[3] - dificultad_nivel[5]) * 0.05);
-				resultados [5] = Math.abs(area_puerta_M[3] - dificultad_nivel[5]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 4to monstruo |" + "cero" + " - " + dificultad_nivel[5] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[5]) * 0.05);
-				resultados [5] = Math.abs(0 - dificultad_nivel[5]) * 0.05;
-			}
-			
-			if (posicion_monstruos.size() >= 5)
-			{
-				System.out.println("Area de seguridad 5to monstruo |" + area_puerta_M[4] + " - " + dificultad_nivel[6] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_M[4] - dificultad_nivel[6]) * 0.05);
-				resultados [6] = Math.abs(area_puerta_M[4] - dificultad_nivel[6]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 5to monstruo |" + "cero" + " - " + dificultad_nivel[6] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[6]) * 0.05);
-				resultados [6] = Math.abs(0 - dificultad_nivel[6]) * 0.05;
-			}
-			
+			//posicion = posicion + 2; //para sumarle uno a la ultima vuelta y tener la posicion para ponerla en la siguiente
+				
 			System.out.println(" ");
 			
 			
 			//Seguridad tesoros con la puerta de entrada ----------------------------------------------
 			
-			if (posicion_tesoros.size() >= 1)
+			//inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+			double ponderacion_restante_s_t = ponderaciones_nivel[3] * 0.5;
+			double distancia_esperada_s_t = Math.round(((f * c) - celdas_Paredes) * dificultad_nivel[3]);
+			for(int s_tesoros = 0; s_tesoros < Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)); s_tesoros++)
 			{
-				System.out.println("Area de seguridad 1er tesoro |" + area_puerta_T[0] + " - " + dificultad_nivel[7] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_T[0] - dificultad_nivel[7]) * 0.05);
-				resultados [7] = Math.abs(area_puerta_T[0] - dificultad_nivel[7]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 1er tesoro |" + "cero" + " - " + dificultad_nivel[7] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[7]) * 0.05);
-				resultados [7] = Math.abs(0 - dificultad_nivel[7]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 2)
-			{
-				System.out.println("Area de seguridad 2do tesoro |" + area_puerta_T[1] + " - " + dificultad_nivel[8] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_T[1] - dificultad_nivel[8]) * 0.05);
-				resultados [8] = Math.abs(area_puerta_T[1] - dificultad_nivel[8]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 2do tesoro |" + "cero" + " - " + dificultad_nivel[8] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[8]) * 0.05);
-				resultados [8] = Math.abs(0 - dificultad_nivel[8]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 3)
-			{
-				System.out.println("Area de seguridad 3ro tesoro |" + area_puerta_T[2] + " - " + dificultad_nivel[9] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_T[2] - dificultad_nivel[9]) * 0.05);
-				resultados [9] = Math.abs(area_puerta_T[2] - dificultad_nivel[9]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 3ro tesoro |" + "cero" + " - " + dificultad_nivel[9] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[9]) * 0.05);
-				resultados [9] = Math.abs(0 - dificultad_nivel[9]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 4)
-			{
-				System.out.println("Area de seguridad 4to tesoro |" + area_puerta_T[3] + " - " + dificultad_nivel[10] + "| * " + "0.05" + " = " +  Math.abs(area_puerta_T[3] - dificultad_nivel[10]) * 0.05);
-				resultados [10] = Math.abs(area_puerta_T[3] - dificultad_nivel[10]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 4to tesoro |" + "cero" + " - " + dificultad_nivel[10] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[10]) * 0.05);
-				resultados [10] = Math.abs(0 - dificultad_nivel[10]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 5)
-			{
-				System.out.println("Area de seguridad 5to tesoro |" + area_puerta_T[4] + " - " + dificultad_nivel[11] + "| * " + "0.05" + " = " + Math.abs(area_puerta_T[4] - dificultad_nivel[11]) * 0.05);
-				resultados [11] = Math.abs(area_puerta_T[4] - dificultad_nivel[11]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Area de seguridad 5to tesoro |" + "cero" + " - " + dificultad_nivel[11] + "| * " + "0.05" + " = " + Math.abs(0 - dificultad_nivel[11]) * 0.05);
-				resultados [11] = Math.abs(0 - dificultad_nivel[11]) * 0.05;
+				posicion = posicion + 1;
+				
+				
+				//si la ponderacion llega hasta 0 dejamos de decrementarla 
+				if (ponderacion_restante_s_t <= 0.0)
+				{
+					ponderacion_restante_s_t = 0.0;
+				}
+				
+				//si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero
+				if(distancia_esperada_s_t >= ((f * c) - celdas_Paredes))
+				{
+					distancia_esperada_s_t = (f * c) - celdas_Paredes;
+				}
+				
+				
+				if (s_tesoros <  posicion_tesoros.size())
+				{
+					System.out.println("Area de seguridad " + (s_tesoros + 1) + " tesoro |" + area_puerta_T[s_tesoros] + " - " + distancia_esperada_s_t + "| * " + ponderacion_restante_s_t + " = " +  Math.abs(area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
+					resultados [posicion] = Math.abs(area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t;
+				}
+				else
+				{
+					System.out.println("Area de seguridad " + (s_tesoros + 1) + " tesoro |" + "cero" + " - " + distancia_esperada_s_t + "| * " + ponderacion_restante_s_t + " = " +  Math.abs(0 - distancia_esperada_s_t) * ponderacion_restante_s_t);
+					resultados [posicion] = Math.abs(0 - distancia_esperada_s_t) * ponderacion_restante_s_t;
+				}
+				
+				//si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+				if(s_tesoros < (Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)) - 2))
+				{
+					ponderacion_restante_s_t = ponderacion_restante_s_t - (ponderacion_restante_s_t * 0.5);
+				}
+				
+				//se incrementa la distancia a la que se espera el siguiente tesoro
+				distancia_esperada_s_t = Math.round(distancia_esperada_s_t + (0.5 * distancia_esperada_s_t)); 
+				
 			}
 			
-			
+			//posicion = posicion; //para sumarle uno a la ultima vuelta y tener la posicion para ponerla en la siguiente
 			System.out.println(" ");
 			
 			
 			//Seguridad tesoros con los monstruos ----------------------------------------------
-		
 			
-			if (posicion_tesoros.size() >= 1)
+			//inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+			double ponderacion_restante_s_t_m = ponderaciones_nivel[4] * 0.5;
+			double distancia_esperada_s_t_m = Math.round(((f * c) - celdas_Paredes) * dificultad_nivel[4]);
+			for (int s_tes_mons = 0; s_tes_mons < Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)); s_tes_mons++)
 			{
-				System.out.println("Seguridad 1er tesoro |" + dungeon[area_T_posicion.get(0).fila][area_T_posicion.get(0).columna].distancia_seguridad_M + " - " + dificultad_nivel[12] + "| * " + "0.05" + " = " +  Math.abs(dungeon[area_T_posicion.get(0).fila][area_T_posicion.get(0).columna].distancia_seguridad_M - dificultad_nivel[12]) * 0.05);
-				resultados [12] = Math.abs(area_T_posicion.get(0).distancia_seguridad_M - dificultad_nivel[12]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Seguridad 1er tesoro |" + "cero" + " - " + dificultad_nivel[12] + "| * " + "0.05" + " = " + Math.abs(0 - dificultad_nivel[12]) * 0.05);
-				resultados [12] = Math.abs(0 - dificultad_nivel[12]) * 0.05;
+				
+				posicion = posicion + 1;
+				
+				//si la ponderacion llega hasta 0 dejamos de decrementarla 
+				if (ponderacion_restante_s_t_m <= 0.0)
+				{
+					ponderacion_restante_s_t_m = 0.0;
+				}
+				
+				//si la distancia esperada a la que se debe encontrar el monstruo es inferior o igual a 1 lo igualamos a 1 (distancia minima a la que puede estar un monstruo de un tesoro)
+				if (distancia_esperada_s_t_m <= 1)
+				{
+					distancia_esperada_s_t_m = 1;
+				}
+				
+				
+				if (s_tes_mons <  posicion_tesoros.size())
+				{		
+					System.out.println("Seguridad " + (s_tes_mons + 1) + " tesoro |" + area_T_posicion.get(s_tes_mons).distancia_seguridad_M + " - " + distancia_esperada_s_t_m + "| * " + ponderacion_restante_s_t_m + " = " + Math.abs(area_T_posicion.get(s_tes_mons).distancia_seguridad_M - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m);
+					resultados [posicion] = Math.abs(area_T_posicion.get(s_tes_mons).distancia_seguridad_M - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m;
+				}
+				else
+				{
+					System.out.println("Seguridad " + (s_tes_mons + 1) + " tesoro |" + "cero" + " - " + distancia_esperada_s_t_m + "| * " + ponderacion_restante_s_t_m + " = " +  Math.abs(0 - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m);
+					resultados [posicion] = Math.abs(0 - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m;
+				}
+				
+				//si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+				if(s_tes_mons < (Math.round(dificultad_nivel[1] * ((f * c) - celdas_Paredes)) - 2))
+				{
+					ponderacion_restante_s_t_m = ponderacion_restante_s_t_m - (ponderacion_restante_s_t_m * 0.5);
+					
+					
+					
+					//System.out.println("distancia_esp = " + distancia);
+				}
+				
+				//se decrementa la distancia a la que se espera el monstruo del tesoro
+				distancia_esperada_s_t_m = Math.round(distancia_esperada_s_t_m - (0.25 * distancia_esperada_s_t_m)); 
+				
 			}
 			
-			if (posicion_tesoros.size() >= 2)
-			{
-				System.out.println("Seguridad 2do tesoro |" + area_T_posicion.get(1).distancia_seguridad_M + " - " + dificultad_nivel[13] + "| * " + "0.05" + " = " + Math.abs(area_T_posicion.get(1).distancia_seguridad_M - dificultad_nivel[13]) * 0.05);
-				resultados [13] = Math.abs(area_T_posicion.get(1).distancia_seguridad_M - dificultad_nivel[13]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Seguridad 2do tesoro |" + "cero" + " - " + dificultad_nivel[13] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[13]) * 0.05);
-				resultados [13] = Math.abs(0 - dificultad_nivel[13]) * 0.05;
-			}
+			System.out.println(" ");
 			
-			if (posicion_tesoros.size() >= 3)
-			{
-				System.out.println("Seguridad 3ro tesoro |" + area_T_posicion.get(2).distancia_seguridad_M + " - " + dificultad_nivel[14] + "| * " + "0.05" + " = " + Math.abs(area_T_posicion.get(2).distancia_seguridad_M - dificultad_nivel[14]) * 0.05);
-				resultados [14] = Math.abs(area_T_posicion.get(2).distancia_seguridad_M - dificultad_nivel[14]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Seguridad 3ro tesoro |" + "cero" + " - " + dificultad_nivel[14] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[14]) * 0.05);
-				resultados [14] = Math.abs(0 - dificultad_nivel[14]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 4)
-			{
-				System.out.println("Seguridad 4to tesoro |" + area_T_posicion.get(3).distancia_seguridad_M + " - " + dificultad_nivel[15] + "| * " + "0.05" + " = " +  Math.abs(area_T_posicion.get(3).distancia_seguridad_M - dificultad_nivel[15]) * 0.05);
-				resultados [15] = Math.abs(area_T_posicion.get(3).distancia_seguridad_M - dificultad_nivel[15]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Seguridad 4to tesoro |" + "cero" + " - " + dificultad_nivel[15] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[15]) * 0.05);
-				resultados [15] = Math.abs(0 - dificultad_nivel[15]) * 0.05;
-			}
-			
-			if (posicion_tesoros.size() >= 5)
-			{
-				System.out.println("Seguridad 5to tesoro |" + area_T_posicion.get(4).distancia_seguridad_M + " - " + dificultad_nivel[16] + "| * " + "0.05" + " = " +  Math.abs(area_T_posicion.get(4).distancia_seguridad_M - dificultad_nivel[16]) * 0.05);
-				resultados [16] = Math.abs(area_T_posicion.get(4).distancia_seguridad_M - dificultad_nivel[16]) * 0.05;
-			}
-			else
-			{
-				System.out.println("Seguridad 5to tesoro |" + "cero" + " - " + dificultad_nivel[16] + "| * " + "0.05" + " = " +  Math.abs(0 - dificultad_nivel[16]) * 0.05);
-				resultados [16] = Math.abs(0 - dificultad_nivel[16]) * 0.05;
-			}
 			
 			//se suman todos los resultados para almacenar el fitness resultante
 			for(int num_resultados = 0; num_resultados < resultados.length; num_resultados++)
 			{
+				//System.out.println("RESULTADO " + num_resultados + ": " + resultados[num_resultados]);
 				fitness = fitness +  resultados[num_resultados];
 			}
 			
@@ -2556,6 +2545,8 @@ public class Dungeon
 		System.out.println("-------------");
 		System.out.println("Numero de monstruos: " + numero_monstruos);
 		System.out.println("Numero de tesoros  : " + numero_tesoros);
+		System.out.println("Numero de celdas Pared  : " + celdas_Paredes);
+		System.out.println("Numero de celdas Libres  : " + ((f*c) - celdas_Paredes));
 		System.out.println("-------------");
 		
 		/*
