@@ -887,13 +887,17 @@ public class EvPopulation
 		return Descendientes; //Devolvemos a los hijos descendientes
 	}
 	
-	
+	/**
+	 * Funcion que comprueba si esta evolucionando la poblacion o esta empeorando, si es asi, para la ejecucion
+	 * @param Poblacion_ Poblacion a comprobar para ver si esta mejorando
+	 * @return Devuelve true si no evoluciona mas la poblacion o ha encontrado al individuo idoneo
+	 */
 	public boolean converge(ArrayList<Dungeon> Poblacion_) 
 	{		
 		
 		
 		//Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
-		if(contador_iteraciones < 100 && !stop )
+		if(contador_iteraciones < 10 && !stop )
 		{
 			
 			//si estamos en la primera evolucion, reseteamos el fitness del individuo de parada para que se iguale bien con el mejor de la poblacion
@@ -988,29 +992,29 @@ public class EvPopulation
 		
 		for(int j= 0; j<Poblacion_.size(); j++)
 		{
-			pintar_individuo(Poblacion_.get(j), Poblacion_);
+			pintar_individuo(j, Poblacion_);
 		}
 	}
 	
 	
 	/**
 	 * Funcion que pinta a un individuo
-	 * @param Individuo
-	 * @param Poblacion_
+	 * @param Individuo Posicion en la que se encuentra el individuo en la poblacion
+	 * @param Poblacion_ Poblacion de individuos
 	 */
-	public void pintar_individuo(Dungeon Individuo, ArrayList<Dungeon> Poblacion_)
+	public void pintar_individuo(int Individuo, ArrayList<Dungeon> Poblacion_)
 	{
 		//Recorro la poblacion
 		for(int j= 0; j<Poblacion_.size(); j++)
 		{
-			//Compruebo que individuo es de la poblacion para pintar en que posicion se encuentra
-			if(Individuo == Poblacion_.get(j))
+			//si j coincide con la posicion en la que se encuentra el individuo pintamos dicho individuo
+			if(j == Individuo)
 			{
 				System.out.println(" ");
 				System.out.println(" ");
 				System.out.println("-----------------------");
 				System.out.println("Individuo " + j );
-				Individuo.pintar();
+				Poblacion_.get(Individuo).pintar();
 				
 			}
 			
