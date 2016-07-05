@@ -156,11 +156,9 @@ public class main
 		
 		
 		//LOG	
-		System.out.print("POBLACION ACTUAL: " + "\n");
-
 		System.out.print("\n");
 		System.out.print("----------------------------------------------------\n");
-		System.out.print("                     POBLACION                      \n");
+		System.out.print("               POBLACION  INICIAL                   \n");
 		System.out.print("----------------------------------------------------\n");
 		for (int i= 0; i < Poblacion.size(); i++)
 		{
@@ -346,16 +344,9 @@ public class main
 		}
 		System.out.print("----------------------------------------------------\n");
 		System.out.print("\n");
-		
-		System.out.print("----------------------------------------------------\n");
-		
-		System.out.println("Individuo_parada fitness: " + evopopulation.individuo_parada.fitness);
-		System.out.println("Individuo_parada_copia fitness: " + evopopulation.individuo_parada_copia.fitness);
-		
-		System.out.print("----------------------------------------------------\n");
+			
 		
 		
-		/*
 		System.out.println("");
 		System.out.println("-------------------------------------------------------");
 		System.out.println("                POBLACION VALIDOS                      ");
@@ -371,7 +362,12 @@ public class main
 		System.out.println("-------------------------------------------------------");
 		
 		//Pinta la poblacion de no validos ************************************************************************
-		evopopulation.pintar_poblacion(evopopulation.Poblacion_noValidos);
+		evopopulation.pintar_poblacion(Poblacion_No_Validos);
+		
+		
+		//se mira a ver cuantos individuos hay en cada poblacion
+		Validos = Poblacion.size();
+		No_validos = Poblacion_No_Validos.size();
 		
 		
 		System.out.println("");
@@ -379,10 +375,17 @@ public class main
 		System.out.println("-------------------------------------------------------");
 		System.out.println("-------------------------------------------------------");
 		System.out.println("");
-		System.out.println("Individuos validos   : " + evopopulation.Validos);
-		System.out.println("Individuos NO validos: " + evopopulation.No_validos);
+		System.out.println("Individuos validos   : " + Validos);
+		System.out.println("Individuos NO validos: " + No_validos);
 
-		*/
+		
+		System.out.print("----------------------------------------------------\n");
+		
+		System.out.println("Mejor individuo de la poblacion");
+		
+		evopopulation.individuo_parada.pintar();
+		
+		System.out.print("----------------------------------------------------\n");
 		
 
 		/*
