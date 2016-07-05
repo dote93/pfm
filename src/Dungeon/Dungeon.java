@@ -34,6 +34,8 @@ public class Dungeon
 	public int numero_monstruos = 0; 
 	public int numero_tesoros = 0; 
 	
+	public int numero_puertas = 0;
+	
 	public int celdas_Paredes = 0; //variable para saber cuantas paredes se han colocado en el mapa
 	
 	public int celdas_Vacias = 0; //variable para saber cuantas celdas vacias se han colocado en el mapa
@@ -109,7 +111,7 @@ public class Dungeon
 	/** 
      *	Constructor de Dungeon
      */
-	public Dungeon(int _f, int _c, int numero_monstruos_, int numero_tesoros_,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas, int porcentaje_, int porcentaje_paredes_, int tipo_celdas_, double [] _dificultad_nivel, double [] _ponderaciones_nivel)
+	public Dungeon(int _f, int _c, int numero_monstruos_, int numero_tesoros_,ArrayList<int[]> pos_puertas, ArrayList<Tipo_puertas> t_puertas , int numero_puertas_, int porcentaje_, int porcentaje_paredes_, int tipo_celdas_, double [] _dificultad_nivel, double [] _ponderaciones_nivel)
 	{
 		//Se igualan las dimensiones del dungeon
 		f= _f;
@@ -139,9 +141,11 @@ public class Dungeon
 		//SE ANADEN LOS OBJETOS AL MAPA***************************
 		
 		
+		numero_puertas = numero_puertas_;
+		
 		//Se anaden las puertas al mapa
 		//anadir_puertas_posicion(pos_puertas, t_puertas, numero_puertas);
-		anadir_puertas(t_puertas, numero_puertas);
+		anadir_puertas(t_puertas, numero_puertas_);
 		
 		
 		
@@ -403,6 +407,56 @@ public class Dungeon
 		
 		}
 		//System.out.println("He terminado");
+	}
+	
+	/**
+	 * Funcion que revisa si el genotipo de la celda coincide con el genotipo global del mapa
+	 */
+	public void revisar_genotipo()
+	{
+		
+		//Variables para saber en que celda me encuentro y para poder calcular asi la posicion en la que me encuentro del genotipo
+		int contador_celda = 0;
+		int posicion = 0;
+		
+		//reseteo la variable de celdas pared para saber cuantas se han colocado al final al igual que de las celdas en blanco
+		celdas_Paredes = 0;
+		celdas_Vacias = 0;
+		
+		
+		Celda celda; //variable para modificar el genotipo de la celda con respecto al genotipo modificado del dungeon
+		
+		System.out.println("tipo_celdas: " + tipo_celdas);
+		
+		for(int i = 0; i < dungeon.length; i++)
+		{
+			for(int j = 0; j < dungeon[i].length; j++)
+			{
+				//Para cada bit del genotipo de cada celda
+				for(int n_tipo_celdas = 0; n_tipo_celdas < tipo_celdas; n_tipo_celdas++)
+				{
+					//posicion del array del genotipo donde se tiene que guardar cada bit
+					posicion = (contador_celda * tipo_celdas) + n_tipo_celdas;
+					
+						dungeon[i][j].genotipo_celda[n_tipo_celdas] = genotipo[posicion];
+				}
+				
+				if(dungeon[i][j].genotipo_celda[0] == 0 && dungeon[i][j].genotipo_celda[1] == 0 && dungeon[i][j].genotipo_celda[2] == 0)
+				{
+					celdas_Vacias++;
+				}
+				
+				else if(dungeon[i][j].genotipo_celda[0] == 1 && dungeon[i][j].genotipo_celda[1] == 1 && dungeon[i][j].genotipo_celda[2] == 1)
+				{
+					celdas_Paredes++;
+				}
+				
+			
+				//Incremento el contador de la celda
+				contador_celda++;
+			}
+			
+		}
 	}
 	
 

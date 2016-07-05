@@ -123,9 +123,22 @@ public class main
 		//Inicializo la poblacion*********************************************************************
 		Poblacion = evopopulation.populationInitialization(f, c, numero_poblacion, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		
-
 		
-	
+		//se seleccionan 2 individuos para luego reemplazar el peor del reemplazo con el mejor de los seleccionados
+		ArrayList<Dungeon> Seleccionados = evopopulation.selection(Poblacion, 2);
+		
+		//se cruzan los dos seleccionados para crear la nueva generacion
+		ArrayList<Dungeon> Descendientes = evopopulation.crossover(Seleccionados);
+		
+		/*
+		//Se reemplaza el peor individuo seleccionado con el mejor de la seleccion
+		Poblacion = evopopulation.replacement(Poblacion, Descendientes);
+		
+		
+		Poblacion = evopopulation.mutation(Poblacion);
+		*/
+		
+		/*
 		System.out.println("");
 		System.out.println("-------------------------------------------------------");
 		System.out.println("                POBLACION VALIDOS                      ");
@@ -152,7 +165,7 @@ public class main
 		System.out.println("Individuos validos   : " + evopopulation.Validos);
 		System.out.println("Individuos NO validos: " + evopopulation.No_validos);
 
-	
+		*/
 		
 
 		/*
