@@ -424,10 +424,6 @@ public class Dungeon
 		celdas_Vacias = 0;
 		
 		
-		Celda celda; //variable para modificar el genotipo de la celda con respecto al genotipo modificado del dungeon
-		
-		System.out.println("tipo_celdas: " + tipo_celdas);
-		
 		for(int i = 0; i < dungeon.length; i++)
 		{
 			for(int j = 0; j < dungeon[i].length; j++)
