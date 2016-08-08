@@ -2175,7 +2175,7 @@ public class Dungeon
 			for(int tesoro= 0; tesoro < numero_tesoros; tesoro++)
 			{
 				fitness_por_partes[0] = fitness_por_partes[0] + fitness_tesoros[tesoro];
-				System.out.println("Fitness tesoro "+ posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ": " + posicion_tesoros.get(tesoro).distancia_seguridad_M);
+				System.out.println("Fitness tesoro " + posicion_tesoros.get(tesoro).fila + " " + posicion_tesoros.get(tesoro).columna + ": " + posicion_tesoros.get(tesoro).distancia_seguridad_M);
 			}
 			System.out.println(" ");
 			
@@ -2537,6 +2537,12 @@ public class Dungeon
 			}
 		}
 		
+	}
+	
+	
+	public void set_fitness(int fitness_modificado)
+	{
+		fitness = fitness_modificado;
 	}
 	
 	/** 

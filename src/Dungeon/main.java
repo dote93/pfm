@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import com.sun.org.apache.xml.internal.security.signature.InvalidDigestValueException;
+
 import Dungeon.Celda.Tipo_puertas;
 
 
@@ -96,7 +98,7 @@ public class main
 				0.04,  //numero de tesoros           4% de tesoros
 				0.20, //area segura 1er monstruo    20% de las celdas libres para el 1er monstruo
 				0.15, //area segura 1er tesoro      15% de las celdas libres para el 1er tesoro
-				0.10, //seguridad 1er tesoro         5% de las celdas libres de distancia entre el monstruo y el 1er tesoro
+				0.10, //seguridad 1er tesoro         10% de las celdas libres de distancia entre el monstruo y el 1er tesoro
 		};
 		
 		//variable que va a guardar las ponderaciones que vamos a establecer (a que variables vamos a querer dar mas importancia
@@ -303,7 +305,6 @@ public class main
 					Poblacion.remove(i);
 				}
 				
-				
 			}
 			
 			/*
@@ -314,6 +315,24 @@ public class main
 			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 			*/
 			
+			for (int i= 0; i < Poblacion.size(); i++)
+			{
+				if(Poblacion.get(i).fitness == -100)
+				{
+					Poblacion_No_Validos.add(Poblacion.get(i));
+					Poblacion.remove(i);
+				}
+				
+				
+			}
+			
+			//si estamos en la primera iteracion, se anaden dos posiciones a la lista de individuos de parada siendo temporalmente el primer individuo de la poblacion
+			if(evopopulation.contador_iteraciones == 0)
+			{
+				evopopulation.Individuos_parada.add(Poblacion.get(0));
+				evopopulation.Individuos_parada.add(Poblacion.get(0));
+			}
+			
 			//se comprueba si la poblacion esta evolucionando o no
 			parada = evopopulation.converge(Poblacion);	
 			
@@ -322,31 +341,8 @@ public class main
 		}
 		while(!parada);
 		
-		System.out.println("Salgo en la iteracion: " + contador);
 		
-		
-		System.out.print("\n");
-		System.out.print("----------------------------------------------------\n");
-		System.out.print("                  POBLACION FINAL                   \n");
-		System.out.print("----------------------------------------------------\n");
-		for (int i= 0; i < Poblacion.size(); i++)
-		{
-			for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
-			{
 				
-				System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
-			}
-			
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion.get(i).fitness);
-			System.out.println("");
-			
-		}
-		System.out.print("----------------------------------------------------\n");
-		System.out.print("\n");
-			
-		
-		
 		System.out.println("");
 		System.out.println("-------------------------------------------------------");
 		System.out.println("                POBLACION VALIDOS                      ");
@@ -380,13 +376,45 @@ public class main
 
 		
 		System.out.print("----------------------------------------------------\n");
+		System.out.print("----------------------------------------------------\n");
+		
+		
+		System.out.print("\n");
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("                  POBLACION FINAL                   \n");
+		System.out.print("----------------------------------------------------\n");
+		for (int i= 0; i < Poblacion.size(); i++)
+		{
+			for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
+			{
+				
+				System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
+			}
+			
+			System.out.println("");
+			System.out.println("Fitness: " + Poblacion.get(i).fitness);
+			System.out.println("");
+			
+		}
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("\n");
+		
+		
+		System.out.println("Salgo en la iteracion: " + contador);
+		System.out.println("Motivo: " + evopopulation.motivo);
 		
 		System.out.println("Mejor individuo de la poblacion");
 		
-		evopopulation.individuo_parada.pintar();
+		if (evopopulation.Individuos_parada.get(0).fitness == -100)
+		{
+			System.out.println("HA HABIDO UN ERROR");
+		}
+		
+		
+		evopopulation.Individuos_parada.get(0).pintar();
 		
 		System.out.print("----------------------------------------------------\n");
-		
+		System.out.print("----------------------------------------------------\n");
 
 		/*
 		//Pinta un individuo**************************************************************************

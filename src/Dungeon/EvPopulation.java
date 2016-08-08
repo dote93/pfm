@@ -37,6 +37,10 @@ public class EvPopulation
 	public int contador_iteraciones = 0;
 	public boolean stop = false;
 	
+	public int motivo;
+	
+	public ArrayList<Dungeon> Individuos_parada = new ArrayList<Dungeon>();
+	
 	
 	/**
 	 * Constructor de EvPopulation
@@ -65,7 +69,6 @@ public class EvPopulation
 		
 		individuo_parada = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
-		
 		
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
@@ -637,8 +640,11 @@ public class EvPopulation
 			
 			//modificamos el fitness del individuo y recalculamos el resto de parametros
 			individuo_mutado.revisar_genotipo();
+			individuo_mutado.posicion_monstruos = new ArrayList<Celda>();
+			individuo_mutado.posicion_tesoros = new ArrayList<Celda>();
 			individuo_mutado.numero_tesoros = individuo_mutado.comprobar_tesoros();
 			individuo_mutado.numero_monstruos = individuo_mutado.comprobar_monstruos();
+			individuo_mutado.ResetearDungeonCamino();
 			individuo_mutado.generateDungeon(0,0);
 			individuo_mutado.calcularfitness(individuo_mutado.numero_puertas);
 			
@@ -803,8 +809,11 @@ public class EvPopulation
 		
 		//se calculan el resto de cosas del individuo para luego almacenarlo en descendientes
 		individuo.revisar_genotipo();
+		individuo.posicion_monstruos = new ArrayList<Celda>();;
+		individuo.posicion_tesoros = new ArrayList<Celda>();;
 		individuo.numero_tesoros = individuo.comprobar_tesoros();
 		individuo.numero_monstruos = individuo.comprobar_monstruos();
+		individuo.ResetearDungeonCamino();
 		individuo.generateDungeon(0,0);
 		individuo.calcularfitness(individuo.numero_puertas);
 		
@@ -832,8 +841,11 @@ public class EvPopulation
 		
 		//se calculan el resto de cosas del individuo para luego almacenarlo en descendientes
 		individuo.revisar_genotipo();
+		individuo.posicion_monstruos = new ArrayList<Celda>();;
+		individuo.posicion_tesoros = new ArrayList<Celda>();;
 		individuo.numero_tesoros = individuo.comprobar_tesoros();
 		individuo.numero_monstruos = individuo.comprobar_monstruos();
+		individuo.ResetearDungeonCamino();
 		individuo.generateDungeon(0,0);
 		individuo.calcularfitness(individuo.numero_puertas);
 		
@@ -895,87 +907,124 @@ public class EvPopulation
 	public boolean converge(ArrayList<Dungeon> Poblacion_) 
 	{		
 		
-		
+
 		//Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
-		if(contador_iteraciones < 10 && !stop )
+		
+		if( contador_iteraciones < 100)
 		{
-			
-			//si estamos en la primera evolucion, reseteamos el fitness del individuo de parada para que se iguale bien con el mejor de la poblacion
-			if(contador_iteraciones == 0)
+			//si estamos en la primera iteracion, debido a que no hay ningun individuo de parada guardado se inicializan las variables a individuos con un mal fitness
+			if (contador_iteraciones == 0)
 			{
-				individuo_parada.fitness = 100;
+
+				individuo_parada.set_fitness(3000);
+
+				//se modifica el individuo temporal con un fitness malo para que luego se reemplace
+				Individuos_parada.set(0, individuo_parada);		
+				
+				
+				//se anade el individuo de parada modificado con un mal fitness
+				Individuos_parada.set(1, Individuos_parada.get(0));
+				
+				
+				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
+				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
+				
 			}
 			
-			//guardamos la copia del mejor individuo de la poblacion
-			individuo_parada_copia = individuo_parada;
-			
+			//si ya hemos dado la primera iteracion, entonces el individuo de parada va a ser el individuo de la anterior iteracion
+			else
+			{
+				//se pone el individuo de la anterior iteracion en el individuo temporal (una copia, el de la anterior iteracion no se toca)
+				Individuos_parada.set(0, Individuos_parada.get(1));		
+				
+				
+				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
+				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
+			}
 			
 			
 			
 			//Recorremos la poblacion
 			for(int i = 0 ; i < Poblacion_.size() ; i++)
 			{
+				
 				//se guarda al mejor individuo sin que sea nulo
-				if((Poblacion_.get(i).fitness < individuo_parada.fitness) && (Poblacion_.get(i).fitness > -100))
+				if((Poblacion_.get(i).fitness < Individuos_parada.get(0).fitness) && (Poblacion_.get(i).fitness >= 0))
 				{
-					individuo_parada = Poblacion_.get(i); //guardamos al mejor individuo de la poblacion
-					
-					/*
-					System.out.print("Fitness del mejor: " + individuo_parada.fitness);
-					*/
+					Individuos_parada.set(0, Poblacion_.get(i));
+					//individuo_parada = Poblacion_.get(i); //guardamos al mejor individuo de la poblacion
 					
 				}
 			}			
 			
-			
 			//Si el individuo que hemos guardado como el mejor de la poblacion no es mejor al individuo que hemos guardado en la anterior iteracion, paramos
-			if(individuo_parada.fitness > individuo_parada_copia.fitness)
+			if(Individuos_parada.get(0).fitness > Individuos_parada.get(1).fitness && (Individuos_parada.get(1).fitness >= 0))
 			{
-				//guardamos el individuo de la anterior iteracion en el individuo_parada ya que este va a ser el individuo que luego usaremos
-				individuo_parada = individuo_parada_copia;
+				//guardamos el individuo de la anterior iteracion en el individuo_parada ya que este va a ser el individuo que luego usaremos	
 				
-				
-				stop = true;
-				/*
-				System.out.print("El mejor individuo es peor que el guardado\n");
-				*/
-				
-			}
-			
-			
-			//Si el individuo parada es mejor que el individuo que hemos copiado anteriormente, entonces lo guardamos como el individuo copia
-			if (individuo_parada.fitness < individuo_parada_copia.fitness)
-			{
-				/*
-				System.out.println("ENTRO AQUI");
-				*/
-				individuo_parada_copia = individuo_parada;
-				//contador_iteraciones = 0;
-				
-			}
-			
-			//Si el mejor individuo de la poblacion es igual al individuo que hemos copiado anteriormente incrementamos un contador
-			if (individuo_parada.fitness == individuo_parada_copia.fitness)
-			{
-				contador_iteraciones++; 
-			}
-			
-			//si el individuo que hemos conseguido es el idóneo paramos
-			if(individuo_parada.fitness == 0)
-			{
+				motivo = 0;
 				
 				stop = true;
 				
-				System.out.print("El fitness es igual a 0\n");
 			}
 			
+			else
+			{	
+			
+				//Si el individuo parada es mejor que el individuo que hemos copiado anteriormente, entonces lo guardamos como el individuo copia
+				if ((Individuos_parada.get(0).fitness < Individuos_parada.get(1).fitness) && (Individuos_parada.get(0).fitness >= 0))
+				{
+					
+					Individuos_parada.set(1, Individuos_parada.get(0));
+					
+				}
+				
+				
+				//si el individuo que hemos conseguido es el idóneo paramos
+				if(Individuos_parada.get(0).fitness == 0.0)
+				{
+					
+					Individuos_parada.set(1, Individuos_parada.get(0));
+					
+					motivo = 1;				
+					stop = true;
+					
+				}
 		
+			}
+			
 			contador_iteraciones++; 
 		}
 		
 		else
 		{
 			
+			if (Individuos_parada.get(1).fitness == -100)
+			{
+				Individuos_parada.get(0).fitness = 6000;
+				
+				
+				//Recorremos la poblacion
+				for(int i = 0 ; i < Poblacion_.size() ; i++)
+				{
+
+					//se guarda al mejor individuo sin que sea nulo
+					if((Poblacion_.get(i).fitness < Individuos_parada.get(0).fitness) && (Poblacion_.get(i).fitness >= 0))
+					{
+						Individuos_parada.set(0, Poblacion_.get(i));
+					
+					}
+				}	
+			}
+			
+			//si el individuo de la anterior iteracion no tiene un fitness negativo, ponemos que el mejor individuo es el de la anterior iteracion
+			else
+			{
+				Individuos_parada.set(0, Individuos_parada.get(1));
+			}
+			
+			
+			motivo = 2;
 			stop = true;
 		}
 		
