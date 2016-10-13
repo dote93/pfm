@@ -2,10 +2,8 @@
 package Dungeon;
 
 import java.util.ArrayList;
-import java.util.Random;
+//import java.util.Random;
 import java.util.Scanner;
-
-import com.sun.org.apache.xml.internal.security.signature.InvalidDigestValueException;
 
 import Dungeon.Celda.Tipo_puertas;
 
@@ -124,9 +122,25 @@ public class main
 		double [] ponderaciones_nivel_facil_s_tesoros = ponderaciones_facil_s_tesoros;
 		*/
 		
+		
+		boolean parada = false;
+		
+		evopopulation.contador_iteraciones = 0;
+		evopopulation.stop = false;
+		int contador = 0;
+		
+		ArrayList<Dungeon> Seleccionados = null;
+		ArrayList<Dungeon> Descendientes = null;
+		
+		
+		evopopulation.mutaciones = 0;
+		
+		int individuos_eliminados = 0;
+		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
+		
 		
 		ArrayList<Dungeon> Poblacion_provisional = new ArrayList<Dungeon>();
 		
@@ -154,6 +168,9 @@ public class main
 			}
 		}
 		
+		//Reseteamos la poblacion provisional y la volvemso a inicializar
+		Poblacion_provisional = null;
+		Poblacion_provisional = new ArrayList<Dungeon>();
 		
 		
 		
@@ -179,168 +196,252 @@ public class main
 		System.out.print("\n");
 		
 		
-		boolean parada = false;
 		
-		evopopulation.contador_iteraciones = 0;
-		evopopulation.stop = false;
-		int contador = 0;
-		
-		ArrayList<Dungeon> Seleccionados = null;
-		ArrayList<Dungeon> Descendientes = null;
-		
-		Poblacion_provisional = null;
-		Poblacion_provisional = new ArrayList<Dungeon>();
-		
-		do
+		//si estamos en la primera iteracion, se anaden dos posiciones a la lista de individuos de parada siendo temporalmente el primer individuo de la poblacion
+		if(evopopulation.contador_iteraciones == 0)
 		{
-			//LOG	
-			System.out.print("POBLACION ACTUAL: " + "\n");
+			evopopulation.Individuos_parada.add(Poblacion.get(0));
+			evopopulation.Individuos_parada.add(Poblacion.get(0));
+		}
+		
+		//se comprueba si se encuentra el mejor individuo entre la poblacion que hemos inicializado, si no es asi, se empieza a evolucionar
+		if (!evopopulation.converge(Poblacion))
+		{
 
-			System.out.print("\n");
-			System.out.print("----------------------------------------------------\n");
-			System.out.print("                     POBLACION                      \n");
-			System.out.print("----------------------------------------------------\n");
-			for (int i= 0; i < Poblacion.size(); i++)
+		
+		
+			do
 			{
-				for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
+				//LOG	
+				System.out.print("\n");
+				System.out.print("----------------------------------------------------\n");
+				System.out.print("                  POBLACION ACTUAL                  \n");
+				System.out.print("----------------------------------------------------\n");
+				for (int i= 0; i < Poblacion.size(); i++)
 				{
+					for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
+					{
+						
+						System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
+					}
 					
-					System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
+					System.out.println("");
+					System.out.println("Fitness: " + Poblacion.get(i).fitness);
+					System.out.println("");
+					
 				}
+				System.out.print("----------------------------------------------------\n");
+				System.out.print("\n");
 				
-				System.out.println("");
-				System.out.println("Fitness: " + Poblacion.get(i).fitness);
-				System.out.println("");
-				
-			}
-			System.out.print("----------------------------------------------------\n");
-			System.out.print("\n");
 			
-		
-			//Antes de seleccionar a cualquier individuo, primero se transladan los individuos con fitness -100 a la poblacion de no validos
-			
-			for (int i= 0; i < Poblacion.size(); i++)
-			{
-				if(Poblacion.get(i).fitness == -100)
+				//Antes de seleccionar a cualquier individuo, primero se transladan los individuos con fitness -100 a la poblacion de no validos
+				for (int i= 0; i < Poblacion.size(); i++)
 				{
-					Poblacion_No_Validos.add(Poblacion.get(i));
-					Poblacion.remove(i);
+					if(Poblacion.get(i).fitness < 0)
+					{
+						Poblacion_No_Validos.add(Poblacion.get(i));
+						Poblacion.remove(i);
+						individuos_eliminados++;
+						
+					}
+				
+				}
+				
+				//System.out.println("INDIVIDUOS ELIMINADOS 01: " + individuos_eliminados);
+				
+				individuos_eliminados = 0;
+				
+				
+				
+				
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("/////////////////////////////Seleccion//////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				if (Poblacion.size() >= 2)
+				{
+					//se seleccionan 2 individuos para luego reemplazar el peor del reemplazo con el mejor de los seleccionados
+					Seleccionados = evopopulation.selection(Poblacion, 2);
+				}
+			
+				
+				
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("/////////////////////////////Descendientes//////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				
+				if (Poblacion.size() >= 2)
+				{
+					//se cruzan los dos seleccionados para crear la nueva generacion
+					Descendientes = evopopulation.crossover(Seleccionados);
 				}
 				
 				
-			}
-			/*
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/////////////////////////////Seleccion//////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			*/
-			if (Poblacion.size() > 2)
-			{
-				//se seleccionan 2 individuos para luego reemplazar el peor del reemplazo con el mejor de los seleccionados
-				Seleccionados = evopopulation.selection(Poblacion, 2);
-			}
-		
+				//Se comprueba que los descendienetes no sean nulos (-100), si es así, se eliminan de descendientes
+				for(int num_descendiente = 0; num_descendiente < Descendientes.size(); num_descendiente++)
+				{
+					if(Descendientes.get(num_descendiente).fitness < 0)
+					{
+						System.out.println("");
+						System.out.println("Fitness descendiente MALO: " + Descendientes.get(num_descendiente).fitness);
+						System.out.println("");
+						Descendientes.remove(num_descendiente);
+					}
+				}
+				
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("/////////////////////////////Reemplazo//////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				if (Poblacion.size() >= 2)
+				{
+					//Se reemplaza el peor individuo seleccionado con el mejor de la seleccion
+					Poblacion = evopopulation.replacement(Poblacion, Descendientes);
+					//evopopulation.Poblacion = Poblacion;
+				}	
+				
+				
+				for (int i= 0; i < Poblacion.size(); i++)
+				{
+					if(Poblacion.get(i).fitness < 0)
+					{
+						Poblacion_No_Validos.add(Poblacion.get(i));
+						Poblacion.remove(i);
+						individuos_eliminados++;
+					}
+					
+					
+				}
+				
+				//System.out.println("INDIVIDUOS ELIMINADOS 02: " + individuos_eliminados);
+				
+				individuos_eliminados = 0;
+				
+				
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("/////////////////////////////Mutacion///////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				
+				
+				if (Poblacion.size() >= 2)
+				{
 	
-			/*
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/////////////////////////////Descendientes//////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			*/
-			
-			if (Poblacion.size() > 2)
-			{
-				//se cruzan los dos seleccionados para crear la nueva generacion
-				Descendientes = evopopulation.crossover(Seleccionados);
-			}
-			
-			/*
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/////////////////////////////Reemplazo//////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			*/
-			if (Poblacion.size() > 2)
-			{
-				//Se reemplaza el peor individuo seleccionado con el mejor de la seleccion
-				Poblacion = evopopulation.replacement(Poblacion, Descendientes);
-				evopopulation.Poblacion = Poblacion;
-			}	
-			
-			
-			for (int i= 0; i < Poblacion.size(); i++)
-			{
-				if(Poblacion.get(i).fitness == -100)
-				{
-					Poblacion_No_Validos.add(Poblacion.get(i));
-					Poblacion.remove(i);
+					//se muta aleatoriamente un individuo on un 5%
+					Poblacion = evopopulation.mutation(Poblacion);
+					//evopopulation.Poblacion = Poblacion;
 				}
 				
-				
-			}
-			
-			/*
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/////////////////////////////Mutacion///////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			*/
-			if (Poblacion.size() > 2)
-			{
-				//se muta aleatoriamente un individuo on un 5%
-				Poblacion = evopopulation.mutation(Poblacion);
-				evopopulation.Poblacion = Poblacion;
-			}
-			
-			for (int i= 0; i < Poblacion.size(); i++)
-			{
-				if(Poblacion.get(i).fitness == -100)
+				for (int i= 0; i < Poblacion.size(); i++)
 				{
-					Poblacion_No_Validos.add(Poblacion.get(i));
-					Poblacion.remove(i);
+					if(Poblacion.get(i).fitness < 0)
+					{
+						Poblacion_No_Validos.add(Poblacion.get(i));
+						Poblacion.remove(i);
+						individuos_eliminados++;
+					}
+					
+					
 				}
 				
-			}
-			
-			/*
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/////////////////////////////Convergencia///////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			*/
-			
-			for (int i= 0; i < Poblacion.size(); i++)
-			{
-				if(Poblacion.get(i).fitness == -100)
+				//System.out.println("INDIVIDUOS ELIMINADOS 03: " + individuos_eliminados);
+				
+				individuos_eliminados = 0;
+				
+		
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("//////////////////////Introduccion de nuevos individuos/////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				
+				//Solo si la poblacion es demasiado pequena
+				if (Poblacion.size() <= 2)
 				{
-					Poblacion_No_Validos.add(Poblacion.get(i));
-					Poblacion.remove(i);
+					Poblacion_provisional = evopopulation.populationInitialization(f, c, 2, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
+					
+					for (int i= 0; i < Poblacion_provisional.size(); i++)
+					{
+						//Si el individuo es no_valido lo anado a la lista de no validos
+						if(!Poblacion_provisional.get(i).dungeon_valido || Poblacion_provisional.get(i).fitness == -100)
+						{
+							No_validos++;
+							//Anado el no valido a la lista de la poblacion de no validos
+							Poblacion_No_Validos.add(Poblacion_provisional.get(i));
+	
+						}
+						
+						//Si el individuos es valiudo lo anado a la lista de validos
+						if(Poblacion_provisional.get(i).dungeon_valido && Poblacion_provisional.get(i).fitness >= 0)
+						{
+							Validos++;
+							//Se anade a la poblacion de validos el mapa nuevo generado
+							Poblacion.add(Poblacion_provisional.get(i));
+						}
+					}
+					
+					//Reseteamos la poblacion provisional y la volvemso a inicializar
+					Poblacion_provisional = null;
+					Poblacion_provisional = new ArrayList<Dungeon>();
 				}
 				
+			
+				/*
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("/////////////////////////////Convergencia///////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				*/
+				
+				for (int i= 0; i < Poblacion.size(); i++)
+				{
+					if(Poblacion.get(i).fitness < 0)
+					{
+						Poblacion_No_Validos.add(Poblacion.get(i));
+						Poblacion.remove(i);
+						individuos_eliminados++;
+					}
+					
+					
+				}
+				
+				//System.out.println("INDIVIDUOS ELIMINADOS 04: " + individuos_eliminados);
+				
+				individuos_eliminados = 0;
+				
+				
+				//si estamos en la primera iteracion, se anaden dos posiciones a la lista de individuos de parada siendo temporalmente el primer individuo de la poblacion
+				if(evopopulation.contador_iteraciones == 0)
+				{
+					evopopulation.Individuos_parada.add(Poblacion.get(0));
+					evopopulation.Individuos_parada.add(Poblacion.get(0));
+				}
+				
+				//se comprueba si la poblacion esta evolucionando o no
+				parada = evopopulation.converge(Poblacion);	
+				
+				contador++;
 				
 			}
-			
-			//si estamos en la primera iteracion, se anaden dos posiciones a la lista de individuos de parada siendo temporalmente el primer individuo de la poblacion
-			if(evopopulation.contador_iteraciones == 0)
-			{
-				evopopulation.Individuos_parada.add(Poblacion.get(0));
-				evopopulation.Individuos_parada.add(Poblacion.get(0));
-			}
-			
-			//se comprueba si la poblacion esta evolucionando o no
-			parada = evopopulation.converge(Poblacion);	
-			
-			contador++;
+			while(!parada);
 			
 		}
-		while(!parada);
-		
 		
 				
 		System.out.println("");
@@ -402,10 +503,11 @@ public class main
 		
 		System.out.println("Salgo en la iteracion: " + contador);
 		System.out.println("Motivo: " + evopopulation.motivo);
+		System.out.println("Mutaciones hechas: " + evopopulation.mutaciones );
 		
 		System.out.println("Mejor individuo de la poblacion");
 		
-		if (evopopulation.Individuos_parada.get(0).fitness == -100)
+		if (evopopulation.Individuos_parada.get(0).fitness < 0)
 		{
 			System.out.println("HA HABIDO UN ERROR");
 		}

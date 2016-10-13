@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Dungeon.Celda.Tipo_puertas;
-import jdk.nashorn.internal.ir.BreakableNode;
 
 /**
  * Clase EvPopulation que se encarga de crear y evolucionar una poblacion
@@ -40,6 +39,9 @@ public class EvPopulation
 	public int motivo;
 	
 	public ArrayList<Dungeon> Individuos_parada = new ArrayList<Dungeon>();
+	
+	
+	public int mutaciones;
 	
 	
 	/**
@@ -186,8 +188,14 @@ public class EvPopulation
 		//De esos n individuos, se selecciona como progenitor al de mayor fitness
 		for (int i= 0; i< num_indiv_selecc; i++)
 		{
+			//si el fitness del seleccionado guardado es nulo, guardamos el semiseleccionado como mejor
+			if(Seleccionados.get(0).fitness == -100)
+			{
+				Seleccionados.set(0, Semi_Seleccionados.get(i));
+			}
+			
 			//si el fitness del almacenado es superior al que se encuentra en semi, lo sustituimmos ya que cuanto menor fitness mejor es el individuo
-			if(Semi_Seleccionados.get(i).fitness < Seleccionados.get(0).fitness)
+			else if((Semi_Seleccionados.get(i).fitness < Seleccionados.get(0).fitness) && (Seleccionados.get(0).fitness >= 0))
 			{
 				Seleccionados.set(0, Semi_Seleccionados.get(i));
 			}
@@ -237,7 +245,7 @@ public class EvPopulation
 		{
 			
 			//si el fitness del almacenado es superior al que se encuentra en semi, lo sustituimmos ya que cuanto menor fitness mejor es el individuo
-			if(Semi_Seleccionados2.get(i).fitness < Seleccionados.get(1).fitness)
+			if((Semi_Seleccionados2.get(i).fitness < Seleccionados.get(1).fitness) && (Semi_Seleccionados2.get(i).fitness >= 0))
 			{
 				Seleccionados.set(1, Semi_Seleccionados2.get(i));
 			}
@@ -286,18 +294,17 @@ public class EvPopulation
 	public ArrayList<Dungeon> replacement(ArrayList<Dungeon> Poblacion_, ArrayList<Dungeon> newGeneration) 
 	{
 		ArrayList<Dungeon> badGeneration = new ArrayList<Dungeon>();
-		ArrayList<Dungeon> Individuos_A_Reemplazar = new ArrayList<Dungeon>();
+		//ArrayList<Dungeon> Individuos_A_Reemplazar = new ArrayList<Dungeon>();
 		
 		int [] posicion_peores = new int[newGeneration.size()];
 		
 		int numero_Indiv_a_reemplazar = newGeneration.size();
-		int [] posicion_seleccionados_reemplazo = new int[newGeneration.size()];
-		
-		
+		//int [] posicion_seleccionados_reemplazo = new int[newGeneration.size()];
+
 		/*//LOG
 		System.out.print("\n");
 		System.out.print("----------------------------------------------------\n");
-		System.out.print("                     POBLACION                      \n");
+		System.out.print("            POBLACION SIN REEMPLAZO                 \n");
 		System.out.print("----------------------------------------------------\n");
 		for (int i= 0; i < Poblacion_.size(); i++)
 		{
@@ -316,278 +323,111 @@ public class EvPopulation
 		System.out.print("\n");
 		*/
 		
-		/*//LOG
-		System.out.print("\n");
-		System.out.print("----------------------------------------------------\n");
-		
-		System.out.print("\n");
-		System.out.print("Individuos seleccionados a reemplazar 1: \n");
-		*/
-		
-		
-		int tamano_poblacion = Poblacion_.size();
-		
-		//Seleccionamos al azar a n individuos de la poblacion
+		//Seleccionamos los n individuos peores de la poblacion
 		for (int i= 0; i < numero_Indiv_a_reemplazar; i++)
 		{
-			
-			posicion_seleccionados_reemplazo[i] = new Random().nextInt(((tamano_poblacion - 1) - 0) + 1) + 0;
-			
-			if (i == 1) //solo cuando estemos en una posicion 1 
+			//recorremos la poblacion para buscar el individuo con peor fitness
+			for(int individuo = 0; individuo < Poblacion_.size(); individuo++)
 			{
-				//si la posicion seleccionada es la misma que la anterior, volvemos a sacar otra posicion random; tambien si el fitness es negativo
-				while(posicion_seleccionados_reemplazo[i] == posicion_seleccionados_reemplazo[i - 1] || Poblacion_.get(posicion_seleccionados_reemplazo[i]).fitness == -100)
+				//si es el primer individuo a seleccionar como el peor no se comprueba nada
+				if(i == 0)
 				{
-					posicion_seleccionados_reemplazo[i] = new Random().nextInt((((Poblacion_.size() - 1) - 1) - 0) + 1) + 0;
+					//si estamos en el primer individuo lo seleccionamos como el peor
+					if (individuo == 0)
+					{
+						badGeneration.add(Poblacion_.get(0));
+						
+						//guardo la posicion en la poblacion del peor individuo
+						posicion_peores[i] = individuo;
+						
+					}
+					
+					//si estamos en el resto de individuos de la poblacion comprobamos si es peor al que hemos guardado
+					else if (individuo > 0)
+					{
+						//si el individuo es peor al guardado, lo sustituimos
+						if(badGeneration.get(i).fitness < Poblacion_.get(individuo).fitness)
+						{
+							badGeneration.set(i, Poblacion_.get(individuo));
+							
+							//guardo la posicion en la poblacion del peor individuo
+							posicion_peores[i] = individuo;
+							
+						}
+						
+					}
+				}	
+				
+				//SI ya hemos seleccionado algun individuo malo de la poblacion 
+				//comprobamos que el que vamos a seleccionar no sea ninguno de los ya elegidos
+				else
+				{
+					//si estamos en el primer individuo lo seleccionamos como el peor
+					if (individuo == 0)
+					{
+						badGeneration.add(Poblacion_.get(0));
+						
+						//guardo la posicion en la poblacion del peor individuo
+						posicion_peores[i] = individuo;
+					}
+					
+					//si estamos en el resto de individuos de la poblacion comprobamos si es peor al que hemos guardado
+					else if (individuo > 0)
+					{
+						//SI el individuo es peor que el que hemos guardado y no es igual al individuo que tenemos guardado anteriormente, entonces lo sustituimos
+						if((badGeneration.get(i).fitness < Poblacion_.get(individuo).fitness) && (posicion_peores[0] != individuo))
+						{
+							
+							badGeneration.set(i, Poblacion_.get(individuo));
+							
+							//guardo la posicion en la poblacion del peor individuo
+							posicion_peores[i] = individuo;
+							
+						}
+						
+					}
+					
 				}
+				
 			}
-			
-			/*//LOG
-			System.out.print("Posicion seleccionados reemplazo " + i + ": " + posicion_seleccionados_reemplazo[i] + "\n");
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(posicion_seleccionados_reemplazo[i]).genotipo.length; tam_gen++)
-			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo[i]).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo[i]).fitness);
-			System.out.println("");
-			*/
-			
-			Individuos_A_Reemplazar.add(Poblacion_.get(posicion_seleccionados_reemplazo[i]));
-			
+				
 		}
+		
+		//Sustituimos los individuos nuevos por los seleccionados como peores
+		for(int new_indiv = 0; new_indiv < newGeneration.size(); new_indiv++)
+		{
+			//se modifican los individuos con peor fitness de la poblacion por los nuevos individuos
+			Poblacion_.set(posicion_peores[new_indiv], newGeneration.get(new_indiv));
+		}
+		
+		badGeneration = null;
+		
+		posicion_peores = null;
 		
 		/*//LOG
 		System.out.print("\n");
-		*/
-		
-		// Guardamos el peor de los dos seleccionados
-		if(Individuos_A_Reemplazar.get(0).fitness > Individuos_A_Reemplazar.get(1).fitness)
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("            POBLACION SIN REEMPLAZADA               \n");
+		System.out.print("----------------------------------------------------\n");
+		for (int i= 0; i < Poblacion_.size(); i++)
 		{
-			/*//LOG
-			System.out.print("\n");
-			System.out.print("Individuo guardado 1: \n");
-			*/
-			badGeneration.add(0, Poblacion_.get(posicion_seleccionados_reemplazo[0]));
-			posicion_peores[0] = posicion_seleccionados_reemplazo[0];
-			
-			/*//LOG
-			System.out.println("Posicion: " + posicion_peores[0]);
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(posicion_seleccionados_reemplazo[0]).genotipo.length; tam_gen++)
+			for(int tam_genotipo = 0; tam_genotipo < Poblacion_.get(0).genotipo.length; tam_genotipo++)
 			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo[0]).genotipo[tam_gen]);
+				
+				System.out.print(Poblacion_.get(i).genotipo[tam_genotipo]);
 			}
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo[0]).fitness);
-			System.out.println("");
-			*/
 			
-		}
-		else
-		{
-			/*//LOG
-			System.out.print("\n");
-			System.out.print("Individuo guardado 1: \n");
-			*/
-			badGeneration.add(0, Poblacion_.get(posicion_seleccionados_reemplazo[1]));
-			posicion_peores[0] = posicion_seleccionados_reemplazo[1];
-			
-			/*//LOG
-			System.out.println("Posicion: " + posicion_peores[0]);
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(posicion_seleccionados_reemplazo[1]).genotipo.length; tam_gen++)
-			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo[1]).genotipo[tam_gen]);
-			}
 			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo[1]).fitness);
+			System.out.println("Fitness: " + Poblacion_.get(i).fitness);
 			System.out.println("");
-			*/
 			
 		}
 		
-		//borramos el arraylist de los individuos a reemplazar para la segunda vuelta
-		Individuos_A_Reemplazar.clear();
+		System.out.println("Mutacion: " + mutaciones);
 		
-		/*//LOG
 		System.out.print("----------------------------------------------------\n");
 		System.out.print("\n");
 		*/
-		
-		//Seleccionamos al azar a n individuos de la poblacion 2
-		int [] posicion_seleccionados_reemplazo2 = new int[newGeneration.size()];
-		for (int i= 0; i < numero_Indiv_a_reemplazar; i++)
-		{
-			
-			posicion_seleccionados_reemplazo2[i] = new Random().nextInt(((tamano_poblacion - 1) - 0) + 1) + 0;
-			
-			//si el seleccionado es igual al que hemos guardado en 1 volvemos a hacer random para no tener problemas a la hora de reemplazar; tambien si el individuo que hemos guardado tiene un fitness negativo
-			while(posicion_seleccionados_reemplazo2[i] == posicion_peores[0] || Poblacion_.get(posicion_seleccionados_reemplazo2[i]).fitness == -100)
-			{
-				posicion_seleccionados_reemplazo2[i] = new Random().nextInt(((Poblacion_.size() - 1) - 0) + 1) + 0;
-			}
-			
-			/*//LOG
-			System.out.print("Posicion seleccionados reemplazo(2) " + i + ": " + posicion_seleccionados_reemplazo2[i] + "\n");
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(0).genotipo.length; tam_gen++)
-			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo2[i]).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo2[i]).fitness);
-			System.out.println("");
-			*/
-			
-			Individuos_A_Reemplazar.add(i,Poblacion_.get(posicion_seleccionados_reemplazo2[i]));
-			
-		}
-		
-		
-		// Guardamos el peor de los dos seleccionados
-		if(Individuos_A_Reemplazar.get(0).fitness > Individuos_A_Reemplazar.get(1).fitness)
-		{
-			/*//LOG
-			System.out.print("\n");
-			System.out.print("Individuo guardado 2: \n");
-			*/
-			
-			badGeneration.add(1, Poblacion_.get(posicion_seleccionados_reemplazo2[0]));
-			posicion_peores[1] = posicion_seleccionados_reemplazo2[0];
-			
-			/*//LOG
-			System.out.println("Posicion: " + posicion_peores[1]);
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(posicion_seleccionados_reemplazo2[0]).genotipo.length; tam_gen++)
-			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo2[0]).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo2[0]).fitness);
-			System.out.println("");
-			*/
-			
-		}
-		else
-		{
-			/*//LOG
-			System.out.print("\n"); 
-			System.out.print("Individuo guardado 2: \n");
-			*/
-			
-			badGeneration.add(1, Poblacion_.get(posicion_seleccionados_reemplazo2[1]));
-			posicion_peores[1] = posicion_seleccionados_reemplazo2[1];
-			
-			/*//LOG
-			System.out.println("Posicion: " + posicion_peores[1]);
-			
-			for(int tam_gen = 0; tam_gen < Poblacion_.get(posicion_seleccionados_reemplazo2[1]).genotipo.length; tam_gen++)
-			{
-				System.out.print(Poblacion_.get(posicion_seleccionados_reemplazo2[1]).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + Poblacion_.get(posicion_seleccionados_reemplazo2[1]).fitness);
-			System.out.println("");
-			*/
-			
-		}
-		
-		/*//LOG
-		System.out.print("----------------------------------------------------\n");
-		System.out.print("----------------------------------------------------\n");
-		System.out.println("Individuos seleccionados para reemplazo");
-
-		for(int tam_bad_gen = 0; tam_bad_gen < badGeneration.size(); tam_bad_gen++)
-		{
-			System.out.println("Posicion: " + posicion_peores[tam_bad_gen]);
-			
-			for(int tam_gen = 0; tam_gen < badGeneration.get(tam_bad_gen).genotipo.length; tam_gen++)
-			{
-				System.out.print(badGeneration.get(tam_bad_gen).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + badGeneration.get(tam_bad_gen).fitness);
-			System.out.println("");
-		}
-		
-		System.out.print("----------------------------------------------------\n");
-		System.out.print("----------------------------------------------------\n");
-		*/
-
-		//Seleccinamos cual es el mejor entre la nueva generacion
-		
-		Dungeon high_fitness = badGeneration.get(0);
-		
-		
-		for(int i= 0; i < newGeneration.size(); i++)
-		{
-			//si el fitness del individuo i es mejor que el individuo 0, se guarda como el candidato para sustituir
-			if(newGeneration.get(i).fitness < high_fitness.fitness)
-			{
-				high_fitness = newGeneration.get(i);
-			}
-		}
-		
-		/*//LOG
-		System.out.print("\n");
-		System.out.print("\n");
-		System.out.print("Individuo con mejor fitness: \n");
-		
-		for(int tam_gen = 0; tam_gen < high_fitness.genotipo.length; tam_gen++)
-		{
-			System.out.print(high_fitness.genotipo[tam_gen]);
-		}
-		System.out.println("");
-		System.out.println("Fitness: " + high_fitness.fitness);
-		System.out.println("");
-		*/
-		
-		//Seleccionamos cual es el peor de los dos seleccionados y lo sustituimos por el mejor
-	
-		
-		// Guardamos el peor de los dos seleccionados y lo modificamos en la poblacion
-		if(badGeneration.get(0).fitness > badGeneration.get(1).fitness)
-		{
-			/*//LOG
-			System.out.print("\n");
-			System.out.print("Individuo peor: \n");
-			
-			System.out.println("Posicion: " + posicion_peores[0]);
-			
-			for(int tam_gen = 0; tam_gen < badGeneration.get(0).genotipo.length; tam_gen++)
-			{
-				System.out.print(badGeneration.get(0).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + badGeneration.get(0).fitness);
-			System.out.println("");
-			*/
-			
-			Poblacion_.set(posicion_peores[0], high_fitness);
-			
-		}
-		else
-		{
-			/*//LOG
-			System.out.print("\n");
-			System.out.print("Individuo peor: \n");
-			
-			System.out.println("Posicion: " + posicion_peores[1]);
-			
-			for(int tam_gen = 0; tam_gen < badGeneration.get(1).genotipo.length; tam_gen++)
-			{
-				System.out.print(badGeneration.get(1).genotipo[tam_gen]);
-			}
-			System.out.println("");
-			System.out.println("Fitness: " + badGeneration.get(1).fitness);
-			System.out.println("");
-			*/
-			
-			Poblacion_.set(posicion_peores[1], high_fitness);
-			
-		}		
 		
 		return Poblacion_;
 	}
@@ -600,18 +440,49 @@ public class EvPopulation
 	public ArrayList<Dungeon> mutation(ArrayList<Dungeon> Poblacion_) 
 	{	
 		
-		//generamos un numero random entre 0 y 1 para hayar el porcentaje de si va a haber mutacion o no
+		/*//LOG	
+		System.out.print("\n");
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("               POBLACION SIN LA MUTACION            \n");
+		System.out.print("----------------------------------------------------\n");
+		for (int i= 0; i < Poblacion_.size(); i++)
+		{
+			for(int tam_genotipo = 0; tam_genotipo < Poblacion_.get(0).genotipo.length; tam_genotipo++)
+			{
+				
+				System.out.print(Poblacion_.get(i).genotipo[tam_genotipo]);
+			}
+			
+			System.out.println("");
+			System.out.println("Fitness: " + Poblacion_.get(i).fitness);
+			System.out.println("");
+			
+		}
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("\n");
+		*/
+		
+		
+		//generamos un numero random entre 0 y 1 para hallar el porcentaje de si va a haber mutacion o no
 		double random_num = Math.random();
 		
 		/*//LOG
 		System.out.print("El numero random generado es: " + random_num + "\n");
 		*/
 		
-		int tamano_poblacion = Poblacion_.size() -1;
+		int tamano_poblacion = Poblacion_.size() - 1;
+		
+		
+		System.out.println("El tam de la poblacion es: " + tamano_poblacion);
+		System.out.println(" ");
 		
 		if(random_num < 0.05)// si sale un porcentaje de un 5% modificamos uno de los individuos de la poblacion
 		{
-			int random_individuo_mutacion = new Random().nextInt((((tamano_poblacion - 1) - 0) + 1) + 0); //generar un numero random (((max - min) + 1) + min)
+			
+			mutaciones++;
+			
+			int random_individuo_mutacion = new Random().nextInt(tamano_poblacion); //generar un numero random (((max - min) + 1) + min)
+			
 			
 			/*//LOG
 			System.out.print("Se procede a la mutacion del individuo: " + random_individuo_mutacion + "\n");
@@ -619,15 +490,287 @@ public class EvPopulation
 			
 			Dungeon individuo_mutado = Poblacion.get(random_individuo_mutacion); // igualamos el individuo local al individuo que luego vamos a modificar para que tenga las variables igual
 			
+			int tam_genotipo = (individuo_mutado.f * individuo_mutado.c) - 1;
 			
-			//nos creamos una variable random que va a almacenar una posicion del genotipo que va a ser modificada
-			int genotipo_modif = new Random().nextInt(((((individuo_mutado.genotipo.length -1) - 1) - 0) + 1) + 0);
+			//nos creamos una variable random que va a almacenar la posicion de la celda que va a modificar
+			int genotipo_modif = new Random().nextInt(tam_genotipo); //(((individuo_mutado.f * individuo_mutado.c) - 1) + 1) + 1); //(((max - min) + 1) + min)
+		
+			
+			/*//LOG
+			System.out.print("Celda a modificar: " + genotipo_modif + "\n");
+			
+			System.out.println("Genotipo del individuo a mutar: ");
+			for (int i = 0; i < individuo_mutado.genotipo.length; i++)
+			{
+				System.out.print(individuo_mutado.genotipo[i]);
+			}
+			
+			System.out.println("");
+			
+			*/
+			
+			//Generamos un numero aleatorio entre el 0 y el 7 para determinar que tipo de celda va a ser la que se va a mutar
+			int random_tipo_celda = new Random().nextInt(((7 - 0) + 1) + 0); 
+			
+			/*//LOG
+			System.out.println("NUmero random: " + random_tipo_celda);
+			*/
+			
+			//Variables para saber en que celda me encuentro y para poder calcular asi la posicion en la que me encuentro del genotipo
+			int contador_celda = 0;
+			int posicion = 0;
+			
+			//Recorremos el individuo para modificar el genotipo de la celda en el genotipo global
+			for(int i = 0; i < individuo_mutado.dungeon.length; i++)
+			{
+				for(int j = 0; j < individuo_mutado.dungeon[i].length; j++)
+				{	
+					
+					//Para cada bit del genotipo de cada celda genero un numero aleatorio (0 o 1)
+					for(int n_tipo_celdas = 0; n_tipo_celdas < individuo_mutado.tipo_celdas; n_tipo_celdas++)
+					{
+						//posicion del array del genotipo donde se tiene que guardar cada bit
+						posicion = (contador_celda * individuo_mutado.tipo_celdas) + n_tipo_celdas;
+						
+						
+						//Si el contador de la celda coincide con el genotipo a modificar, se modifica
+						if(contador_celda == genotipo_modif)
+						{
+							
+							//si estoy en la posicion 0 y el numero generado es el 0
+							if(n_tipo_celdas == 0 && random_tipo_celda == 0)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 0
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 0)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 0
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 0)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 1
+							if(n_tipo_celdas == 0 && random_tipo_celda == 1)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 1
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 1)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 1
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 1)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 2
+							if(n_tipo_celdas == 0 && random_tipo_celda == 2)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 2
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 2)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 2
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 2)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 3
+							if(n_tipo_celdas == 0 && random_tipo_celda == 3)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 3
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 3)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 3
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 3)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 4
+							if(n_tipo_celdas == 0 && random_tipo_celda == 4)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 0
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 4)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 4
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 4)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 5
+							if(n_tipo_celdas == 0 && random_tipo_celda == 5)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 5
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 5)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 5
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 5)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 6
+							if(n_tipo_celdas == 0 && random_tipo_celda == 6)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 6
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 6)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 6
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 6)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 0;
+							}
+							//****************************************************************************************
+							
+							//si estoy en la posicion 0 y el numero generado es el 7
+							if(n_tipo_celdas == 0 && random_tipo_celda == 7)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 1 y el numero generado es el 7
+							else if(n_tipo_celdas == 1 && random_tipo_celda == 7)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+						
+							//si estoy en la posicion 2 y el numero generado es el 7
+							else if(n_tipo_celdas == 2 && random_tipo_celda == 7)
+							{
+								//guardo el bit creado en el array con todos los bits del individuo
+								individuo_mutado.genotipo[posicion] = 1;
+							}
+							//****************************************************************************************
+						
+						}
+			
+					}
+					
+					//Incremento el contador de la celda
+					contador_celda++;
+				}
+			}
+			
+			
+			/*//LOG
+			System.out.println("Genotipo del individuo a mutar: ");
+			for (int i = 0; i < individuo_mutado.genotipo.length; i++)
+			{
+				System.out.print(individuo_mutado.genotipo[i]);
+			}
+			
+			System.out.println("");
+			
+			System.out.print("PARADA" + "\n");
+			*/
+			
+			
+			//modificamos el fitness del individuo y recalculamos el resto de parametros
+			individuo_mutado.revisar_genotipo();
+			individuo_mutado.posicion_monstruos = new ArrayList<Celda>();
+			individuo_mutado.posicion_tesoros = new ArrayList<Celda>();
+			individuo_mutado.numero_tesoros = individuo_mutado.comprobar_tesoros();
+			individuo_mutado.numero_monstruos = individuo_mutado.comprobar_monstruos();
+			individuo_mutado.ResetearDungeonCamino();
+			individuo_mutado.generateDungeon(0,0);
+			individuo_mutado.calcularfitness(individuo_mutado.numero_puertas);
+			
+			//si el individuo que hemos generado tiene un fitness nulo, se translada a la poblacion de no validos
+			if (individuo_mutado.fitness == -100)
+			{
+				//se anade a la poblacion de no validos el individuo
+				Poblacion_noValidos.add(Poblacion_.get(random_individuo_mutacion));
+				
+				//se elimina el individuo de la poblacion ya que se ha pasado a la poblacion de no validos
+				Poblacion_.remove(random_individuo_mutacion);
+				
+				
+			}
+			else
+			{
+				//modificamos el individuo en la poblacion con los datos que hemos modificado en el individuo mutado
+				Poblacion_.set(random_individuo_mutacion, individuo_mutado); 
+			}
+			
+			
+			
 			
 			/*//LOG
 			System.out.print("Genotipo a modificar: " +genotipo_modif+  "\n");
 			*/
 			
-			
+			/*
 			//si el genotipo seleccionado aleatoriamente es 0 lo ponemos a 1 y si es 1 lo ponemos a 0
 			if(individuo_mutado.genotipo[genotipo_modif] == 0)
 			{
@@ -654,6 +797,9 @@ public class EvPopulation
 				//se anade a la poblacion de no validos el individuo
 				Poblacion_noValidos.add(Poblacion_.get(random_individuo_mutacion));
 				
+				//se elimina el individuo de la poblacion ya que se ha pasado a la poblacion de no validos
+				Poblacion_.remove(random_individuo_mutacion);
+				
 				
 			}
 			else
@@ -662,16 +808,14 @@ public class EvPopulation
 				Poblacion_.set(random_individuo_mutacion, individuo_mutado); 
 			}
 			
-			
+			*/
 			
 		}
 			
 		/*//LOG	
-		System.out.print("POBLACION ACTUAL: " + "\n");
-
 		System.out.print("\n");
 		System.out.print("----------------------------------------------------\n");
-		System.out.print("                     POBLACION                      \n");
+		System.out.print("               POBLACION CON LA MUTACION            \n");
 		System.out.print("----------------------------------------------------\n");
 		for (int i= 0; i < Poblacion_.size(); i++)
 		{
@@ -687,6 +831,7 @@ public class EvPopulation
 			
 		}
 		System.out.print("----------------------------------------------------\n");
+		
 		System.out.print("\n");
 		*/
 		
@@ -803,9 +948,29 @@ public class EvPopulation
 		
 		
 		//individuo para poder modificar el arraylist de hijos
-		Dungeon individuo = parents.get(0);
+		//Dungeon individuo1 = parents.get(0);
+		Dungeon individuo = null;
 		
-		individuo.genotipo = genotipo_hijo1;
+		ArrayList<Tipo_puertas> t_puertas = new ArrayList<Tipo_puertas>();
+		ArrayList<int[]> pos_puertas = new ArrayList<int[]>();
+		//Creo las posiciones de las puertas
+		int [] puerta_1 = {((parents.get(0).f / 2) - 1), 0}; // puerta centrada en el lado Oeste
+		int [] puerta_2 = {0, ((parents.get(0).c/2) - 1)}; //puerta centrada en el lado Norte
+		int [] puerta_3 = {(parents.get(0).f-1), ((parents.get(0).c/2) - 1)}; //puerta centrada en el lado Sur
+		int [] puerta_4 = {((parents.get(0).f / 2) - 1), (parents.get(0).c-1)}; ////puerta centrada en el lado Este
+		
+		
+		//Anado las puertas a la lista con sus respectivas posiciones
+		pos_puertas.add(puerta_1);
+		pos_puertas.add(puerta_2);
+		pos_puertas.add(puerta_3);
+		pos_puertas.add(puerta_4);
+		
+		individuo = new Dungeon(parents.get(0).f, parents.get(0).c, parents.get(0).numero_monstruos, parents.get(0).numero_tesoros, pos_puertas, t_puertas, parents.get(0).numero_puertas, parents.get(0).porcentaje, parents.get(0).porcentaje_paredes, parents.get(0).tipo_celdas, parents.get(0).dificultad_nivel, parents.get(0).ponderaciones_nivel);
+		
+		int [] genotipo_individuo = genotipo_hijo1;
+		
+		individuo.genotipo = genotipo_individuo;
 		
 		//se calculan el resto de cosas del individuo para luego almacenarlo en descendientes
 		individuo.revisar_genotipo();
@@ -819,7 +984,7 @@ public class EvPopulation
 		
 		
 		//si el fitness del individuo sale nulo entonces se translada a la poblacion de no validos y se copia un padre como sucesor
-		if(individuo.fitness == -100)
+		/*if(individuo.fitness == -100)
 		{
 			//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
 			Descendientes.set(0, parents.get(0));
@@ -831,12 +996,21 @@ public class EvPopulation
 		{
 			//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
 			Descendientes.set(0, individuo);
-		}
+		}*/
 		
+		
+		//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
+		Descendientes.set(0, individuo);
+		
+		genotipo_individuo = null;
 		individuo = null; //se pone a null para poder inicializar la variable de nuevo
 		
-		individuo = parents.get(1);
-		individuo.genotipo = genotipo_hijo2;
+		individuo = new Dungeon(parents.get(0).f, parents.get(0).c, parents.get(0).numero_monstruos, parents.get(0).numero_tesoros, pos_puertas, t_puertas, parents.get(0).numero_puertas, parents.get(0).porcentaje, parents.get(0).porcentaje_paredes, parents.get(0).tipo_celdas, parents.get(0).dificultad_nivel, parents.get(0).ponderaciones_nivel);
+		
+		
+		//individuo = parents.get(1);
+		genotipo_individuo = genotipo_hijo2;
+		individuo.genotipo = genotipo_individuo;
 		
 		
 		//se calculan el resto de cosas del individuo para luego almacenarlo en descendientes
@@ -851,7 +1025,7 @@ public class EvPopulation
 		
 		
 		//si el fitness del individuo sale nulo entonces se translada a la poblacion de no validos y se copia un padre como sucesor
-		if(individuo.fitness == -100)
+		/*if(individuo.fitness == -100)
 		{
 			//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
 			Descendientes.set(1, parents.get(1));
@@ -863,7 +1037,10 @@ public class EvPopulation
 		{
 			//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
 			Descendientes.set(1, individuo);
-		}
+		}*/
+		
+		//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
+		Descendientes.set(1, individuo);
 		
 			
 		
@@ -935,11 +1112,33 @@ public class EvPopulation
 			else
 			{
 				//se pone el individuo de la anterior iteracion en el individuo temporal (una copia, el de la anterior iteracion no se toca)
-				Individuos_parada.set(0, Individuos_parada.get(1));		
+				//Individuos_parada.set(0, Individuos_parada.get(1));		
 				
 				
 				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
 				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
+				
+				
+				System.out.print("\n");
+				System.out.print("----------------------------------------------------\n");
+				System.out.print("                     POBLACION                      \n");
+				System.out.print("----------------------------------------------------\n");
+				for (int i= 0; i < Poblacion_.size(); i++)
+				{
+					for(int tam_genotipo = 0; tam_genotipo < Poblacion_.get(0).genotipo.length; tam_genotipo++)
+					{
+						
+						System.out.print(Poblacion_.get(i).genotipo[tam_genotipo]);
+					}
+					
+					System.out.println("");
+					System.out.println("Fitness: " + Poblacion_.get(i).fitness);
+					System.out.println("");
+					
+				}
+				System.out.print("----------------------------------------------------\n");
+				System.out.print("\n");
+				
 			}
 			
 			
@@ -949,55 +1148,99 @@ public class EvPopulation
 			{
 				
 				//se guarda al mejor individuo sin que sea nulo
-				if((Poblacion_.get(i).fitness < Individuos_parada.get(0).fitness) && (Poblacion_.get(i).fitness >= 0))
+				if((Poblacion_.get(i).fitness < Individuos_parada.get(1).fitness) && (Poblacion_.get(i).fitness >= 0))
 				{
-					Individuos_parada.set(0, Poblacion_.get(i));
+					Individuos_parada.set(1, Poblacion_.get(i));
 					//individuo_parada = Poblacion_.get(i); //guardamos al mejor individuo de la poblacion
 					
 				}
-			}			
+			}	
 			
-			//Si el individuo que hemos guardado como el mejor de la poblacion no es mejor al individuo que hemos guardado en la anterior iteracion, paramos
-			if(Individuos_parada.get(0).fitness > Individuos_parada.get(1).fitness && (Individuos_parada.get(1).fitness >= 0))
+			//si ninguno de los individuos guardados es negativo y ademas, estamos en la iteracion 1, comprobamos si estamos mejorando
+			if ((Individuos_parada.get(0).fitness >= 0) && (Individuos_parada.get(1).fitness >= 0) && (contador_iteraciones > 0))
 			{
-				//guardamos el individuo de la anterior iteracion en el individuo_parada ya que este va a ser el individuo que luego usaremos	
-				
-				motivo = 0;
-				
-				stop = true;
-				
-			}
-			
-			else
-			{	
-			
-				//Si el individuo parada es mejor que el individuo que hemos copiado anteriormente, entonces lo guardamos como el individuo copia
-				if ((Individuos_parada.get(0).fitness < Individuos_parada.get(1).fitness) && (Individuos_parada.get(0).fitness >= 0))
+				//Si el individuo que hemos guardado como el mejor de la poblacion no es mejor al individuo que hemos guardado en la anterior iteracion, paramos
+				if(Individuos_parada.get(1).fitness > Individuos_parada.get(0).fitness)
 				{
 					
-					Individuos_parada.set(1, Individuos_parada.get(0));
+					motivo = 0;
 					
-				}
-				
-				
-				//si el individuo que hemos conseguido es el idóneo paramos
-				if(Individuos_parada.get(0).fitness == 0.0)
-				{
-					
-					Individuos_parada.set(1, Individuos_parada.get(0));
-					
-					motivo = 1;				
 					stop = true;
 					
 				}
-		
+				
+				else
+				{	
+				
+					//Si el individuo parada es mejor que el individuo que hemos copiado anteriormente, entonces lo guardamos como el mejor individuo de las iteraciones
+					if (Individuos_parada.get(1).fitness < Individuos_parada.get(0).fitness)
+					{
+						
+						Individuos_parada.set(0, Individuos_parada.get(1));
+						
+					}
+					
+					
+			
+				}
+			}
+			
+			//si el individuo que hemos conseguido es el idóneo paramos
+			if(Individuos_parada.get(1).fitness == 0.0)
+			{
+				
+				Individuos_parada.set(0, Individuos_parada.get(1));
+				
+				motivo = 1;				
+				stop = true;
+				
 			}
 			
 			contador_iteraciones++; 
 		}
 		
+		//Si llevamos mas iteraciones de las estipuladas y no hemos encontrado al individuo idoneo, guardamos el mejor individuo de esa poblacion
 		else
 		{
+			
+			//recorremos la poblacion
+			for(int i = 0 ; i < Poblacion_.size() ; i++)
+			{
+				
+				//si el individuo de parada tiene un fitness negativo, se guarda como el mejor el individuo de la poblacion
+				if (Individuos_parada.get(0).fitness < 0)
+				{
+					//si el individuo de la poblacion no es negativo, entonces modificamos ambos individuos de parada
+					if(Poblacion_.get(i).fitness >= 0)
+					{
+						Individuos_parada.set(0, Poblacion_.get(i));
+						Individuos_parada.set(1, Poblacion_.get(i));
+					}
+				}
+				
+				//se comprueba que el individuo i no sea mejor que el guardado en la anterior iteracion
+				if((Poblacion_.get(i).fitness < Individuos_parada.get(0).fitness) && (Poblacion_.get(i).fitness >= 0))
+				{
+					//se modifica el individuo 1 para guardar el mejor individuo de la poblacion que supera la anterior iteracion
+					Individuos_parada.set(1, Poblacion_.get(i));
+				
+				}
+				
+				
+				
+			}
+			
+			
+			//una vez comprobado si hay un individuo mejor en la poblacion que la anterior iteracion, se modifica el individuo 0 idoneo
+			
+			if(Individuos_parada.get(1).fitness < Individuos_parada.get(0).fitness)
+			{
+				//se guarda el mejor individuo en la posicion 0
+				Individuos_parada.set(0, Individuos_parada.get(1));
+			}
+			
+			
+			/*
 			
 			if (Individuos_parada.get(1).fitness == -100)
 			{
@@ -1022,7 +1265,7 @@ public class EvPopulation
 			{
 				Individuos_parada.set(0, Individuos_parada.get(1));
 			}
-			
+			*/
 			
 			motivo = 2;
 			stop = true;
