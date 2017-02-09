@@ -69,9 +69,7 @@ public class EvPopulation
 		
 		//se inicializan los individuos de parada y la copia para luego modificarlos en la convergencia
 		
-		individuo_parada = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
-		individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
-		
+		Poblacion = new ArrayList<Dungeon>();
 		
 		//Se crea un mapa por cada individuo y se anade a la poblacion
 		for(int i = 0; i<numero_poblacion; i++)
@@ -106,6 +104,9 @@ public class EvPopulation
 			*/
 			
 		}
+		
+		individuo_parada = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
+		individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		
 		
 		//Se devuelve la poblacion creada
@@ -396,8 +397,13 @@ public class EvPopulation
 		//Sustituimos los individuos nuevos por los seleccionados como peores
 		for(int new_indiv = 0; new_indiv < newGeneration.size(); new_indiv++)
 		{
-			//se modifican los individuos con peor fitness de la poblacion por los nuevos individuos
-			Poblacion_.set(posicion_peores[new_indiv], newGeneration.get(new_indiv));
+			//se modifican los individuos con peor fitness de la poblacion por los nuevos individuo solo si son buenos
+			if(newGeneration.get(new_indiv).getFitness() >= 0.0)
+			{
+				Poblacion_.set(posicion_peores[new_indiv], newGeneration.get(new_indiv));
+			}
+			
+			
 		}
 		
 		badGeneration = null;
@@ -470,7 +476,7 @@ public class EvPopulation
 		System.out.print("El numero random generado es: " + random_num + "\n");
 		*/
 		
-		int tamano_poblacion = Poblacion_.size() - 1;
+		int tamano_poblacion = Poblacion_.size();
 		
 		
 		System.out.println("El tam de la poblacion es: " + tamano_poblacion);
@@ -481,14 +487,23 @@ public class EvPopulation
 			
 			mutaciones++;
 			
-			int random_individuo_mutacion = new Random().nextInt(tamano_poblacion); //generar un numero random (((max - min) + 1) + min)
+
+			int random_individuo_mutacion = new Random().nextInt((((tamano_poblacion - 1) - 0) + 1) + 0); //generar un numero random (((max - min) + 1) + min)
 			
 			
 			/*//LOG
 			System.out.print("Se procede a la mutacion del individuo: " + random_individuo_mutacion + "\n");
 			*/
 			
-			Dungeon individuo_mutado = Poblacion.get(random_individuo_mutacion); // igualamos el individuo local al individuo que luego vamos a modificar para que tenga las variables igual
+			//TODO MIRAR SI ESTE IF MEJORA LA EVOLUCION DE LA POBLACION
+			//si el individuo seleccionado es el individuo con mejor fitness, no dejamos que este mute
+			/*if(Poblacion_.get(random_individuo_mutacion).getFitness() == Individuos_parada.get(1).getFitness())
+			{
+				
+			}*/
+			
+			Dungeon individuo_mutado = Poblacion_.get(random_individuo_mutacion); // igualamos el individuo local al individuo que luego vamos a modificar para que tenga las variables igual
+			
 			
 			int tam_genotipo = (individuo_mutado.f * individuo_mutado.c) - 1;
 			
@@ -1106,43 +1121,8 @@ public class EvPopulation
 				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
 				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
 				
-			}
-			
-			//si ya hemos dado la primera iteracion, entonces el individuo de parada va a ser el individuo de la anterior iteracion
-			else
-			{
-				//se pone el individuo de la anterior iteracion en el individuo temporal (una copia, el de la anterior iteracion no se toca)
-				//Individuos_parada.set(0, Individuos_parada.get(1));		
-				
-				
-				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
-				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
-				
-				
-				System.out.print("\n");
-				System.out.print("----------------------------------------------------\n");
-				System.out.print("                     POBLACION                      \n");
-				System.out.print("----------------------------------------------------\n");
-				for (int i= 0; i < Poblacion_.size(); i++)
-				{
-					for(int tam_genotipo = 0; tam_genotipo < Poblacion_.get(0).genotipo.length; tam_genotipo++)
-					{
+			}			
 						
-						System.out.print(Poblacion_.get(i).genotipo[tam_genotipo]);
-					}
-					
-					System.out.println("");
-					System.out.println("Fitness: " + Poblacion_.get(i).fitness);
-					System.out.println("");
-					
-				}
-				System.out.print("----------------------------------------------------\n");
-				System.out.print("\n");
-				
-			}
-			
-			
-			
 			//Recorremos la poblacion
 			for(int i = 0 ; i < Poblacion_.size() ; i++)
 			{
@@ -1196,6 +1176,7 @@ public class EvPopulation
 				
 			}
 			
+			
 			contador_iteraciones++; 
 		}
 		
@@ -1226,10 +1207,7 @@ public class EvPopulation
 				
 				}
 				
-				
-				
 			}
-			
 			
 			//una vez comprobado si hay un individuo mejor en la poblacion que la anterior iteracion, se modifica el individuo 0 idoneo
 			
@@ -1272,7 +1250,76 @@ public class EvPopulation
 		}
 		
 		
+		System.out.print("\n");
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("                     POBLACION                      \n");
+		System.out.print("----------------------------------------------------\n");
+		for (int i= 0; i < Poblacion_.size(); i++)
+		{
+			for(int tam_genotipo = 0; tam_genotipo < Poblacion_.get(0).genotipo.length; tam_genotipo++)
+			{
+				
+				System.out.print(Poblacion_.get(i).genotipo[tam_genotipo]);
+			}
+			
+			System.out.println("");
+			System.out.println("Fitness: " + Poblacion_.get(i).fitness);
+			System.out.println("");
+			
+		}
+		System.out.print("----------------------------------------------------\n");
+		System.out.print("\n");
+		
 		return stop;
+	}
+	
+	/**
+	 * Funcion que se encarga de obtener el peor individuo de la poblacion
+	 * @return Un dungeon con el peor individuo de la Poblacion_
+	 */
+	public Dungeon getWorstIndividuo(ArrayList<Dungeon> Poblacion_)
+	{
+		Dungeon worstIndividuo = new Dungeon();
+		
+		for (int num_indiv= 0; num_indiv < Poblacion_.size(); num_indiv++)
+		{
+			if(num_indiv == 0)
+			{
+				worstIndividuo = Poblacion_.get(0);
+			}
+			else
+			{
+				if(Poblacion_.get(num_indiv).getFitness() > worstIndividuo.getFitness() && Poblacion_.get(num_indiv).getFitness() >= 0.0)
+				{
+					worstIndividuo = Poblacion_.get(num_indiv);
+				}
+			}
+			
+		}
+
+		return worstIndividuo;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getMeanPoblacion(ArrayList<Dungeon> Poblacion_)
+	{
+		double mean = 0;
+		
+		for (int num_indiv= 0; num_indiv < Poblacion_.size(); num_indiv++)
+		{
+				
+			mean = mean + Poblacion_.get(num_indiv).getFitness();
+			
+		}
+		
+		mean = (double) mean / Poblacion_.size();
+		
+		//TODO Calcular la media de los individuos de la poblacion
+		
+		return mean;
 	}
 
 	/**

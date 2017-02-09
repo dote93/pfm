@@ -2,9 +2,24 @@
 package Dungeon;
 
 import java.util.ArrayList;
-//import java.util.Random;
 import java.util.Scanner;
 
+//Imports para escribir y modificar un archivo de texto
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+//import para la fecha
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+
+
+//Import de los tipos de puertas que hay
 import Dungeon.Celda.Tipo_puertas;
 
 
@@ -19,9 +34,13 @@ import Dungeon.Celda.Tipo_puertas;
  */
 public class main
 {
+	
+	// AYUDAAAAAAAAAAAAAAAAAAAAAAAA
+	// Control + 7 para comentar varias lineas seleccionadas
+	
 
 	@SuppressWarnings({ "resource", "unused" })
-	public static void main(String[] args) 
+	public static void main(String[] args) throws IOException
 	{
 		Scanner scan = new Scanner(System.in);
 		
@@ -35,13 +54,13 @@ public class main
 		
 	
 		//Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
-		int porcentaje = 70; //50 para 4 * 4 //50 para 10 * 10
-		int porcentaje_paredes = 20; //25  //20 para 4 * 4 //40 para 10 * 10 //AHORA CON UN 20% funciona, si es mayor para 10*10 alguna puerta acaba cayendo donde hay una pared
+		int porcentaje = (int)((f*c) * 70) / 100; //50 para 4 * 4 //50 para 10 * 10
+		int porcentaje_paredes = (int)((f*c) * 20) / 100; //25  //20 para 4 * 4 //40 para 10 * 10 //AHORA CON UN 20% funciona, si es mayor para 10*10 alguna puerta acaba cayendo donde hay una pared
 		
 		
 		
-		int numero_monstruos = 5;
-		int numero_tesoros = 5;
+		int numero_monstruos = (int)((f * c) - (porcentaje + porcentaje_paredes))/2;
+		int numero_tesoros = (int)((f * c) - (porcentaje + porcentaje_paredes + numero_monstruos));
 		
 		//ArrayList que almacena los individuos de la poblacion
 		ArrayList<Dungeon> Poblacion = new ArrayList<Dungeon>();
@@ -137,6 +156,33 @@ public class main
 		
 		int individuos_eliminados = 0;
 		
+		
+		//---------------- FECHA y VARIABLES PARA GUARDAR EN EL ARCHIVO -------------------
+		
+		
+		Date fechaActual = new Date();
+		//DateFormat formatoHora = new SimpleDateFormat("HH_mm_ss");
+        DateFormat formatoFecha = new SimpleDateFormat("yyyy_MM_dd");
+        
+        String nombre_archivo = formatoFecha.format(fechaActual); //+ "_" + formatoHora.format(fechaActual);
+        
+        /*//LOG
+        System.out.println("Fecha: " + nombre_archivo);
+        */
+        
+        //Variable con la que vamos a escribir en el archivo
+		BufferedWriter bw = null;
+		
+		
+		//RUTA Relativa
+		String ruta = "../pfm/Pruebas/" + nombre_archivo + ".txt";
+		File file_;
+		file_ = new File(ruta);
+		
+		
+		//---------------------------------------------------------------------------------
+		
+		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
 		/*****************************************************************************************************************************************/
@@ -174,7 +220,7 @@ public class main
 		
 		
 		
-		//LOG	
+		/**LOG*/
 		System.out.print("\n");
 		System.out.print("----------------------------------------------------\n");
 		System.out.print("               POBLACION  INICIAL                   \n");
@@ -207,34 +253,32 @@ public class main
 		//se comprueba si se encuentra el mejor individuo entre la poblacion que hemos inicializado, si no es asi, se empieza a evolucionar
 		if (!evopopulation.converge(Poblacion))
 		{
-
-		
 		
 			do
 			{
-				//LOG	
-				System.out.print("\n");
-				System.out.print("----------------------------------------------------\n");
-				System.out.print("                  POBLACION ACTUAL                  \n");
-				System.out.print("----------------------------------------------------\n");
-				for (int i= 0; i < Poblacion.size(); i++)
-				{
-					for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
-					{
-						
-						System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
-					}
-					
-					System.out.println("");
-					System.out.println("Fitness: " + Poblacion.get(i).fitness);
-					System.out.println("");
-					
-				}
-				System.out.print("----------------------------------------------------\n");
-				System.out.print("\n");
+				/**LOG**/
+//				System.out.print("\n");
+//				System.out.print("----------------------------------------------------\n");
+//				System.out.print("                  POBLACION ACTUAL                  \n");
+//				System.out.print("----------------------------------------------------\n");
+//				for (int i= 0; i < Poblacion.size(); i++)
+//				{
+//					for(int tam_genotipo = 0; tam_genotipo < Poblacion.get(0).genotipo.length; tam_genotipo++)
+//					{
+//						
+//						System.out.print(Poblacion.get(i).genotipo[tam_genotipo]);
+//					}
+//					
+//					System.out.println("");
+//					System.out.println("Fitness: " + Poblacion.get(i).fitness);
+//					System.out.println("");
+//					
+//				}
+//				System.out.print("----------------------------------------------------\n");
+//				System.out.print("\n");
 				
 			
-				//Antes de seleccionar a cualquier individuo, primero se transladan los individuos con fitness -100 a la poblacion de no validos
+				/**Antes de seleccionar a cualquier individuo, primero se transladan los individuos con fitness -100 a la poblacion de no validos**/
 				for (int i= 0; i < Poblacion.size(); i++)
 				{
 					if(Poblacion.get(i).fitness < 0)
@@ -247,20 +291,21 @@ public class main
 				
 				}
 				
-				//System.out.println("INDIVIDUOS ELIMINADOS 01: " + individuos_eliminados);
+				/**LOG
+				System.out.println("INDIVIDUOS ELIMINADOS 01: " + individuos_eliminados);**/
 				
 				individuos_eliminados = 0;
 				
 				
 				
 				
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("/////////////////////////////Seleccion//////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
+				
 				if (Poblacion.size() >= 2)
 				{
 					//se seleccionan 2 individuos para luego reemplazar el peor del reemplazo con el mejor de los seleccionados
@@ -269,13 +314,12 @@ public class main
 			
 				
 				
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("/////////////////////////////Descendientes//////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 				
 				if (Poblacion.size() >= 2)
 				{
@@ -296,13 +340,12 @@ public class main
 					}
 				}
 				
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("/////////////////////////////Reemplazo//////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 				if (Poblacion.size() >= 2)
 				{
 					//Se reemplaza el peor individuo seleccionado con el mejor de la seleccion
@@ -323,18 +366,17 @@ public class main
 					
 				}
 				
-				//System.out.println("INDIVIDUOS ELIMINADOS 02: " + individuos_eliminados);
+				/**LOG
+				System.out.println("INDIVIDUOS ELIMINADOS 02: " + individuos_eliminados);**/
 				
 				individuos_eliminados = 0;
+			
 				
-				
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("/////////////////////////////Mutacion///////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 				
 				
 				if (Poblacion.size() >= 2)
@@ -360,18 +402,15 @@ public class main
 				//System.out.println("INDIVIDUOS ELIMINADOS 03: " + individuos_eliminados);
 				
 				individuos_eliminados = 0;
-				
 		
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("//////////////////////Introduccion de nuevos individuos/////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 				
 				//Solo si la poblacion es demasiado pequena
-				if (Poblacion.size() <= 2)
+				if (Poblacion.size() < 10)
 				{
 					Poblacion_provisional = evopopulation.populationInitialization(f, c, 2, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 					
@@ -397,17 +436,13 @@ public class main
 					
 					//Reseteamos la poblacion provisional y la volvemso a inicializar
 					Poblacion_provisional = null;
-					Poblacion_provisional = new ArrayList<Dungeon>();
 				}
-				
-			
-				/*
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+							
+				/**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 				System.out.println("/////////////////////////////Convergencia///////////////////////////////////////////");
 				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-				*/
+				System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 				
 				for (int i= 0; i < Poblacion.size(); i++)
 				{
@@ -421,20 +456,150 @@ public class main
 					
 				}
 				
-				//System.out.println("INDIVIDUOS ELIMINADOS 04: " + individuos_eliminados);
+				/**LOG
+				System.out.println("INDIVIDUOS ELIMINADOS 04: " + individuos_eliminados);*/
 				
 				individuos_eliminados = 0;
 				
 				
-				//si estamos en la primera iteracion, se anaden dos posiciones a la lista de individuos de parada siendo temporalmente el primer individuo de la poblacion
-				if(evopopulation.contador_iteraciones == 0)
-				{
-					evopopulation.Individuos_parada.add(Poblacion.get(0));
-					evopopulation.Individuos_parada.add(Poblacion.get(0));
-				}
-				
 				//se comprueba si la poblacion esta evolucionando o no
 				parada = evopopulation.converge(Poblacion);	
+				
+				
+				//TODO ESCRIBIR AQUI EL ARCHIVO CON LOS DATOS DEL MEJOR Y EL PEOR INDIVIDUO DE LA POBLACION
+				
+				
+				try
+				{
+					//Si el archivo ya existe, solo escribo la linea correspondiente
+					if(file_.exists())
+					{
+						bw = new BufferedWriter(new FileWriter(ruta, true));
+						bw.newLine();
+						if(contador == 0)
+						{
+							bw.write("00"); //se anade la iteracion en la que estamos
+						}
+						else if(contador < 10)
+						{
+							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
+						}
+						else
+						{
+							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
+						}
+						
+						if(Poblacion.size() < 10)
+						{
+							bw.append(" 0" + Poblacion.size());
+						}
+						bw.append(" " + evopopulation.Individuos_parada.get(0).getFitness());
+						
+//						String mejorGenotipo = new String();
+//						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
+//						{
+//							
+//							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
+//						}
+//						
+//						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
+//						
+						Dungeon worstIndividuo = new Dungeon();
+						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
+						
+						bw.append(" " + worstIndividuo.getFitness());
+						
+//						String peorGenotipo = new String();
+//						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
+//						{
+//							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
+//						}
+//						
+//						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
+//						
+						bw.append(" " + evopopulation.getMeanPoblacion(Poblacion));
+						
+						
+					}
+					
+					//si el archivo no existia, escribo una primera linea informativa
+					else
+					{
+						bw = new BufferedWriter(new FileWriter(ruta, true));
+						
+						bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
+						bw.newLine();
+						bw.newLine();
+						
+						if(contador == 0)
+						{
+							bw.write("00"); //se anade la iteracion en la que estamos
+						}
+						else if(contador < 10)
+						{
+							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
+						}
+						else
+						{
+							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
+						}
+						
+						if(Poblacion.size() < 10)
+						{
+							bw.append(" 0" + Poblacion.size());
+						}
+						bw.append(" " + evopopulation.Individuos_parada.get(0).getFitness());
+						
+//						String mejorGenotipo = new String();
+//						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
+//						{
+//							
+//							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
+//						}
+//						
+//						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
+//						
+						Dungeon worstIndividuo = new Dungeon();
+						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
+						
+						bw.append(" " + worstIndividuo.getFitness());
+						
+						String peorGenotipo = new String();
+						
+//						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
+//						{
+//							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
+//						}
+//						
+//						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
+//						
+						bw.append(" " + evopopulation.getMeanPoblacion(Poblacion));
+						
+						
+					}
+					
+					
+					System.out.println("Escribo en el archivo");
+					
+				}
+				catch (IOException e)
+				{
+					//Error processing code
+					System.out.println("Error: " + e);
+				}
+				finally
+				{
+					//si el archivo existiao se ha creado y no ha habido ningun error, se cierra
+					if(bw != null)
+					{
+						bw.close();
+					}
+				}
+				
+				
+				System.out.println("Fitness peor indiv         :" + evopopulation.getWorstIndividuo(Poblacion).fitness);
+				System.out.println("Fitness indiv temporal     : " + evopopulation.Individuos_parada.get(0).fitness);
+				System.out.println("Fitness indiv anterior iter: " + evopopulation.Individuos_parada.get(1).fitness);
 				
 				contador++;
 				
@@ -449,7 +614,7 @@ public class main
 		System.out.println("                POBLACION VALIDOS                      ");
 		System.out.println("-------------------------------------------------------");
 		//Pinta la poblacion de validos **************************************************************************
-		evopopulation.pintar_poblacion(Poblacion);
+//		evopopulation.pintar_poblacion(Poblacion);
 		
 		
 		System.out.println("");
@@ -459,7 +624,7 @@ public class main
 		System.out.println("-------------------------------------------------------");
 		
 		//Pinta la poblacion de no validos ************************************************************************
-		evopopulation.pintar_poblacion(Poblacion_No_Validos);
+//		evopopulation.pintar_poblacion(Poblacion_No_Validos);
 		
 		
 		//se mira a ver cuantos individuos hay en cada poblacion
@@ -515,10 +680,18 @@ public class main
 		
 		evopopulation.Individuos_parada.get(0).pintar();
 		
+		//Se pintan los datos esperados para saber que es lo que se buscaba
+		
+		System.out.println("Numero de monstruos esperados     : " + numero_monstruos);
+		System.out.println("Numero de tesoros esperados       : " + numero_tesoros);
+		System.out.println("Numero de celdas Pared esperadas  : " + porcentaje_paredes);
+		System.out.println("Numero de celdas Libres esperadas : " + porcentaje);
+		
 		System.out.print("----------------------------------------------------\n");
 		System.out.print("----------------------------------------------------\n");
 
-		/*
+		
+		/**
 		//Pinta un individuo**************************************************************************
 		System.out.println("");
 		System.out.println("");

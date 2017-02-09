@@ -108,6 +108,20 @@ public class Dungeon
 	ArrayList<Celda> area_M_posicion;
 	ArrayList<Celda> area_T_posicion;
 	
+	
+	
+	public double getFitness(){
+		return this.fitness;
+	}
+	
+	/**
+	 * Constructor para inicializar.
+	 */
+	public Dungeon()
+	{
+		super();
+	}
+	
 	/** 
      *	Constructor de Dungeon
      */
@@ -2718,10 +2732,10 @@ public class Dungeon
 				
 		System.out.println(" ");
 		System.out.println("-------------");
-		System.out.println("Numero de monstruos: " + numero_monstruos);
-		System.out.println("Numero de tesoros  : " + numero_tesoros);
+		System.out.println("Numero de monstruos     : " + numero_monstruos);
+		System.out.println("Numero de tesoros       : " + numero_tesoros);
 		System.out.println("Numero de celdas Pared  : " + celdas_Paredes);
-		System.out.println("Numero de celdas Libres  : " + ((f*c) - celdas_Paredes));
+		System.out.println("Numero de celdas Libres : " + ((f*c) - celdas_Paredes));
 		System.out.println("-------------");
 		
 		/*
