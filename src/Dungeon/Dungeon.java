@@ -2735,7 +2735,7 @@ public class Dungeon
 		System.out.println("Numero de monstruos     : " + numero_monstruos);
 		System.out.println("Numero de tesoros       : " + numero_tesoros);
 		System.out.println("Numero de celdas Pared  : " + celdas_Paredes);
-		System.out.println("Numero de celdas Libres : " + ((f*c) - celdas_Paredes));
+		System.out.println("Numero de celdas Libres : " + ((f*c) - celdas_Paredes - numero_monstruos - numero_tesoros));
 		System.out.println("-------------");
 		
 		/*

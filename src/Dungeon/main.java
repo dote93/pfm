@@ -59,7 +59,7 @@ public class main
 		
 		
 		
-		int numero_monstruos = (int)((f * c) - (porcentaje + porcentaje_paredes))/2;
+		int numero_monstruos = (int)((((f * c) - (porcentaje + porcentaje_paredes)) * 60)/100 );
 		int numero_tesoros = (int)((f * c) - (porcentaje + porcentaje_paredes + numero_monstruos));
 		
 		//ArrayList que almacena los individuos de la poblacion
