@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * 			Fecha: 01-02-2016
  */
 
-public class Celda 
+public class Celda implements Cloneable
 {
 	//Coordenadas x,y de la celda.	
 	int fila;	
@@ -32,6 +32,7 @@ public class Celda
 	public boolean puerta;
 	public boolean tesoro;
 	public boolean monstruo;
+	public boolean pared = false;
 	
 	//Variables para saber en que lado esta la puerta
 	public boolean puerta_N;
@@ -71,7 +72,6 @@ public class Celda
 	public ArrayList<Celda> Vecinos = new ArrayList<Celda>();
 	
 	
-	
 	//Variable que va a guardar una lista de todas las distancias entre la puerta y los tesoros
 	public ArrayList<Integer> tam_dist_T = new ArrayList<Integer>();
 	
@@ -86,6 +86,11 @@ public class Celda
 	
 	//Distancia de la puerta mas cercana para calcular luego el fitness (solo se usa cuando la celda es de tipo tesoro)
 	int distancia_P_cercana;
+	
+	public Celda()
+	{
+		super();
+	}
 	
 	/** 
      *	Constructor de Celda
@@ -159,5 +164,9 @@ public class Celda
 		
 		return (coste + estimacion); // devolvemos la suma del coste y la estimacion de la celda que hemos recibido
 	}
+	
+	protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 	
 }
