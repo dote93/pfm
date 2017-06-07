@@ -105,12 +105,15 @@ public class EvPopulation
 			}
 			*/
 			
+//			System.out.println("Indiv: " + i);
 		}
 		
 		individuo_parada = new Dungeon();
-		individuo_parada = 	new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
+		individuo_parada = (Dungeon) Poblacion.get(0).clone();
+		//individuo_parada = 	new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		individuo_parada_copia = new Dungeon();
-		individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
+		individuo_parada_copia = (Dungeon) Poblacion.get(0).clone();
+		//individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 		
 		
 		//Se devuelve la poblacion creada
@@ -204,7 +207,7 @@ public class EvPopulation
 		for (int i= 0; i< num_indiv_selecc; i++)
 		{
 			//si el fitness del seleccionado guardado es nulo, guardamos el semiseleccionado como mejor
-			if(Seleccionados.get(0).fitness == -100)
+			if((Semi_Seleccionados.get(i).fitness < Seleccionados.get(0).fitness) && (Semi_Seleccionados.get(i).fitness >= 0))
 			{
 				try {
 					Seleccionados.set(0, (Dungeon) Semi_Seleccionados.get(i).clone());
@@ -214,16 +217,16 @@ public class EvPopulation
 				}
 			}
 			
-			//si el fitness del almacenado es superior al que se encuentra en semi, lo sustituimmos ya que cuanto menor fitness mejor es el individuo
-			else if((Semi_Seleccionados.get(i).fitness < Seleccionados.get(0).fitness) && (Seleccionados.get(0).fitness >= 0))
-			{
-				try {
-					Seleccionados.set(0, (Dungeon) Semi_Seleccionados.get(i).clone());
-				} catch (CloneNotSupportedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+//			//si el fitness del almacenado es superior al que se encuentra en semi, lo sustituimmos ya que cuanto menor fitness mejor es el individuo
+//			else if((Semi_Seleccionados.get(i).fitness < Seleccionados.get(0).fitness) && (Seleccionados.get(0).fitness >= 0))
+//			{
+//				try {
+//					Seleccionados.set(0, (Dungeon) Semi_Seleccionados.get(i).clone());
+//				} catch (CloneNotSupportedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		
 		//limpiamos el arraylist de semi_seleccionados
@@ -330,8 +333,9 @@ public class EvPopulation
 	 * @param Poblacion_  Poblacion que se quiere modificar
 	 * @param newGeneration Individuos que se han seleccionado de cara a mejorar la poblacion (solo se pondra el mejor de los 2)
 	 * @return Devuelve la poblacion modificada con el mejor de la nueva generacion sustituido por el peor entre los seleccionados
+	 * @throws CloneNotSupportedException 
 	 */
-	public ArrayList<Dungeon> replacement(ArrayList<Dungeon> Poblacion_, ArrayList<Dungeon> newGeneration) 
+	public ArrayList<Dungeon> replacement(ArrayList<Dungeon> Poblacion_, ArrayList<Dungeon> newGeneration) throws CloneNotSupportedException 
 	{
 		ArrayList<Dungeon> badGeneration = new ArrayList<Dungeon>();
 		//ArrayList<Dungeon> Individuos_A_Reemplazar = new ArrayList<Dungeon>();
@@ -375,7 +379,7 @@ public class EvPopulation
 					//si estamos en el primer individuo lo seleccionamos como el peor
 					if (individuo == 0)
 					{
-						badGeneration.add(Poblacion_.get(0));
+						badGeneration.add((Dungeon) Poblacion_.get(0).clone());
 						
 						//guardo la posicion en la poblacion del peor individuo
 						posicion_peores[i] = individuo;
@@ -388,7 +392,7 @@ public class EvPopulation
 						//si el individuo es peor al guardado, lo sustituimos
 						if(badGeneration.get(i).fitness < Poblacion_.get(individuo).fitness)
 						{
-							badGeneration.set(i, Poblacion_.get(individuo));
+							badGeneration.set(i, (Dungeon) Poblacion_.get(individuo).clone());
 							
 							//guardo la posicion en la poblacion del peor individuo
 							posicion_peores[i] = individuo;
@@ -405,10 +409,22 @@ public class EvPopulation
 					//si estamos en el primer individuo lo seleccionamos como el peor
 					if (individuo == 0)
 					{
-						badGeneration.add(Poblacion_.get(0));
-						
-						//guardo la posicion en la poblacion del peor individuo
-						posicion_peores[i] = individuo;
+						//si el peor individuo guardado anteriormente es el primero iniciamos como el segundo peor la siguiente posicion
+						if(posicion_peores[i] == 0)
+						{
+							badGeneration.add((Dungeon) Poblacion_.get(1).clone());
+							
+							//guardo la posicion en la poblacion del peor individuo
+							posicion_peores[i] = individuo;
+						}
+						else
+						{
+							badGeneration.add((Dungeon) Poblacion_.get(0).clone());
+							
+							//guardo la posicion en la poblacion del peor individuo
+							posicion_peores[i] = individuo;
+						}
+
 					}
 					
 					//si estamos en el resto de individuos de la poblacion comprobamos si es peor al que hemos guardado
@@ -418,7 +434,7 @@ public class EvPopulation
 						if((badGeneration.get(i).fitness < Poblacion_.get(individuo).fitness) && (posicion_peores[0] != individuo))
 						{
 							
-							badGeneration.set(i, Poblacion_.get(individuo));
+							badGeneration.set(i,(Dungeon) Poblacion_.get(individuo).clone());
 							
 							//guardo la posicion en la poblacion del peor individuo
 							posicion_peores[i] = individuo;
@@ -436,11 +452,20 @@ public class EvPopulation
 		//Sustituimos los individuos nuevos por los seleccionados como peores
 		for(int new_indiv = 0; new_indiv < newGeneration.size(); new_indiv++)
 		{
-			//se modifican los individuos con peor fitness de la poblacion por los nuevos individuo solo si son buenos
-			if(newGeneration.get(new_indiv).getFitness() >= 0.0)
-			{
-				Poblacion_.set(posicion_peores[new_indiv], newGeneration.get(new_indiv));
+			try {
+				if(posicion_peores[new_indiv] >= 0)
+				{
+					//se modifican los individuos con peor fitness de la poblacion por los nuevos individuo solo si son buenos
+					if(newGeneration.get(new_indiv).getFitness() >= 0.0)
+					{
+						Poblacion_.set(posicion_peores[new_indiv], (Dungeon) newGeneration.get(new_indiv).clone());
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 			
 			
 		}
@@ -814,7 +839,7 @@ public class EvPopulation
 			System.out.print("PARADA" + "\n");
 			*/
 			
-			//modificamos el fitness del individuo y recalculamos el resto de parametros			
+			//modificamos el fitness del individuo y recalculamos el resto de parametros		
 			individuo_mutado.ResetearDungeon();
 			individuo_mutado.revisar_genotipo();
 			individuo_mutado.numero_tesoros = individuo_mutado.comprobar_tesoros();
@@ -994,7 +1019,12 @@ public class EvPopulation
 		//Arraylist de los individuos que van a ser los progenitores
 		ArrayList<Dungeon> Descendientes = new ArrayList<Dungeon>();
 		
-		Descendientes = (ArrayList<Dungeon>) parents.clone();
+//		Descendientes = (ArrayList<Dungeon>) parents.clone();
+		
+		for(int i = 0; i < parents.size(); i++)
+		{
+			Descendientes.add(new Dungeon());
+		}
 		
 		int[] genotipo_hijo1 = new int[parents.get(0).genotipo.length];
 		int[] genotipo_hijo2 = new int[parents.get(1).genotipo.length];
@@ -1066,11 +1096,19 @@ public class EvPopulation
 		
 		//Inicializamos los descendientes
 		
-		for(int tam_gen = 0; tam_gen < Descendientes.get(0).genotipo.length; tam_gen++)
+		for(int tam_gen = 0; tam_gen < parents.get(0).genotipo.length; tam_gen++)
 		{
 			genotipo_hijo1[tam_gen] = 0;
 			genotipo_hijo2[tam_gen] = 0;
 		}
+		
+//		System.out.println("Genotipo padre 0:");
+//		for (int i = 0; i < parents.get(0).genotipo.length; i++)
+//		{
+//			System.out.print(parents.get(0).genotipo[i]);
+//		}
+//		
+//		System.out.println("");
 		
 		//Recorremos cada genotipo
 		for(int i = 0; i < mascara.length; i++) 
@@ -1097,18 +1135,45 @@ public class EvPopulation
 		//Dungeon individuo1 = parents.get(0);
 		Dungeon individuo = null;
 		
-		try {
-			individuo = (Dungeon) parents.get(0).clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		individuo = new Dungeon();
+		individuo.dungeon_valido = true;
+		individuo.f = parents.get(0).f;
+		individuo.c = parents.get(0).c;
+		individuo.tipo_celdas = parents.get(0).tipo_celdas;
+		individuo.porcentaje = parents.get(0).porcentaje;
+		individuo.porcentaje_paredes = parents.get(0).porcentaje_paredes;
+		individuo.celdas_Paredes = parents.get(0).celdas_Paredes;
+		individuo.celdas_Vacias = parents.get(0).celdas_Vacias; 
+		individuo.dificultad_nivel = parents.get(0).dificultad_nivel;
+		individuo.ponderaciones_nivel = parents.get(0).ponderaciones_nivel;
+		
+		
+		individuo.inicializarDungeon();
 		
 		individuo.genotipo = genotipo_hijo1;
 		individuo.ResetearDungeon();
 		individuo.revisar_genotipo();
+		
+		individuo.numero_puertas = parents.get(0).numero_puertas;
+		
+//		individuo.pos_puertas = parents.get(0).pos_puertas;
+//		individuo.t_puertas = parents.get(0).t_puertas;
+		
+		individuo.posicion_puertas = new ArrayList<Celda>();
+		
+		
+		//TODO Añadir las puertas en las mismas posiciones que el padre y 
+		//que las celdas correspondientes tengan las mismas caracteristicas (puerta norte, ... puerta si, etc)
+		individuo.anadir_puertas(individuo.t_puertas, individuo.numero_puertas);
+		
+		individuo.numero_tesoros = 0;
 		individuo.numero_tesoros = individuo.comprobar_tesoros();
+
+		individuo.numero_monstruos = 0;
 		individuo.numero_monstruos = individuo.comprobar_monstruos();
+		
+		
+		
 		individuo.ResetearDungeonCamino();
 		//TODO
 		
@@ -1155,10 +1220,16 @@ public class EvPopulation
 		
 		individuo.generateDungeon(posicionStartX, posicionStartY);
 		
+//		System.out.println("Antes de calcular fintess 1");
+//		individuo.pintar();
+		
 		individuo.calcularfitness(individuo.numero_puertas);
 		
-
-		
+		if (individuo.fitness  < 0){
+//			System.out.println("Despues de calcular fintess 1");
+//			individuo.pintar();
+//			individuo.calcularfitness(individuo.numero_puertas);
+		}
 		
 		//si el fitness del individuo sale nulo entonces se translada a la poblacion de no validos y se copia un padre como sucesor
 		/*if(individuo.fitness == -100)
@@ -1177,32 +1248,50 @@ public class EvPopulation
 		
 		
 		//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
-		Descendientes.set(0, individuo);
+		Descendientes.set(0, (Dungeon) individuo.clone());
+		individuo = null;
 		
 		Dungeon individuo2 = null; //se pone a null para poder inicializar la variable de nuevo
-		
-		try {
-			individuo2 = (Dungeon) parents.get(1).clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		//individuo = parents.get(1);
+		individuo2 = new Dungeon();
+		
+		individuo2.f = parents.get(1).f;
+		individuo2.c = parents.get(1).c;
+		individuo2.tipo_celdas = parents.get(1).tipo_celdas;
+		individuo2.porcentaje = parents.get(1).porcentaje;
+		individuo2.porcentaje_paredes = parents.get(1).porcentaje_paredes;
+		individuo2.celdas_Paredes = parents.get(1).celdas_Paredes;
+		individuo2.celdas_Vacias = parents.get(1).celdas_Vacias; 
+		individuo2.dificultad_nivel = parents.get(1).dificultad_nivel;
+		individuo2.ponderaciones_nivel = parents.get(1).ponderaciones_nivel;
+		
+		
+		individuo2.inicializarDungeon();
+		
 		individuo2.genotipo = genotipo_hijo2;
-		
-		
-		//se calculan el resto de cosas del individuo para luego almacenarlo en descendientes
 		individuo2.ResetearDungeon();
 		individuo2.revisar_genotipo();
-		individuo2.numero_tesoros = individuo2.comprobar_tesoros();
-		individuo2.numero_monstruos = individuo2.comprobar_monstruos();
-		individuo2.ResetearDungeonCamino();
 		
+		individuo2.numero_puertas = parents.get(1).numero_puertas;
+		
+//		individuo2.pos_puertas = parents.get(1).pos_puertas;
+//		individuo2.t_puertas = parents.get(1).t_puertas;
+		
+		individuo2.posicion_puertas = new ArrayList<Celda>();
+		
+		
+		//TODO Añadir las puertas en las mismas posiciones que el padre y 
+		//que las celdas correspondientes tengan las mismas caracteristicas (puerta norte, ... puerta si, etc)
+		individuo2.anadir_puertas(individuo2.t_puertas, individuo2.numero_puertas);
+		
+		individuo2.numero_tesoros = 0;
+		individuo2.numero_tesoros = individuo2.comprobar_tesoros();
+
+		individuo2.numero_monstruos = 0;
+		individuo2.numero_monstruos = individuo2.comprobar_monstruos();
 		
 		int posicionStartX2 = -1;
 		int posicionStartY2 = -1;
-		
 		
 		for(int i= 0; i< individuo2.posicion_puertas.size(); i++)
 		{
@@ -1241,8 +1330,18 @@ public class EvPopulation
 		}
 		
 		individuo2.generateDungeon(posicionStartX2, posicionStartY2);
+		
+//		System.out.println("Antes de calcular fintess 2");
+//		individuo2.pintar();
+		
 		individuo2.calcularfitness(individuo2.numero_puertas);
 		
+
+		if (individuo2.fitness  < 0){
+//			System.out.println("Despues de calcular fintess 2");
+//			individuo2.pintar();
+//			individuo2.calcularfitness(individuo2.numero_puertas);
+		}
 		
 		
 		//si el fitness del individuo sale nulo entonces se translada a la poblacion de no validos y se copia un padre como sucesor
@@ -1261,7 +1360,7 @@ public class EvPopulation
 		}*/
 		
 		//se modifica el segundo hijo con el genotipo correspondiente y los datos del individuo correspondientes
-		Descendientes.set(1, individuo2);
+		Descendientes.set(1, (Dungeon) individuo2.clone());
 		
 			
 		
@@ -1306,33 +1405,82 @@ public class EvPopulation
 	{		
 				
 	
-		//Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
-		
-		if( contador_iteraciones < 1000)
+		//si estamos en la primera iteracion, debido a que no hay ningun individuo de parada guardado se inicializan las variables a individuos con un mal fitness
+		if (contador_iteraciones == 0)
 		{
-			//si estamos en la primera iteracion, debido a que no hay ningun individuo de parada guardado se inicializan las variables a individuos con un mal fitness
-			if (contador_iteraciones == 0)
-			{
-	
-				individuo_parada.set_fitness(3000);
-	
-				//se modifica el individuo temporal con un fitness malo para que luego se reemplace
-				this.Individuos_parada.set(0, individuo_parada);		
-				
-				
-				//se anade el individuo de parada modificado con un mal fitness
-				try {
-					this.Individuos_parada.set(1, (Dungeon) Individuos_parada.get(0).clone());
-				} catch (CloneNotSupportedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
-				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
-				
-			}			
+			
+			individuo_parada.set_fitness(3000);
+			
+			this.Individuos_parada = new ArrayList<Dungeon>(2);
+			this.Individuos_parada.add(0, new Dungeon());
+			this.Individuos_parada.add(1, new Dungeon());
+			
+			//se modifica el individuo temporal con un fitness malo para que luego se reemplace
+			
+			try {
+				this.Individuos_parada.set(0, null);
+				this.Individuos_parada.set(0, new Dungeon());
+				this.Individuos_parada.set(0,(Dungeon) individuo_parada.clone());
+//				this.Individuos_parada.get(0).pintar();
+			} catch (CloneNotSupportedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}		
+			
+			
+			//se anade el individuo de parada modificado con un mal fitness
+			try {
+				this.Individuos_parada.set(1, null);
+				this.Individuos_parada.set(1, new Dungeon());
+				this.Individuos_parada.set(1, (Dungeon) individuo_parada.clone());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
+			System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
+			
+		}
+		
+		//Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
+		if( contador_iteraciones < 100)
+		{
+//			//si estamos en la primera iteracion, debido a que no hay ningun individuo de parada guardado se inicializan las variables a individuos con un mal fitness
+//			if (contador_iteraciones == 0)
+//			{
+//	
+//				individuo_parada.set_fitness(3000);
+//	
+//				//se modifica el individuo temporal con un fitness malo para que luego se reemplace
+//				
+//				try {
+//					this.Individuos_parada.set(0, null);
+//					this.Individuos_parada.set(0, new Dungeon());
+//					this.Individuos_parada.set(0,(Dungeon) individuo_parada.clone());
+//					this.Individuos_parada.get(0).pintar();
+//				} catch (CloneNotSupportedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}		
+//				
+//				
+//				//se anade el individuo de parada modificado con un mal fitness
+//				try {
+//					this.Individuos_parada.set(1, null);
+//					this.Individuos_parada.set(1, new Dungeon());
+//					this.Individuos_parada.set(1, (Dungeon) individuo_parada.clone());
+//				} catch (CloneNotSupportedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				
+//				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
+//				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
+//				
+//			}			
 						
 			//Recorremos la poblacion
 			for(int i = 0 ; i < Poblacion_.size() ; i++)
@@ -1342,6 +1490,8 @@ public class EvPopulation
 				if((Poblacion_.get(i).fitness < Individuos_parada.get(1).fitness) && (Poblacion_.get(i).fitness >= 0))
 				{					
 					try {
+						this.Individuos_parada.set(1, null);
+						this.Individuos_parada.set(1, new Dungeon());
 						this.Individuos_parada.set(1, (Dungeon) Poblacion_.get(i).clone());
 					} catch (CloneNotSupportedException e) {
 						// TODO Auto-generated catch block
@@ -1373,6 +1523,8 @@ public class EvPopulation
 					if (Individuos_parada.get(1).fitness < Individuos_parada.get(0).fitness)
 					{
 						try {
+							this.Individuos_parada.set(0, null);
+							this.Individuos_parada.set(0, new Dungeon());
 							this.Individuos_parada.set(0,(Dungeon) Individuos_parada.get(1).clone());
 						} catch (CloneNotSupportedException e) {
 							// TODO Auto-generated catch block
@@ -1387,6 +1539,8 @@ public class EvPopulation
 			if(Individuos_parada.get(1).fitness <= 0.5)
 			{
 				try {
+					this.Individuos_parada.set(0, null);
+					this.Individuos_parada.set(0, new Dungeon());
 					this.Individuos_parada.set(0, (Dungeon) Individuos_parada.get(1).clone());
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
@@ -1419,6 +1573,8 @@ public class EvPopulation
 					// iteracion
 					
 					try {
+						this.Individuos_parada.set(1, null);
+						this.Individuos_parada.set(1, new Dungeon());
 						this.Individuos_parada.set(1, (Dungeon) Poblacion_.get(i).clone());
 					} catch (CloneNotSupportedException e) {
 						// TODO Auto-generated catch block
@@ -1437,6 +1593,8 @@ public class EvPopulation
 			{
 				//se guarda el mejor individuo en la posicion 0
 				try {
+					this.Individuos_parada.set(0, null);
+					this.Individuos_parada.set(0, new Dungeon());
 					this.Individuos_parada.set(0, (Dungeon) Individuos_parada.get(1).clone());
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block

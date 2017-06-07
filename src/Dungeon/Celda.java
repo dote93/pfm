@@ -87,6 +87,10 @@ public class Celda implements Cloneable
 	//Distancia de la puerta mas cercana para calcular luego el fitness (solo se usa cuando la celda es de tipo tesoro)
 	int distancia_P_cercana;
 	
+	private double F;
+	private double G;
+	private double H;
+	
 	public Celda()
 	{
 		super();
@@ -143,27 +147,86 @@ public class Celda implements Cloneable
 		//crearParedes(fila, columna, max_fila, max_columna);
 	}
 	
+	/**
+	 * Function que va a devolver la suma del coste real hasta llegar al nodo destino
+	 * y el valor heurístico de la celda actual hasta la celda destino.
+	 * @return
+	 */
+	public double getF()
+	{
+		return this.F;
+	}
 	
+	public void setF(double F)
+	{
+		this.F = F;
+	}
+	/**
+	 * Funcion que va a devolver el coste real de ir desde la celda de inicio 
+	 * hasta la celda actual
+	 * @return
+	 */
+	public double getG() {
+		return this.G;
+	}
+
+	public void setG(double g) {
+		this.G = g;
+	}
+
+	/**
+	 * Funcion que va a devolver la heuristica de ir desde la celda actual 
+	 * hasta el destino
+	 * @return
+	 */
+	public double getH() {
+		return this.H;
+	}
+
+	public void setH(double h) {
+		this.H = h;
+	}
+	
+	/**
+	 * Funcion que se encarga de calcular los costes recibiendo la celda 
+	 * de la que venimos y la celda en la que nos encontramos
+	 * @param padre
+	 * @param hijo
+	 */
+	public void setEcuacion (Celda padre, Celda inicio, Celda destino)
+	{
+		//calculamos H
+		double distancia_H = ((Math.abs(destino.fila - this.fila)) + (Math.abs(destino.columna - this.columna)));
+
+		//calculamos G
+		double distancia_G = ((Math.abs(padre.fila - this.fila)) + (Math.abs(padre.columna - this.columna)));
+		
+		//Se asignan los valores a la celda
+		this.setG(padre.getG() + distancia_G);
+		this.setH(padre.getG() + distancia_H);
+		this.setF(this.getG() + this.getH());
+		
+	}
 	
 	/** 
      *	Funci—n que calcula el coste entre la posicion de salida y la posicion en la que nos encontramos (coste) y el coste entre la posicion en la que nos
      *  encontramos y la meta (estimacion)
      */
-	public int coste(int posicion_salida_x, int posicion_salida_y, int posicion_meta_x, int posicion_meta_y ,int posicion_x, int posicion_y)
-	{
-		//variables para guardar el coste y la estimacion de ir de la celda en la que nos encontramos hasta la final viniendo de la inicial
-		int coste;
-		int estimacion;
-		
-		// igualamos el coste a la suma de los valores absolutos de las diferencias entre la posicion de salida y la posicion inicial en las variables x e y
-		coste = (Math.abs(posicion_salida_x - posicion_x)) + (Math.abs(posicion_salida_y - posicion_y));
-		
-		// igualamos la estimacon a la suma de los valores absolutos de las diferencias entre la posicion de meta y la posicion inicial en las variables x e y
-		estimacion = (Math.abs(posicion_meta_x - posicion_x)) + (Math.abs(posicion_meta_y - posicion_y));
-		
-		
-		return (coste + estimacion); // devolvemos la suma del coste y la estimacion de la celda que hemos recibido
-	}
+//	public int coste(int posicion_salida_x, int posicion_salida_y, int posicion_meta_x, int posicion_meta_y ,int posicion_x, int posicion_y)
+//	{
+//		//variables para guardar el coste y la estimacion de ir de la celda en la que nos encontramos hasta la final viniendo de la inicial
+//		int coste;
+//		int estimacion;
+//		
+//		// igualamos el coste a la suma de los valores absolutos de las diferencias entre la posicion de salida y la posicion inicial en las variables x e y
+//		coste = (Math.abs(posicion_salida_x - posicion_x)) + (Math.abs(posicion_salida_y - posicion_y));
+//		
+//		// igualamos la estimacon a la suma de los valores absolutos de las diferencias entre la posicion de meta y la posicion inicial en las variables x e y
+//		estimacion = (Math.abs(posicion_meta_x - posicion_x)) + (Math.abs(posicion_meta_y - posicion_y));
+//		
+//		
+//		return (coste + estimacion); // devolvemos la suma del coste y la estimacion de la celda que hemos recibido
+//	}
 	
 	protected Object clone() throws CloneNotSupportedException {
         return super.clone();
