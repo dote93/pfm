@@ -1,0 +1,5 @@
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_06_12_20_06_04
+
+00,00

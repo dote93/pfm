@@ -1164,7 +1164,14 @@ public class EvPopulation
 		
 		//TODO Añadir las puertas en las mismas posiciones que el padre y 
 		//que las celdas correspondientes tengan las mismas caracteristicas (puerta norte, ... puerta si, etc)
-		individuo.anadir_puertas(individuo.t_puertas, individuo.numero_puertas);
+//		individuo.anadir_puertas(individuo.t_puertas, individuo.numero_puertas);
+		
+		for(int pos=0; pos<parents.get(0).posicion_puertas.size(); pos++){
+			Celda puerta = parents.get(0).posicion_puertas.get(pos);
+			individuo.dungeon[puerta.fila][puerta.columna] = (Celda) puerta.clone();
+			individuo.ResetearCelda((Celda) individuo.dungeon[puerta.fila][puerta.columna].clone());
+			individuo.posicion_puertas.add((Celda) individuo.dungeon[puerta.fila][puerta.columna].clone());
+		}
 		
 		individuo.numero_tesoros = 0;
 		individuo.numero_tesoros = individuo.comprobar_tesoros();
@@ -1282,7 +1289,14 @@ public class EvPopulation
 		
 		//TODO Añadir las puertas en las mismas posiciones que el padre y 
 		//que las celdas correspondientes tengan las mismas caracteristicas (puerta norte, ... puerta si, etc)
-		individuo2.anadir_puertas(individuo2.t_puertas, individuo2.numero_puertas);
+//		individuo2.anadir_puertas(individuo2.t_puertas, individuo2.numero_puertas);
+		
+		for(int pos=0; pos<parents.get(1).posicion_puertas.size(); pos++){
+			Celda puerta = parents.get(1).posicion_puertas.get(pos);
+			individuo2.dungeon[puerta.fila][puerta.columna] = (Celda) puerta.clone();
+			individuo2.ResetearCelda((Celda) individuo2.dungeon[puerta.fila][puerta.columna].clone());
+			individuo2.posicion_puertas.add((Celda) individuo2.dungeon[puerta.fila][puerta.columna].clone());
+		}
 		
 		individuo2.numero_tesoros = 0;
 		individuo2.numero_tesoros = individuo2.comprobar_tesoros();
@@ -1675,7 +1689,7 @@ public class EvPopulation
 	}
 	
 	/**
-	 * 
+	 * Funcion que calcula la media de los individuos de la poblacion
 	 * @return
 	 */
 	public double getMeanPoblacion(ArrayList<Dungeon> Poblacion_)
@@ -1690,10 +1704,44 @@ public class EvPopulation
 		}
 		
 		mean = (double) mean / Poblacion_.size();
-		
-		//TODO Calcular la media de los individuos de la poblacion
-		
+
 		return mean;
+	}
+	
+	/**
+	 * Funcion que calcula la varianza de los individuos de la poblacion
+	 * @return
+	 */
+	public double getVariancePoblacion(ArrayList<Dungeon> Poblacion_, double mean)
+	{
+		double variance = 0;
+		
+		for (int num_indiv= 0; num_indiv < Poblacion_.size(); num_indiv++)
+		{		
+			variance = variance + Math.pow(Math.abs(Poblacion_.get(num_indiv).getFitness() - mean), 2);
+		}
+		
+		variance = (double) variance / Poblacion_.size();
+		
+		return variance;
+	}
+	
+	/**
+	 * Funcion que calcula la desviacion tipica de los individuos de la poblacion
+	 * @return
+	 */
+	public double getStandardDeviationPoblacion(double variance)
+	{
+		return Math.sqrt(variance);
+	}
+	
+	/**
+	 * Funcion que calcula el intervalo de confianza de los individuos de la poblacion
+	 * @return An array of 2 possitions with the higher and lower 
+	 */
+	public double[] getConfienceIntervalPoblacion(double standardDesviation, double mean, double numIndiv)
+	{	
+		return new double[]{(mean + 1.96 * standardDesviation), (mean - 1.96 * standardDesviation)};
 	}
 
 	/**

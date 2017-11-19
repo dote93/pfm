@@ -1,0 +1,516 @@
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_01_01
+
+00 13 4.601812499999999 17.223999999999997 9.287028846153845
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_01_05
+
+00 10 5.377374999999999 17.27325 9.778012499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_01_10
+
+00 10 7.122749999999999 11.777249999999999 9.125924999999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_01_10
+
+00 10 6.33 26.22425 10.693162499999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_03_44
+
+00 11 7.317562499999999 14.0139375 10.38565909090909
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_03_51
+
+00 11 3.0384999999999995 11.419749999999999 8.855505681818181
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_03_51
+
+00 10 4.417187500000001 15.31575 10.307762499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_03_54
+
+00 11 5.109125 14.582624999999997 8.581204545454547
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_04_00
+
+00 11 6.841749999999999 14.759125000000001 10.386363636363637
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_05_43
+
+00 10 6.6034999999999995 11.96975 8.77111875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_05_45
+
+00 12 7.254999999999999 12.021 9.319156249999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_07_50
+
+00 10 6.79225 14.740124999999997 10.301299999999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_07_55
+
+00 10 2.833875 14.21475 10.517750000000001
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_07_58
+
+00 11 5.42625 20.2273125 10.317119318181817
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_08_00
+
+00 10 4.288625 12.466750000000001 8.4992125
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_08_03
+
+00 11 5.512249999999999 10.3185 8.112840909090906
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_08_05
+
+00 10 4.624999999999999 14.565437499999998 9.331887499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_11_36
+
+00 11 5.6308125 17.369749999999996 9.916625
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_12_02
+
+00 10 4.8345625 12.12975 8.019662499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_12_05
+
+00 11 5.294312499999999 13.78525 8.283585227272726
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_12_07
+
+00 11 5.500624999999999 16.982375 9.310420454545453
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_12_09
+
+00 10 3.0505625 18.044375000000002 9.48208125
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_46_34
+
+00 12 5.88125 11.782499999999999 9.718223958333335
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_46_42
+
+00 10 3.8974999999999995 14.16075 9.1117125
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_46_46
+
+00 10 5.66225 10.8695 7.891018749999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_46_50
+
+00 13 4.526624999999999 12.95 9.417221153846153
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_14
+
+00 11 3.5728125 11.162500000000001 8.576744318181817
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_17
+
+00 10 3.759125 12.379750000000001 6.959899999999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_18
+
+00 10 5.577499999999999 15.807187499999998 9.49506875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_22
+
+00 11 7.648499999999999 16.344125 10.540107954545455
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_34
+
+00 10 6.092499999999999 11.004499999999998 8.447325
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_37
+
+00 10 3.572375 18.202624999999998 10.599012499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_39
+
+00 12 5.226874999999999 11.020999999999999 7.778015624999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_47_40
+
+00 10 4.553749999999999 25.702249999999996 10.74609375
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_54_18
+
+00 12 6.816249999999999 13.79975 10.029166666666667
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_54_25
+
+00 10 5.4025 12.778249999999998 9.023475000000001
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_57_14
+
+00 11 4.6684375 16.9253125 9.251369318181817
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_57_23
+
+00 10 2.3775 12.40775 8.305931249999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_19_57_29
+
+00 10 2.6157499999999994 11.215 7.797656250000001
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_04_26
+
+00 10 0.0 14.019250000000001 10.2937
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_08_21
+
+00 12 6.271 11.517249999999999 7.635354166666667
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_10_01
+
+00 12 4.309687499999999 26.3963125 10.929093749999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_10_23
+
+00 10 10.92625 11.837 9.154556249999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_10_44
+
+00 11 6.0695 11.53775 8.139187499999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_13_48
+
+00 10 4.6379375 9.117874999999998 7.13033125
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_14_50
+
+00 11 9.67475 13.011249999999999 10.347579545454545
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_15_59
+
+00 10 11.4655 12.78125 10.0802875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_16_01
+
+00 12 10.5154375 15.787249999999998 9.251661458333333
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_16_59
+
+00 10 5.82325 16.63775 9.810662500000001
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_20_22
+
+00 10 10.737000000000002 19.5845 10.992575
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_20_26
+
+00 11 7.9792499999999995 12.55475 8.589994318181816
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_20_29
+
+00 11 12.904 16.12 10.77622159090909
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_20_30
+
+00 12 7.6025 14.514999999999999 10.679666666666664
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_20_32
+
+00 10 7.501999999999999 11.452250000000001 8.7345875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_10
+
+00 10 12.93625 13.2465 9.586043749999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_12
+
+00 10 10.03 14.125 9.25666875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_13
+
+00 10 11.084499999999998 13.54975 9.276912499999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_15
+
+00 10 10.1631875 12.63925 8.455068749999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_24
+
+00 10 3.82875 13.412187499999996 7.155568749999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_21_25
+
+00 10 10.477249999999998 15.738500000000002 9.4452375
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_23_17
+
+00 11 18.317500000000003 18.317500000000003 10.259818181818183
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_23_27
+
+00 11 10.674249999999999 12.29975 9.494613636363635
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_19
+
+00 10 5.332249999999998 15.39725 9.9287875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_29
+
+00 10 6.002999999999999 11.70725 8.7885875
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_33
+
+00 10 5.323125 16.012625 10.361337500000001
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_36
+
+00 10 5.656249999999999 16.061874999999997 9.258481249999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_37
+
+00 11 6.405249999999999 17.179499999999994 10.593920454545453
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_39
+
+00 10 6.208125 16.104562500000004 10.47185
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_41
+
+00 11 4.2244375 14.276 9.438494318181817
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_43
+
+00 11 4.37625 14.492750000000001 9.282204545454546
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_45
+
+00 10 6.349625 16.822874999999996 11.184837499999999
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_47
+
+00 10 4.786249999999999 16.207874999999998 9.900618749999998
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_49
+
+00 11 4.1321875 11.486125 8.894051136363636
+
+
+*******************************************************************************************
+Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness 
+2017_05_03_20_25_50
+
+00 12 4.126875 12.347 8.402135416666665

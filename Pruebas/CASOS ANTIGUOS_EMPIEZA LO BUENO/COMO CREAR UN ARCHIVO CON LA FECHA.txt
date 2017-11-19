@@ -1,0 +1,63 @@
+
+		Date fechaActual = new Date();
+		//DateFormat formatoHora = new SimpleDateFormat("HH_mm_ss");
+        DateFormat formatoFecha = new SimpleDateFormat("yyyy_MM_dd");
+        
+        String nombre_archivo = formatoFecha.format(fechaActual); //+ "_" + formatoHora.format(fechaActual);
+        
+        System.out.println("Fecha: " + nombre_archivo);
+        
+		
+		//------------------------------------------------------------------------------------
+		
+		BufferedWriter bw = null;
+		
+		
+		//RUTA Relativa
+		String ruta = "../pfm/Pruebas/" + nombre_archivo + ".txt";
+		File file_;
+		file_ = new File(ruta);
+		
+		try
+		{
+			//Si el archivo ya existe, solo escribo la linea correspondiente
+			if(file_.exists())
+			{
+				bw = new BufferedWriter(new FileWriter(ruta, true));
+				bw.newLine();
+				bw.write("Hola");
+				bw.append(" " + "pepito");
+				bw.append(" " + "Grillo");
+			}
+			
+			//si el archivo no existia, escribo una primera linea informativa
+			else
+			{
+				bw = new BufferedWriter(new FileWriter(ruta, true));
+				
+				bw.append("Iteracion MejorFitness PeorFitness Media");
+				bw.newLine();
+				bw.newLine();
+				bw.write("Hola");
+				bw.append(" " + "pepito");
+				bw.append(" " + "Grillo");
+			}
+			
+			
+			System.out.println("Escribo en el archivo");
+			
+		}
+		catch (IOException e)
+		{
+			//Error processing code
+			System.out.println("Error: " + e);
+		}
+		finally
+		{
+			//si el archivo existia y no ha habido ningun error, se cierra
+			if(bw != null)
+			{
+				bw.close();
+			}
+		}
+		

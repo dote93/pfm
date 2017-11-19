@@ -578,8 +578,8 @@ public class Dungeon implements Cloneable
 		int posicion = 0;
 		
 		//reseteo la variable de celdas pared para saber cuantas se han colocado al final al igual que de las celdas en blanco
-		celdas_Paredes = 0;
-		celdas_Vacias = 0;
+		this.celdas_Paredes = 0;
+		this.celdas_Vacias = 0;
 		
 		
 		
@@ -601,13 +601,13 @@ public class Dungeon implements Cloneable
 				
 				if(this.dungeon[i][j].genotipo_celda[0] == 0 && this.dungeon[i][j].genotipo_celda[1] == 0 && this.dungeon[i][j].genotipo_celda[2] == 0)
 				{
-					celdas_Vacias++;
+					this.celdas_Vacias++;
 					
 				}
 				
 				else if(this.dungeon[i][j].genotipo_celda[0] == 1 && this.dungeon[i][j].genotipo_celda[1] == 1 && this.dungeon[i][j].genotipo_celda[2] == 1)
 				{
-					celdas_Paredes++;
+					this.celdas_Paredes++;
 					
 					//si la celda es de tipo pared, ponemos el booleano a true
 					this.dungeon[i][j].pared = true;
@@ -3487,10 +3487,44 @@ public class Dungeon implements Cloneable
 				
 				this.dungeon[i][j].distancia_P_cercana = -1;
 				
-	
+				for(int k=0; k<this.dungeon[i][j].genotipo_celda.length; k++){
+					this.dungeon[i][j].genotipo_celda[k] = -1;
+				}
+				
 			}
 		}
 	
+	}
+	
+	public void ResetearCelda(Celda celda){
+		//resetamos los booleanos y los ponemos a false de nuevo por si estamos volviendo de nuevo a pasar por este dungeon
+		this.dungeon[celda.fila][celda.columna].destino = false;
+		this.dungeon[celda.fila][celda.columna].tesoro   = false;
+		this.dungeon[celda.fila][celda.columna].monstruo = false;
+//		this.dungeon[i][j].pared = false;
+		
+		// decimos que la celda ha sido visitada
+		this.dungeon[celda.fila][celda.columna].visitada = false;
+		
+		this.dungeon[celda.fila][celda.columna].distancia_seguridad_M = -1;
+		
+		this.dungeon[celda.fila][celda.columna].Vecinos = new ArrayList<Celda>(4);
+		
+		this.dungeon[celda.fila][celda.columna].tam_dist_T = new ArrayList<Integer>();
+		
+		this.dungeon[celda.fila][celda.columna].tam_dist_M = new ArrayList<Integer>();
+		
+		// Inicializamos el array de int que luego va a guardar las coordenadas de su precursora
+		this.dungeon[celda.fila][celda.columna].Posicion_precursor = new int [2];
+		
+		// Inicializamos el array de int que luego va a guardar las coordenadas del tesoro mas cercano
+		this.dungeon[celda.fila][celda.columna].Posicion_T_cercano = new int[2];
+		
+		// Inicializamos el array de int que luego va a guardar las coordenadas del monstruo mas cercano
+		this.dungeon[celda.fila][celda.columna].Posicion_M_cercano = new int[2];
+		
+		this.dungeon[celda.fila][celda.columna].distancia_P_cercana = -1;
+		
 	}
 	
 	/**

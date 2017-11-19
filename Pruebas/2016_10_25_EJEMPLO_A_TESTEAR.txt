@@ -1,0 +1,89 @@
+Salgo en la iteracion: 100
+Motivo: Individuo no encontrado tras 100 iteraciones
+Mutaciones hechas: 10
+Mejor individuo de la poblacion
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   | * | S | C |   |   |
++---+---+---+---+---+---+---+---+---+---+
+| * | * |   | * |   | * |   |   |   | * |
++---+---+---+---+---+---+---+---+---+---+
+| * | * | * |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+| * | * |   |   | * | * |   | * |   | * |
++---+---+---+---+---+---+---+---+---+---+
+|   | * | * |   | * |   |   |   |   | * |
++---+---+---+---+---+---+---+---+---+---+
+| * |   | * | * | * | * |   |   |   | * |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   | * | * | S |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   | * |   |   | * | S |   |   | M |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   | L |   | G |   |   |   | P |
++---+---+---+---+---+---+---+---+---+---+
+| G | G |   |   | P |   | M |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+ 
+-------------
+Genotipo del individuo: 
+000 000 000 000 000 111 100 011 000 000 111 111 000 111 000 111 000 000 000 111 111 111 111 000 000 000 000 000 000 000 111 111 000 000 111 111 000 111 000 111 000 111 111 000 111 000 000 000 000 111 111 000 111 111 111 111 000 000 000 111 000 000 000 000 000 111 111 100 000 000 000 111 000 000 111 100 000 000 010 000 000 000 000 101 000 001 000 000 000 110 001 001 000 000 110 000 010 000 000 000  
+-------------
+ 
+-------------
+Numero de monstruos     : 7
+[9 6][8 5][9 1][7 5][9 0][7 8][6 7]
+
+Numero de tesoros       : 4
+[9 4][8 3][8 9][0 7]
+
+Numero de celdas Pared  : 29
+Numero de celdas Libres : 60
+-------------
+ 
+-------------
+Tipo puertas: 
+Puerta Norte 0 8: SALIDA 
+ 
+Puerta Sur   9 4: ENTRADA_SALIDA 
+ 
+Puerta Entrada Escogida: puerta_S
+-------------
+Recorrido 0, tamano = 13 :
+[0 8][1 8][2 8][3 8][4 8][5 8][6 8][7 8][8 8][9 8][9 7][9 6][9 5]
+[   ][   ][   ][   ][   ][   ][   ][ M ][   ][   ][   ][ M ][   ]
+
+
+Desglose fitness: 
+Resultado 0:real (2.0) y esperado (1.0)0.04975
+Resultado 1:real (0.0) y esperado (1.0)0.01
+Resultado 2:real (7.0) y esperado (6.0)0.35
+Resultado 3:real (4.0) y esperado (4.0)0.0
+Resultado 4:real (4.0) y esperado (7.0)0.195
+Resultado 5:real (4.0) y esperado (11.0)0.2275
+Resultado 6:real (8.0) y esperado (15.0)0.11375
+Resultado 7:real (8.0) y esperado (19.0)0.08937500000000001
+Resultado 8:real (14.0) y esperado (23.0)0.0365625
+Resultado 9:real (27.0) y esperado (27.0)0.0
+Resultado 10:real (0.0) y esperado (8.0)0.0
+Resultado 11:real (4.0) y esperado (12.0)0.0
+Resultado 12:real (27.0) y esperado (16.0)0.0
+Resultado 13:real (57.0) y esperado (20.0)0.0
+Resultado 14:real (2.0) y esperado (2.0)0.0
+Resultado 15:real (2.0) y esperado (2.0)0.0
+Resultado 16:real (2.0) y esperado (2.0)0.0
+Resultado 17:real (8.0) y esperado (2.0)0.03
+Resultado 18:real (29.0) y esperado (30.0)0.0105
+ 
+Fitness: 1.1124375000000002
+-----------------------
+Numero de monstruos recorrido esperados   : 1.0
+Numero de tesoros recorrido esperados     : 1.0
+Numero de monstruos esperados             : 6.0
+Numero de tesoros esperados               : 4.0
+Area Segura monstruo esperada             : 7.0
+Area Segura tesoro esperada               : 8.0
+Seguridad tesoro esperada                 : 2.0
+Numero de celdas Pared esperadas          : 30.0
+Numero de celdas Libres esperadas         : 60
+----------------------------------------------------
+----------------------------------------------------

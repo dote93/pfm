@@ -7,15 +7,20 @@ import java.util.Scanner;
 //Imports para escribir y modificar un archivo de texto
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
 
+import java.io.PrintStream;
 //import para la fecha
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+
+
 
 //Import de los tipos de puertas que hay
 import Dungeon.Celda.Tipo_puertas;
@@ -183,13 +188,18 @@ public class main
 		
 		
 		//RUTA Relativa
-		String ruta = "../pfm/Pruebas/" + nombre_archivo + ".txt";
+		String ruta = "../pfm/Pruebas/";
 		File file_;
-		file_ = new File(ruta);
+		file_ = new File(ruta + nombre_archivo + ".txt");
 		
 		
 		//---------------------------------------------------------------------------------
 		
+		
+		//Desvia la salida de la consola al archivo fijado
+		//TODO Comentar estas lineas mientras se esta debugueando y no esta en modo para sacar resultados
+//		PrintStream out = new PrintStream(new FileOutputStream((String)("../pfm/Pruebas/"  + fecha_completa + "_output.txt")));
+//		System.setOut(out);
 		
 		/*****************************************************************************************************************************************/
 		/*************************************************** INIZIALIZACION **********************************************************************/
@@ -266,12 +276,16 @@ public class main
 		System.out.print("\n");
 		
 		
+		
+		
+		
 		//***************************************************************************************************************************************************
 		//***************************************************************************************************************************************************
 		
 		//variable para saber si queremos generar una evolucion o no
 		
 		boolean evolucion = true;
+		
 		
 		//***************************************************************************************************************************************************
 		//***************************************************************************************************************************************************
@@ -333,11 +347,22 @@ public class main
 //				parada = true;
 //			}
 			
+			//Se pone a 1 debido a que ya hemos hecho una iteracion porque hemos generado una poblacion bajo unos principios/reglas
+			evopopulation.contador_iteraciones = 1;
+			
 			//se comprueba si se encuentra el mejor individuo entre la poblacion que hemos inicializado, si no es asi, se empieza a evolucionar
 			if (evopopulation.converge((ArrayList<Dungeon>) Poblacion.clone()))
 			{
 				parada = true;
 			}
+			
+			//TODO Escribir la poblacion inicial porque entre ellos puede estar el mejor individuo antes de empezar si quiera a evolucionar
+			LogWriter logWriter = new LogWriter();
+			
+			//Se escribe a los primeros individuos de la poblacion
+			logWriter = new LogWriter(ruta, file_, fecha_completa, contador, (ArrayList<Dungeon>) Poblacion.clone(), evopopulation);
+			
+			contador = contador + 1;
 			
 			while(!parada)
 			{
@@ -654,149 +679,150 @@ public class main
 				//TODO ESCRIBIR AQUI EL ARCHIVO CON LOS DATOS DEL MEJOR Y EL PEOR INDIVIDUO DE LA POBLACION
 				
 				
-				try
-				{
-					//Si el archivo ya existe, solo escribo la linea correspondiente
-					if(file_.exists())
-					{
-						bw = new BufferedWriter(new FileWriter(ruta, true));
-						bw.newLine();
-						if(contador == 0)
-						{
-							bw.newLine();
-							bw.newLine();
-							bw.write("*******************************************************************************************");
-							bw.newLine();
-							bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
-							bw.newLine();
-							bw.write(fecha_completa);
-							bw.newLine();
-							bw.newLine();
-							bw.write("00"); //se anade la iteracion en la que estamos
-						}
-						else if(contador < 10)
-						{
-							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
-						}
-						else
-						{
-							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
-						}
-						
-						if(Poblacion.size() < 10)
-						{
-							bw.append(",0" + Poblacion.size());
-						}
-						else
-						{
-							bw.append("," + Poblacion.size());
-						}
-						bw.append("," + evopopulation.Individuos_parada.get(0).getFitness());
-						
-//						String mejorGenotipo = new String();
-//						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
+//				try
+//				{
+//					//Si el archivo ya existe, solo escribo la linea correspondiente
+//					if(file_.exists())
+//					{
+//						bw = new BufferedWriter(new FileWriter(ruta, true));
+//						bw.newLine();
+//						if(contador == 0)
 //						{
-//							
-//							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
+//							bw.newLine();
+//							bw.newLine();
+//							bw.write("*******************************************************************************************");
+//							bw.newLine();
+//							bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
+//							bw.newLine();
+//							bw.write(fecha_completa);
+//							bw.newLine();
+//							bw.newLine();
+//							bw.write("00"); //se anade la iteracion en la que estamos
+//						}
+//						else if(contador < 10)
+//						{
+//							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
+//						}
+//						else
+//						{
+//							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
 //						}
 //						
-//						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
+//						if(Poblacion.size() < 10)
+//						{
+//							bw.append(",0" + Poblacion.size());
+//						}
+//						else
+//						{
+//							bw.append("," + Poblacion.size());
+//						}
+//						bw.append("," + evopopulation.Individuos_parada.get(0).getFitness());
 //						
-						Dungeon worstIndividuo = new Dungeon();
-						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
-						
-						bw.append("," + worstIndividuo.getFitness());
-						
+////						String mejorGenotipo = new String();
+////						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
+////						{
+////							
+////							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
+////						}
+////						
+////						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
+////						
+//						Dungeon worstIndividuo = new Dungeon();
+//						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
+//						
+//						bw.append("," + worstIndividuo.getFitness());
+//						
+////						String peorGenotipo = new String();
+////						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
+////						{
+////							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
+////						}
+////						
+////						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
+////						
+//						bw.append("," + evopopulation.getMeanPoblacion(Poblacion));
+//						
+//						
+//					}
+//					
+//					//si el archivo no existia, escribo una primera linea informativa
+//					else
+//					{
+//						bw = new BufferedWriter(new FileWriter(ruta, true));
+//						
+//						if(contador == 0)
+//						{
+//							bw.write("*******************************************************************************************");
+//							bw.newLine();
+//							bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
+//							bw.newLine();
+//							bw.write(fecha_completa);
+//							bw.newLine();
+//							bw.newLine();
+//							bw.write("00"); //se anade la iteracion en la que estamos
+//						}
+//						else if(contador < 10)
+//						{
+//							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
+//						}
+//						else
+//						{
+//							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
+//						}
+//						
+//						if(Poblacion.size() < 10)
+//						{
+//							bw.append(",0" + Poblacion.size());
+//						}
+//						else
+//						{
+//							bw.append("," + Poblacion.size());
+//						}
+//						bw.append("," + evopopulation.Individuos_parada.get(0).getFitness());
+//						
+////						String mejorGenotipo = new String();
+////						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
+////						{
+////							
+////							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
+////						}
+////						
+////						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
+////						
+//						Dungeon worstIndividuo = new Dungeon();
+//						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
+//						
+//						bw.append("," + worstIndividuo.getFitness());
+//						
 //						String peorGenotipo = new String();
-//						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
-//						{
-//							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
-//						}
 //						
-//						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
-//						
-						bw.append("," + evopopulation.getMeanPoblacion(Poblacion));
-						
-						
-					}
-					
-					//si el archivo no existia, escribo una primera linea informativa
-					else
-					{
-						bw = new BufferedWriter(new FileWriter(ruta, true));
-						
-						if(contador == 0)
-						{
-							bw.write("*******************************************************************************************");
-							bw.newLine();
-							bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
-							bw.newLine();
-							bw.write(fecha_completa);
-							bw.newLine();
-							bw.newLine();
-							bw.write("00"); //se anade la iteracion en la que estamos
-						}
-						else if(contador < 10)
-						{
-							bw.write("0" + Integer.toString(contador)); //se anade la iteracion en la que estamos
-						}
-						else
-						{
-							bw.write(Integer.toString(contador)); //se anade la iteracion en la que estamos
-						}
-						
-						if(Poblacion.size() < 10)
-						{
-							bw.append(",0" + Poblacion.size());
-						}
-						else
-						{
-							bw.append("," + Poblacion.size());
-						}
-						bw.append("," + evopopulation.Individuos_parada.get(0).getFitness());
-						
-//						String mejorGenotipo = new String();
-//						for(int tam_genotipo = 0; tam_genotipo < evopopulation.Individuos_parada.get(0).genotipo.length; tam_genotipo++)
-//						{
-//							
-//							mejorGenotipo = mejorGenotipo + (evopopulation.Individuos_parada.get(0).genotipo[tam_genotipo]);
-//						}
-//						
-//						bw.append(" " + mejorGenotipo); //se anade el genotipo del mejor individuo
-//						
-						Dungeon worstIndividuo = new Dungeon();
-						worstIndividuo = evopopulation.getWorstIndividuo(Poblacion);
-						
-						bw.append("," + worstIndividuo.getFitness());
-						
-						String peorGenotipo = new String();
-						
-//						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
-//						{
-//							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
-//						}
-//						
-//						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
-//						
-						bw.append("," + evopopulation.getMeanPoblacion(Poblacion));
-
-					}
-					
-				}
-				catch (IOException e)
-				{
-					//Error processing code
-					System.out.println("Error: " + e);
-				}
-				finally
-				{
-					//si el archivo existiao se ha creado y no ha habido ningun error, se cierra
-					if(bw != null)
-					{
-						bw.close();
-					}
-				}
+////						for(int tam_genotipo = 0; tam_genotipo < worstIndividuo.genotipo.length; tam_genotipo++)
+////						{
+////							peorGenotipo = peorGenotipo + (worstIndividuo.genotipo[tam_genotipo]);
+////						}
+////						
+////						bw.append(" " + peorGenotipo); //se anade el genotipo del peor individuo
+////						
+//						bw.append("," + evopopulation.getMeanPoblacion(Poblacion));
+//
+//					}
+//					
+//				}
+//				catch (IOException e)
+//				{
+//					//Error processing code
+//					System.out.println("Error: " + e);
+//				}
+//				finally
+//				{
+//					//si el archivo existiao se ha creado y no ha habido ningun error, se cierra
+//					if(bw != null)
+//					{
+//						bw.close();
+//					}
+//				}
 				
+				logWriter = new LogWriter(ruta, file_, fecha_completa, contador, (ArrayList<Dungeon>) Poblacion.clone(), evopopulation);
 				
 					System.out.println("Fitness peor indiv         :" + evopopulation.getWorstIndividuo(Poblacion).fitness);
 					System.out.println("Fitness indiv temporal     : " + evopopulation.Individuos_parada.get(0).fitness);
@@ -913,9 +939,12 @@ public class main
 		System.out.println("-------------------------------------------------------");
 		evopopulation.pintar_individuo(Poblacion.get(9));
 		*/
-
 		
 		
+		//SE RENOMBRA EL ARCHIVO DE LOG
+		File fileRenamed = new File(ruta + fecha_completa + ".txt");
+		
+		file_.renameTo(fileRenamed);
 		
 	} // Cierra el main
 } // Cierra la clase main

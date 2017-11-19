@@ -1,0 +1,85 @@
++---+---+---+---+---+---+---+---+---+---+
+| * | C | * | * |   |   |   | * |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   | * |   | * |
++---+---+---+---+---+---+---+---+---+---+
+| * |   |   |   | * |   |   | * |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   | * | * |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   | * |   |   |   | * |   |   | * | * |
++---+---+---+---+---+---+---+---+---+---+
+| * | * |   | * | * | * |   | * |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   | * |   | * | * |   | S |   | * |   |
++---+---+---+---+---+---+---+---+---+---+
+| * | * |   |   |   | * |   |   | * |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   | * |   |   | P |   |
++---+---+---+---+---+---+---+---+---+---+
+|   | C | G |   |   | C | P |   | S |   |
++---+---+---+---+---+---+---+---+---+---+
+ 
+-------------
+Genotipo del individuo: 
+111 011 111 111 000 000 000 111 000 000 000 000 000 000 000 000 000 111 000 111 111 000 000 000 111 000 000 111 000 000 000 000 000 000 111 111 000 000 000 000 000 111 000 000 000 111 000 000 111 111 111 111 000 111 111 111 000 111 000 000 000 111 000 111 111 000 100 000 111 000 111 111 000 000 000 111 000 000 111 000 000 000 000 000 000 111 000 000 110 000 000 011 001 000 000 011 110 000 100 000  
+-------------
+ 
+-------------
+Numero de monstruos     : 3
+[9 2][9 8][6 6]
+
+Numero de tesoros       : 5
+[9 5][9 1][9 6][8 8][0 1]
+
+Numero de celdas Pared  : 30
+Numero de celdas Libres : 62
+-------------
+ 
+-------------
+Tipo puertas: 
+Puerta Norte 0 8: SALIDA 
+ 
+Puerta Sur   9 3: ENTRADA_SALIDA 
+ 
+Puerta Entrada Escogida: puerta_S
+-------------
+Recorrido 0, tamano = 14 :
+[0 8][1 8][2 8][3 8][3 7][4 7][4 6][5 6][6 6][7 6][8 6][9 6][9 5][9 4]
+[   ][   ][   ][   ][   ][   ][   ][   ][ M ][   ][   ][ T ][ T ][   ]
+
+
+Desglose fitness: 
+Resultado 0:real (1.0) y esperado (1.0)0.0
+Resultado 1:real (2.0) y esperado (1.0)0.01
+Resultado 2:real (3.0) y esperado (6.0)1.0499999999999998
+Resultado 3:real (5.0) y esperado (4.0)0.35
+Resultado 4:real (1.0) y esperado (7.0)0.39
+Resultado 5:real (18.0) y esperado (11.0)0.2275
+Resultado 6:real (22.0) y esperado (15.0)0.11375
+Resultado 7:real (3.0) y esperado (3.0)0.8125
+Resultado 8:real (4.0) y esperado (3.0)0.40625
+Resultado 9:real (5.0) y esperado (3.0)0.40625
+Resultado 10:real (4.0) y esperado (8.0)0.0
+Resultado 11:real (4.0) y esperado (12.0)0.0
+Resultado 12:real (9.0) y esperado (16.0)0.0
+Resultado 13:real (22.0) y esperado (20.0)0.0
+Resultado 14:real (3.0) y esperado (2.0)0.02
+Resultado 15:real (1.0) y esperado (2.0)0.01
+Resultado 16:real (2.0) y esperado (2.0)0.0
+Resultado 17:real (1.0) y esperado (2.0)0.005
+Resultado 18:real (30.0) y esperado (30.0)0.0
+ 
+Fitness: 3.8012499999999996
+-----------------------
+Numero de monstruos recorrido esperados   : 1.0
+Numero de tesoros recorrido esperados     : 1.0
+Numero de monstruos esperados             : 6.0
+Numero de tesoros esperados               : 4.0
+Area Segura monstruo esperada             : 7.0
+Area Segura tesoro esperada               : 8.0
+Seguridad tesoro esperada                 : 2.0
+Numero de celdas Pared esperadas          : 30.0
+Numero de celdas Libres esperadas         : 60
+----------------------------------------------------
+----------------------------------------------------
