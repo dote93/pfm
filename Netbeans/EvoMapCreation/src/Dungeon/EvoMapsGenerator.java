@@ -572,15 +572,28 @@ public class EvoMapsGenerator
 
                 /**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
                 System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+                System.out.println("//////////////////////////Eliminacion peores individuos/////////////////////////////");
+                System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+                System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/  
+                
+                for(int i=0; i<3; i++){
+                    int worstIndivPos = -1;
+                    worstIndivPos =evopopulation.getWorstIndividuoPos((ArrayList<Dungeon>) Poblacion.clone());
+                    Poblacion.remove(worstIndivPos);
+
+                }
+                
+                /**System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+                System.out.println("////////////////////////////////////////////////////////////////////////////////////");
                 System.out.println("//////////////////////Introduccion de nuevos individuos/////////////////////////////");
                 System.out.println("////////////////////////////////////////////////////////////////////////////////////");
                 System.out.println("////////////////////////////////////////////////////////////////////////////////////");*/
 
                 //Solo si la poblacion es demasiado pequena
-                if (Poblacion.size() < 8)
+                while (Poblacion.size() < 10)
                 {
                     Poblacion_provisional = new ArrayList<Dungeon>();
-                    Poblacion_provisional = evopopulation.populationInitialization(f, c, 2, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
+                    Poblacion_provisional = evopopulation.populationInitialization(f, c, 1, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 
                     for (int i= 0; i < Poblacion_provisional.size(); i++)
                     {
@@ -638,13 +651,7 @@ public class EvoMapsGenerator
 
 
                 }
-//				
-//				/**LOG
-//				System.out.println("INDIVIDUOS ELIMINADOS 04: " + individuos_eliminados);*/
-//				
-//				individuos_eliminados = 0;
-//				
-//				
+                
                 //se comprueba si la poblacion esta evolucionando o no
                 parada = evopopulation.converge((ArrayList<Dungeon>) Poblacion.clone());	
                 //parada = true;
@@ -753,8 +760,10 @@ public class EvoMapsGenerator
         System.out.println("-------------------------------------------------------");
         evopopulation.pintar_individuo(Poblacion.get(9));
         */
-
-
+        
+        //TODO: Anadir aqui la escritura del resultado final de la poblacion en el otro archivo.
+        
+        
         //SE RENOMBRA EL ARCHIVO DE LOG
         File fileRenamed = new File(ruta + fecha_completa + ".txt");
 

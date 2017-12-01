@@ -53,7 +53,7 @@ public class LogWriter {
 					bw.newLine();
 					bw.write("*******************************************************************************************");
 					bw.newLine();
-					bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
+					bw.append("Iteracion, NumIndividuos, MejorFitness, PeorFitness, MediaFitness, Varianza, DesviacionTipica, IntervaloConfianza");
 					bw.newLine();
 					bw.write(fecha_completa);
 					bw.newLine();
@@ -131,7 +131,7 @@ public class LogWriter {
 				{
 					bw.write("*******************************************************************************************");
 					bw.newLine();
-					bw.append("Iteracion NumIndividuos MejorFitness MejorGenotipo PeorFitness PeorGenotipo MediaFitness ");
+					bw.append("Iteracion, NumIndividuos, MejorFitness, PeorFitness, MediaFitness, Varianza, DesviacionTipica, IntervaloConfianza");
 					bw.newLine();
 					bw.write(fecha_completa);
 					bw.newLine();

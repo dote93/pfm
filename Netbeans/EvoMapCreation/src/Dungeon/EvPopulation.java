@@ -1224,41 +1224,7 @@ public class EvPopulation {
         }
 
         //Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
-        if (contador_iteraciones < 300) {
-//			//si estamos en la primera iteracion, debido a que no hay ningun individuo de parada guardado se inicializan las variables a individuos con un mal fitness
-//			if (contador_iteraciones == 0)
-//			{
-//	
-//				individuo_parada.set_fitness(3000);
-//	
-//				//se modifica el individuo temporal con un fitness malo para que luego se reemplace
-//				
-//				try {
-//					this.Individuos_parada.set(0, null);
-//					this.Individuos_parada.set(0, new Dungeon());
-//					this.Individuos_parada.set(0,(Dungeon) individuo_parada.clone());
-//					this.Individuos_parada.get(0).pintar();
-//				} catch (CloneNotSupportedException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}		
-//				
-//				
-//				//se anade el individuo de parada modificado con un mal fitness
-//				try {
-//					this.Individuos_parada.set(1, null);
-//					this.Individuos_parada.set(1, new Dungeon());
-//					this.Individuos_parada.set(1, (Dungeon) individuo_parada.clone());
-//				} catch (CloneNotSupportedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				
-//				System.out.println("Fitness indiv temporal     : " + Individuos_parada.get(0).fitness);
-//				System.out.println("Fitness indiv anterior iter: " + Individuos_parada.get(1).fitness);
-//				
-//			}			
+        if (contador_iteraciones < 500) {		
 
             //Recorremos la poblacion
             for (int i = 0; i < Poblacion_.size(); i++) {
@@ -1270,11 +1236,9 @@ public class EvPopulation {
                         this.Individuos_parada.set(1, new Dungeon());
                         this.Individuos_parada.set(1, (Dungeon) Poblacion_.get(i).clone());
                     } catch (CloneNotSupportedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
-                    //individuo_parada = Poblacion_.get(i); //guardamos al mejor individuo de la poblacion
                 }
             }
 
@@ -1296,7 +1260,6 @@ public class EvPopulation {
                             this.Individuos_parada.set(0, new Dungeon());
                             this.Individuos_parada.set(0, (Dungeon) Individuos_parada.get(1).clone());
                         } catch (CloneNotSupportedException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
 
@@ -1305,7 +1268,7 @@ public class EvPopulation {
             }
 
             //si el individuo que hemos conseguido es el idóneo paramos
-            if (Individuos_parada.get(1).fitness <= 0.5) {
+            if (Individuos_parada.get(1).fitness <= 1.5) {
                 try {
                     this.Individuos_parada.set(0, null);
                     this.Individuos_parada.set(0, new Dungeon());
@@ -1393,7 +1356,7 @@ public class EvPopulation {
      *
      * @return Un dungeon con el peor individuo de la Poblacion_
      */
-    public Dungeon getWorstIndividuo(ArrayList<Dungeon> Poblacion_) {
+    public Dungeon getWorstIndividuo(ArrayList<Dungeon> Poblacion_){
         Dungeon worstIndividuo = new Dungeon();
 
         for (int num_indiv = 0; num_indiv < Poblacion_.size(); num_indiv++) {
@@ -1418,6 +1381,41 @@ public class EvPopulation {
         }
 
         return worstIndividuo;
+    }
+    
+    /**
+     * Funcion que se encarga de obtener el peor individuo de la poblacion
+     *
+     * @return Un dungeon con el peor individuo de la Poblacion_
+     */
+    public int getWorstIndividuoPos(ArrayList<Dungeon> Poblacion_) throws CloneNotSupportedException {
+        Dungeon worstIndividuo = new Dungeon();
+        int pos = -1;
+
+        for (int num_indiv = 0; num_indiv < Poblacion_.size(); num_indiv++) {
+            if (num_indiv == 0) {
+                try {
+                    worstIndividuo = (Dungeon) Poblacion_.get(0).clone();
+                    pos = 0;
+                } catch (CloneNotSupportedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+                if (Poblacion_.get(num_indiv).getFitness() > worstIndividuo.getFitness() && Poblacion_.get(num_indiv).getFitness() >= 0.0) {
+                    try {
+                        worstIndividuo = (Dungeon) Poblacion_.get(num_indiv).clone();
+                        pos = num_indiv;
+                    } catch (CloneNotSupportedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+
+        return pos;
     }
 
     /**
