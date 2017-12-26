@@ -891,7 +891,7 @@ public class Dungeon implements Cloneable {
      * @param c columnas
      * @param numero_tesoros
      */
-    public int comprobar_tesoros() {
+    public int comprobar_tesoros() throws CloneNotSupportedException {
         int numero_tesoros = 0;
         this.posicion_tesoros = null;
         this.posicion_tesoros = new ArrayList<Celda>();
@@ -903,21 +903,21 @@ public class Dungeon implements Cloneable {
                 //Hay una moneda
                 if (this.dungeon[fila][columna].genotipo_celda[0] == 0 && this.dungeon[fila][columna].genotipo_celda[1] == 1 && this.dungeon[fila][columna].genotipo_celda[2] == 1) {
                     this.dungeon[fila][columna].tesoro = true;
-                    this.posicion_tesoros.add(dungeon[fila][columna]);
+                    this.posicion_tesoros.add((Celda) dungeon[fila][columna].clone());
 
                     numero_tesoros = this.posicion_tesoros.size();
 
                 } //Hay una llave
                 else if (this.dungeon[fila][columna].genotipo_celda[0] == 1 && this.dungeon[fila][columna].genotipo_celda[1] == 0 && this.dungeon[fila][columna].genotipo_celda[2] == 1) {
                     this.dungeon[fila][columna].tesoro = true;
-                    this.posicion_tesoros.add(this.dungeon[fila][columna]);
+                    this.posicion_tesoros.add((Celda) this.dungeon[fila][columna].clone());
 
                     numero_tesoros = this.posicion_tesoros.size();
 
                 } //Hay una piedra preciosa
                 else if (this.dungeon[fila][columna].genotipo_celda[0] == 1 && this.dungeon[fila][columna].genotipo_celda[1] == 1 && this.dungeon[fila][columna].genotipo_celda[2] == 0) {
                     this.dungeon[fila][columna].tesoro = true;
-                    this.posicion_tesoros.add(this.dungeon[fila][columna]);
+                    this.posicion_tesoros.add((Celda) this.dungeon[fila][columna].clone());
 
                     numero_tesoros = this.posicion_tesoros.size();
 
@@ -937,7 +937,7 @@ public class Dungeon implements Cloneable {
      * @param c columnas
      * @param numero_tesoros
      */
-    public int comprobar_monstruos() {
+    public int comprobar_monstruos() throws CloneNotSupportedException {
         int numero_monstruos = 0;
 
         this.posicion_monstruos = null;
@@ -951,21 +951,21 @@ public class Dungeon implements Cloneable {
                 //Hay un gigante
                 if (this.dungeon[fila][columna].genotipo_celda[0] == 0 && this.dungeon[fila][columna].genotipo_celda[1] == 0 && this.dungeon[fila][columna].genotipo_celda[2] == 1) {
                     this.dungeon[fila][columna].monstruo = true;
-                    this.posicion_monstruos.add(this.dungeon[fila][columna]);
+                    this.posicion_monstruos.add((Celda) this.dungeon[fila][columna].clone());
 
                     numero_monstruos = this.posicion_monstruos.size();
 
                 } //Hay un murcielago
                 else if (this.dungeon[fila][columna].genotipo_celda[0] == 0 && this.dungeon[fila][columna].genotipo_celda[1] == 1 && this.dungeon[fila][columna].genotipo_celda[2] == 0) {
                     this.dungeon[fila][columna].monstruo = true;
-                    this.posicion_monstruos.add(this.dungeon[fila][columna]);
+                    this.posicion_monstruos.add((Celda) this.dungeon[fila][columna].clone());
 
                     numero_monstruos = this.posicion_monstruos.size();
 
                 } //Hay un soldado
                 else if (this.dungeon[fila][columna].genotipo_celda[0] == 1 && this.dungeon[fila][columna].genotipo_celda[1] == 0 && this.dungeon[fila][columna].genotipo_celda[2] == 0) {
                     this.dungeon[fila][columna].monstruo = true;
-                    this.posicion_monstruos.add(this.dungeon[fila][columna]);
+                    this.posicion_monstruos.add((Celda) this.dungeon[fila][columna].clone());
 
                     numero_monstruos = this.posicion_monstruos.size();
 
@@ -1495,7 +1495,7 @@ public class Dungeon implements Cloneable {
             //por cada monstruo que hay en el mapa calculo las distancias entre ese monstruo y el tesoro i
             for (int monstruo = 0; monstruo < numero_monstruos; monstruo++) {
                 //calculo cual es la distancia minima entre el tesoro y el resto de monstruos que hay en el mapa
-                llegada_optima(posicion_tesoros.get(tesoro).fila, posicion_tesoros.get(tesoro).columna, this.posicion_monstruos.get(monstruo).fila, this.posicion_monstruos.get(monstruo).columna);
+                llegada_optima(this.posicion_tesoros.get(tesoro).fila, this.posicion_tesoros.get(tesoro).columna, this.posicion_monstruos.get(monstruo).fila, this.posicion_monstruos.get(monstruo).columna);
 
                 //obtengo el st
                 st = distancia; //st_resta / st_suma;
@@ -1527,7 +1527,10 @@ public class Dungeon implements Cloneable {
             }
 
             //guardo en la posicion correspondiente el fitness minimo para ese tesoro
-            this.dungeon[posicion_tesoros.get(tesoro).fila][posicion_tesoros.get(tesoro).columna].distancia_seguridad_M = st;
+            Celda celda_mod = (Celda) this.dungeon[this.posicion_tesoros.get(tesoro).fila][this.posicion_tesoros.get(tesoro).columna].clone();
+            celda_mod.distancia_seguridad_M = st;
+            this.dungeon[celda_mod.fila][celda_mod.columna] = (Celda) celda_mod.clone();
+            this.posicion_tesoros.set(tesoro, (Celda) celda_mod.clone());
             fitness_tesoros[tesoro] = st;
 
         }
@@ -1570,85 +1573,16 @@ public class Dungeon implements Cloneable {
         if (this.posicion_monstruos.size() > 1) {
             int distancia_PM = -1;
             int distancia_PM_anterior = -1;
-            ArrayList<Celda> posicion_monstruos_ordenados = new ArrayList<Celda>(this.posicion_monstruos.size());
-
-            while (posicion_monstruos_ordenados.size() < this.posicion_monstruos.size()) {
-                //se recorren los monstruos guardados
-                for (int i = 0; i < this.posicion_monstruos.size(); i++) {
-
-                    //si estamos en la primera vuelta, anadimos el recorrido a la 
-                    //lista de ordenados
-                    if (i == 0) {
-                        this.distancia = -1;
-                        llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_monstruos.get(i).fila, this.posicion_monstruos.get(i).columna);
-                        distancia_PM = this.distancia;
-
-                        if (this.distancia == -1) {
-                            this.fitness = -100;
-                        }
-
-                        posicion_monstruos_ordenados.add((Celda) this.posicion_monstruos.get(i));
-                    } else {
-                        //se obtiene el recorrido
-                        this.distancia = -1;
-                        llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_monstruos.get(i).fila, this.posicion_monstruos.get(i).columna);
-
-                        if (this.distancia == -1) {
-                            this.fitness = -100;
-                        }
-
-                        distancia_PM = this.distancia;
-
-                        //si se ha insertado algun elemento en los recorridos ordenados,
-                        //obtenemos la posicion donde hay que colocar al recorrido.
-                        if (posicion_monstruos_ordenados.size() >= 1) {
-                            int pos = -1;
-                            distancia_PM_anterior = -1;
-                            //se recorre el array de los rec ordenados
-                            for (int j = 0; j < posicion_monstruos_ordenados.size(); j++) {
-                                //si el recorrido escogido es inferior al guardado entonces la posicion que le corresponde
-                                //es donde se encuentra ese elemento
-                                this.distancia = -1;
-
-                                llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, posicion_monstruos_ordenados.get(j).fila, posicion_monstruos_ordenados.get(j).columna);
-                                distancia_PM_anterior = this.distancia;
-
-                                if (this.distancia == -1) {
-                                    llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, posicion_monstruos_ordenados.get(j).fila, posicion_monstruos_ordenados.get(j).columna);
-                                    this.fitness = -100;
-                                }
-
-                                //si la distancia es menor o igual 
-                                if (distancia_PM <= distancia_PM_anterior && distancia_PM > -1 && distancia_PM_anterior > -1 && i > 0) {
-                                    pos = j;
-                                    j = posicion_monstruos_ordenados.size();
-                                }
-
-                            }
-
-                            if (pos != -1) {
-                                posicion_monstruos_ordenados.add(pos, (Celda) this.posicion_monstruos.get(i));
-                            } else {
-                                if (pos == -1 && this.posicion_monstruos.get(i).fila != this.puertaEntrada.fila && this.posicion_monstruos.get(i).columna != this.puertaEntrada.columna) {
-                                    posicion_monstruos_ordenados.add((Celda) this.posicion_monstruos.get(i));
-                                } else if (pos == -1 && this.posicion_monstruos.get(i).fila == this.puertaEntrada.fila && this.posicion_monstruos.get(i).columna == this.puertaEntrada.columna) {
-                                    posicion_monstruos_ordenados.add(0, (Celda) this.posicion_monstruos.get(i));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
+            
+            ArrayList<Celda> posicion_monstruos_ordenados = this.ordenarCeldas(this.posicion_monstruos);
             //se ordenan los recorridos
             this.posicion_monstruos = new ArrayList<Celda>();
             this.posicion_monstruos = (ArrayList<Celda>) posicion_monstruos_ordenados.clone();
-
             this.area_puerta_M = new double[this.posicion_monstruos.size()];
             for (int i = 0; i < this.area_puerta_M.length; i++) {
                 this.area_puerta_M[i] = -1.0;
             }
-
+            
         } else if (this.posicion_monstruos.size() == 1) {
 
             this.area_puerta_M = new double[this.posicion_monstruos.size()];
@@ -1661,83 +1595,7 @@ public class Dungeon implements Cloneable {
         if (this.posicion_tesoros.size() > 1) {
             int distancia_PT = -1;
             int distancia_PT_anterior = -1;
-            ArrayList<Celda> posicion_tesoros_ordenados = new ArrayList<Celda>(this.posicion_tesoros.size());
-
-            while (posicion_tesoros_ordenados.size() < this.posicion_tesoros.size()) {
-                //se recorren los monstruos guardados
-                for (int i = 0; i < this.posicion_tesoros.size(); i++) {
-
-                    //si estamos en la primera vuelta, anadimos el recorrido a la 
-                    //lista de ordenados
-                    if (i == 0) {
-                        this.distancia = -1;
-
-                        if (this.puertaEntrada.fila == this.posicion_tesoros.get(i).fila && this.puertaEntrada.columna == this.posicion_tesoros.get(i).columna) {
-                            llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_tesoros.get(i).fila, this.posicion_tesoros.get(i).columna);
-                            distancia_PT = this.distancia;
-                        }
-
-                        llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_tesoros.get(i).fila, this.posicion_tesoros.get(i).columna);
-                        distancia_PT = this.distancia;
-
-                        if (this.distancia == -1) {
-                            this.fitness = -100;
-                        }
-
-                        posicion_tesoros_ordenados.add((Celda) this.posicion_tesoros.get(i));
-                    } else {
-                        if (this.puertaEntrada.fila == this.posicion_tesoros.get(i).fila && this.puertaEntrada.columna == this.posicion_tesoros.get(i).columna) {
-                            llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_tesoros.get(i).fila, this.posicion_tesoros.get(i).columna);
-                            distancia_PT = this.distancia;
-                        }
-
-                        //se obtiene el recorrido
-                        this.distancia = -1;
-                        llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, this.posicion_tesoros.get(i).fila, this.posicion_tesoros.get(i).columna);
-
-                        if (this.distancia == -1) {
-                            this.fitness = -100;
-                        }
-
-                        distancia_PT = this.distancia;
-
-                        //si se ha insertado algun elemento en los recorridos ordenados,
-                        //obtenemos la posicion donde hay que colocar al recorrido.
-                        if (posicion_tesoros_ordenados.size() >= 1) {
-                            int pos = -1;
-                            distancia_PT_anterior = -1;
-                            //se recorre el array de los rec ordenados
-                            for (int j = 0; j < posicion_tesoros_ordenados.size(); j++) {
-                                //si el recorrido escogido es inferior al guardado entonces la posicion que le corresponde
-                                //es donde se encuentra ese elemento
-                                this.distancia = -1;
-                                llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, posicion_tesoros_ordenados.get(j).fila, posicion_tesoros_ordenados.get(j).columna);
-                                distancia_PT_anterior = this.distancia;
-
-                                if (this.distancia == -1) {
-                                    this.fitness = -100;
-                                }
-
-                                //si la distancia es menor o igual 
-                                if (distancia_PT <= distancia_PT_anterior && distancia_PT > -1 && distancia_PT_anterior > -1 && i > 0) {
-                                    pos = j;
-                                    j = posicion_tesoros_ordenados.size();
-                                }
-                            }
-
-                            if (pos != -1) {
-                                posicion_tesoros_ordenados.add(pos, (Celda) this.posicion_tesoros.get(i));
-                            } else {
-                                if (pos == -1 && this.posicion_tesoros.get(i).fila != this.puertaEntrada.fila && this.posicion_tesoros.get(i).columna != this.puertaEntrada.columna) {
-                                    posicion_tesoros_ordenados.add((Celda) this.posicion_tesoros.get(i));
-                                } else if (pos == -1 && this.posicion_tesoros.get(i).fila == this.puertaEntrada.fila && this.posicion_tesoros.get(i).columna == this.puertaEntrada.columna) {
-                                    posicion_tesoros_ordenados.add(0, (Celda) this.posicion_tesoros.get(i));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            ArrayList<Celda> posicion_tesoros_ordenados = this.ordenarCeldas(this.posicion_tesoros);
 
             //se ordenan los recorridos
             this.posicion_tesoros = new ArrayList<Celda>();
@@ -2020,6 +1878,96 @@ public class Dungeon implements Cloneable {
     }
 
     /**
+     * 
+     * @param listaDesordenada
+     * @return
+     * @throws CloneNotSupportedException 
+     */
+    public ArrayList<Celda> ordenarCeldas(ArrayList<Celda> listaDesordenada) throws CloneNotSupportedException{
+        ArrayList<Celda> listaOrdenada = new ArrayList<Celda>();
+        int distancia_PT = -1;
+        int distancia_PT_anterior = -1;
+        
+        //se recorren los monstruos guardados
+        for (int i = 0; i < listaDesordenada.size(); i++) {
+
+            //si estamos en la primera vuelta, anadimos el recorrido a la 
+            //lista de ordenados
+            if (i == 0) {
+                this.distancia = -1;
+
+                if (this.puertaEntrada.fila == listaDesordenada.get(i).fila && this.puertaEntrada.columna == listaDesordenada.get(i).columna) {
+                    llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, listaDesordenada.get(i).fila, listaDesordenada.get(i).columna);
+                    distancia_PT = this.distancia;
+                }
+
+                llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, listaDesordenada.get(i).fila, listaDesordenada.get(i).columna);
+                distancia_PT = this.distancia;
+
+                if (this.distancia == -1) {
+                    this.fitness = -100;
+                }
+
+                listaOrdenada.add((Celda) listaDesordenada.get(i).clone());
+            } else {
+                if (this.puertaEntrada.fila == listaDesordenada.get(i).fila && this.puertaEntrada.columna == listaDesordenada.get(i).columna) {
+                    llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, listaDesordenada.get(i).fila, listaDesordenada.get(i).columna);
+                    distancia_PT = this.distancia;
+                }
+
+                //se obtiene el recorrido
+                this.distancia = -1;
+                llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, listaDesordenada.get(i).fila, listaDesordenada.get(i).columna);
+
+                if (this.distancia == -1) {
+                    this.fitness = -100;
+                }
+
+                distancia_PT = this.distancia;
+
+                //si se ha insertado algun elemento en los recorridos ordenados,
+                //obtenemos la posicion donde hay que colocar al recorrido.
+                if (listaOrdenada.size() >= 1) {
+                    int pos = -1;
+                    distancia_PT_anterior = -1;
+                    //se recorre el array de los rec ordenados
+                    for (int j = 0; j < listaOrdenada.size(); j++) {
+                        //si el recorrido escogido es inferior al guardado entonces la posicion que le corresponde
+                        //es donde se encuentra ese elemento
+                        this.distancia = -1;
+                        llegada_optima(this.puertaEntrada.fila, this.puertaEntrada.columna, listaOrdenada.get(j).fila, listaOrdenada.get(j).columna);
+                        distancia_PT_anterior = this.distancia;
+
+                        if (this.distancia == -1) {
+                            this.fitness = -100;
+                        }
+
+                        //si la distancia es menor o igual 
+                        if (distancia_PT <= distancia_PT_anterior && distancia_PT > -1 && distancia_PT_anterior > -1 && i > 0) {
+                            pos = j;
+                            j = listaOrdenada.size();
+                        }
+                    }
+
+                    if (pos != -1) {
+                        listaOrdenada.add(pos, (Celda) listaDesordenada.get(i).clone());
+                    } 
+                    else {
+                        if (pos == -1 && (listaDesordenada.get(i).fila != this.puertaEntrada.fila || listaDesordenada.get(i).columna != this.puertaEntrada.columna)) {
+                            listaOrdenada.add((Celda) listaDesordenada.get(i).clone());
+                        } else if (pos == -1 && listaDesordenada.get(i).fila == this.puertaEntrada.fila && listaDesordenada.get(i).columna == this.puertaEntrada.columna) {
+                            listaOrdenada.add(0, (Celda) listaDesordenada.get(i).clone());
+                        }
+                    }
+                }
+            }
+        }
+    
+        return (ArrayList<Celda>) listaOrdenada.clone();
+    }
+    
+    
+    /**
      * Funcion que calcula el fitness del dungeon
      *
      * @throws CloneNotSupportedException
@@ -2191,15 +2139,39 @@ public class Dungeon implements Cloneable {
             if (this.fitness == -100) {
                 return;
             }
-
+            
+            
+            double porcent_mons = Math.abs((dificultad_nivel[2] * 50 )/100);
+            double infer_mons =  Math.abs(dificultad_nivel[2] - porcent_mons);
+            double super_mons =  Math.abs(dificultad_nivel[2] + porcent_mons);
+            
+            //Se comprueba si el numero de monstruos que hay en el mapa no esta por debajo ni por encima del 5% de lo esperado
+//            if((infer_mons > this.posicion_monstruos.size())){
+//                this.fitness = -100;
+//                System.out.println("Mal monstruos");
+//                return;
+//            }
+                
             this.resultados[posicion] = Math.abs(this.posicion_monstruos.size() - dificultad_nivel[2]) * ponderaciones_nivel[2];
             this.distancias_esperadas[posicion] = dificultad_nivel[2];
             this.distancias_reales[posicion] = this.posicion_monstruos.size();
 
             posicion = posicion + 1;
+            
+            double porcent_tes = Math.abs((dificultad_nivel[3] * 80 )/100);
+            double infer_tes =  Math.abs(dificultad_nivel[3] - porcent_tes);
+            double super_tes =  Math.abs(dificultad_nivel[3] + porcent_tes);
+            
+            //Se comprueba si el numero de tesoros que hay en el mapa no esta por debajo ni por encima del 5% de lo esperado
+//            if((infer_tes > this.posicion_tesoros.size())){
+//                this.fitness = -100;
+//                System.out.println("Mal tesoros");
+//                return;
+//            }
+            
             this.resultados[posicion] = Math.abs(posicion_tesoros.size() - dificultad_nivel[3]) * ponderaciones_nivel[3];
             this.distancias_esperadas[posicion] = dificultad_nivel[3];
-            this.distancias_reales[posicion] = posicion_tesoros.size();
+            this.distancias_reales[posicion] = this.posicion_tesoros.size();
 
             //Seguridad montruos con la puerta de entrada ----------------------------------------------
             //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
@@ -2207,6 +2179,9 @@ public class Dungeon implements Cloneable {
 
             double distancia_esperada_s_m = dificultad_nivel[4];
 
+            
+            
+            
             for (int s_monstruos = 0; s_monstruos < dificultad_nivel[2]; s_monstruos++) {
 
                 posicion = posicion + 1;

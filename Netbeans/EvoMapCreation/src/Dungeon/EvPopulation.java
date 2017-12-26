@@ -38,6 +38,8 @@ public class EvPopulation {
     public ArrayList<Dungeon> Individuos_parada = new ArrayList<Dungeon>(2);
 
     public int mutaciones;
+    
+    public int max_iter;
 
     /**
      * Constructor de EvPopulation
@@ -71,30 +73,6 @@ public class EvPopulation {
             mapa = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel); //El dungeon se pasa con las dimensiones (x, y)
 
             Poblacion.add((Dungeon) mapa.clone());
-
-            /*
-			//Si el individuo es no_valido lo anado a la lista de no validos
-			if(!mapa.dungeon_valido)
-			{
-				No_validos++;
-				
-				//Anado el no valido a la lista de la poblacion de no validos
-				Poblacion_noValidos.add(mapa);
-		
-				
-				
-			}
-			
-			//Si el individuos es valiudo lo anado a la lista de validos
-			if(mapa.dungeon_valido)
-			{
-				Validos++;
-				
-				//Se anade a la poblacion de validos el mapa nuevo generado
-				Poblacion.add(mapa);
-			}
-             */
-//			System.out.println("Indiv: " + i);
         }
 
         individuo_parada = new Dungeon();
@@ -105,7 +83,7 @@ public class EvPopulation {
         //individuo_parada_copia = new Dungeon(f, c, numero_monstruos, numero_tesoros, pos_puertas, t_puertas, numero_puertas, porcentaje, porcentaje_paredes, tipo_celdas, dificultad_nivel, ponderaciones_nivel);
 
         //Se devuelve la poblacion creada
-        return Poblacion;
+        return (ArrayList<Dungeon>) Poblacion.clone();
     }
 
     /**
@@ -296,7 +274,7 @@ public class EvPopulation {
 		System.out.print("\n");
          */
         //se devuelven los individuos con mejor fitness
-        return Seleccionados;
+        return (ArrayList<Dungeon>) Seleccionados.clone();
     }
 
     /**
@@ -387,14 +365,14 @@ public class EvPopulation {
 
                     } //si estamos en el resto de individuos de la poblacion comprobamos si es peor al que hemos guardado
                     else if (individuo > 0) {
-                        
+
                         boolean exists = false;
                         for (int n_pos = 0; n_pos < posicion_peores.length; n_pos++) {
                             if (posicion_peores[n_pos] == individuo) {
                                 exists = true;
                             }
                         }
-                        
+
                         //SI el individuo es peor que el que hemos guardado y no es igual a algun individuo guardado, entonces lo sustituimos
                         if ((Poblacion_.get(posicion_peores[i]).fitness < Poblacion_.get(individuo).fitness) && (!exists)) {
                             //guardo la posicion en la poblacion del peor individuo
@@ -447,7 +425,7 @@ public class EvPopulation {
 		System.out.print("----------------------------------------------------\n");
 		System.out.print("\n");
          */
-        return Poblacion_;
+        return (ArrayList<Dungeon>) Poblacion_.clone();
     }
 
     /**
@@ -839,7 +817,7 @@ public class EvPopulation {
 		
 		System.out.print("\n");
          */
-        return Poblacion_;
+        return (ArrayList<Dungeon>) Poblacion_.clone();
     }
 
     /**
@@ -1175,7 +1153,7 @@ public class EvPopulation {
 			System.out.print("\n");
 		
 		}*/
-        return Descendientes; //Devolvemos a los hijos descendientes
+        return (ArrayList<Dungeon>) Descendientes.clone(); //Devolvemos a los hijos descendientes
     }
 
     /**
@@ -1224,7 +1202,7 @@ public class EvPopulation {
         }
 
         //Si llegamos a mas de 100 iteraciones que el mejor individuo de la poblacion es el mismo devolvemos true
-        if (contador_iteraciones < 500) {		
+        if (contador_iteraciones < max_iter) {
 
             //Recorremos la poblacion
             for (int i = 0; i < Poblacion_.size(); i++) {
@@ -1246,11 +1224,15 @@ public class EvPopulation {
             if ((Individuos_parada.get(0).fitness >= 0) && (Individuos_parada.get(1).fitness >= 0) && (contador_iteraciones > 0)) {
                 //Si el individuo que hemos guardado como el mejor de la poblacion no es mejor al individuo que hemos guardado en la anterior iteracion, paramos
                 if (Individuos_parada.get(1).fitness > Individuos_parada.get(0).fitness) {
-
                     motivo = "Poblacion empeora";
-                    contador_iteraciones = 1000;
+                    contador_iteraciones = max_iter;
                     stop = true;
 
+                } // Si la poblacion es el mismo individuo, es que ha convergido
+                else if (isEqualAllPoblacion(Poblacion_)){
+                    motivo = "Poblacion convergida";
+                    contador_iteraciones = max_iter;
+                    stop = true;
                 } else {
 
                     //Si el individuo parada es mejor que el individuo que hemos copiado anteriormente, entonces lo guardamos como el mejor individuo de las iteraciones
@@ -1279,7 +1261,7 @@ public class EvPopulation {
                 }
 
                 motivo = "Individuo encontrado";
-                contador_iteraciones = 1000;
+                contador_iteraciones = max_iter;
                 stop = true;
 
             }
@@ -1356,7 +1338,7 @@ public class EvPopulation {
      *
      * @return Un dungeon con el peor individuo de la Poblacion_
      */
-    public Dungeon getWorstIndividuo(ArrayList<Dungeon> Poblacion_){
+    public Dungeon getWorstIndividuo(ArrayList<Dungeon> Poblacion_) {
         Dungeon worstIndividuo = new Dungeon();
 
         for (int num_indiv = 0; num_indiv < Poblacion_.size(); num_indiv++) {
@@ -1382,7 +1364,7 @@ public class EvPopulation {
 
         return worstIndividuo;
     }
-    
+
     /**
      * Funcion que se encarga de obtener el peor individuo de la poblacion
      *
@@ -1416,6 +1398,25 @@ public class EvPopulation {
         }
 
         return pos;
+    }
+
+    /**
+     * Checks if all population is equal.
+     * @param Poblacion_
+     * @return true if all population is equal to the best indiv. False if not.
+     */
+    public boolean isEqualAllPoblacion(ArrayList<Dungeon> Poblacion_) {
+        boolean allEqual = true;
+
+        for (int i = 0; i < Poblacion_.size(); i++) {
+            if (Poblacion_.get(i).fitness != Individuos_parada.get(0).fitness) {
+                allEqual = false;
+                break;
+            }
+
+        }
+
+        return allEqual;
     }
 
     /**

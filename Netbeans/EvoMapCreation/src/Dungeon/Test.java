@@ -24,7 +24,7 @@ public class Test {
 			//Dungeon individuo1 = padre;
 			Dungeon individuo = null;
 			Dungeon padre = null;
-			String genotipo_hijo1_str = "000 001 111 000 000 000 000 100 000 111 000 000 000 000 000 000 000 000 000 000 000 000 111 000 111 000 000 000 000 000 000 000 000 000 000 111 000 000 111 111 111 000 000 000 000 000 000 000 000 111 000 000 000 111 111 000 000 111 000 000 000 000 000 000 111 000 111 000 000 111 000 000 000 000 000 111 111 000 000 000 101 111 000 111 000 000 111 000 100 000 001 111 101 011 010 001 101 001 010 111";
+			String genotipo_hijo1_str = "000 111 000 000 000 111 000 111 000 000 000 000 111 111 000 000 000 111 111 000 000 000 000 000 000 000 000 000 111 000 000 111 000 000 000 111 111 111 000 111 000 000 111 000 111 111 111 111 111 000 000 000 000 111 000 000 111 111 000 000 111 000 000 000 000 111 000 000 000 000 111 000 000 000 000 111 000 000 000 000 111 111 000 111 000 111 100 000 011 101 000 000 000 000 000 110 000 000 000 000";
 			padre = new Dungeon();
 			
 			
@@ -34,27 +34,31 @@ public class Test {
 			padre.tipo_celdas = 3;
 			padre.porcentaje = (int)((padre.f*padre.c) * 70) / 100;
 			padre.porcentaje_paredes = (int)((padre.f*padre.c) * 30) / 100;
-			padre.celdas_Paredes = 29;
-			padre.celdas_Vacias = 60;
+//			padre.celdas_Paredes = 30;
+//			padre.celdas_Vacias = 60;
+                        
+                        int numero_monstruos = (int) ((padre.porcentaje * 9) / 100);
+                        int numero_tesoros = (int) ((padre.porcentaje * 6) / 100);
+                        
 			padre.dificultad_nivel = new double[]{
-                                (int)Math.round(((int)((padre.porcentaje * 9)/100 ) * 20)/100 ),       //numero de monstruos que se esperan entre la puerta de entrada y la mas cercana
-                                (int)Math.round(((int)((padre.porcentaje * 6)/100 ) * 40)/100 ),         //numero de tesoros que se esperan entre la puerta de entrada y la mas cercana
-                                (int)((padre.porcentaje * 9)/100 ),  			                         //numero de monstruos         9% de monstruos de las celdas libres
-                                (int)((padre.porcentaje * 6)/100 ),  			                         //numero de tesoros           6% de tesoros de las celdas libres
+                                (int)Math.round((numero_monstruos * 20)/100 ),       //numero de monstruos que se esperan entre la puerta de entrada y la mas cercana
+                                (int)Math.round((numero_tesoros * 40)/100 ),         //numero de tesoros que se esperan entre la puerta de entrada y la mas cercana
+                                numero_monstruos,  			                         //numero de monstruos         9% de monstruos de las celdas libres
+                                numero_tesoros,  			                         //numero de tesoros           6% de tesoros de las celdas libres
                                 (int)Math.round((padre.porcentaje * 10)/100 ),             //area segura 1er monstruo    29% de las celdas libres para el 1er monstruo (20% de de las totales si son 100 celdas)
                                 (int)Math.round((padre.porcentaje * 12)/100 ),		     //area segura 1er tesoro      22% de las celdas libres para el 1er tesoro (15% de las totales si son 100 celdas)
-                                (int)Math.round((padre.porcentaje * 5)/100 ),  		     //seguridad 1er tesoro        15% de las celdas libres de distancia entre el monstruo y el 1er tesoro (10% de las totales si son 100 celdas)
+                                (int)Math.round((padre.porcentaje * 4)/100 ),  		     //seguridad 1er tesoro        15% de las celdas libres de distancia entre el monstruo y el 1er tesoro (10% de las totales si son 100 celdas)
                                 padre.porcentaje_paredes                                   //celdas pared
                             };
 			padre.ponderaciones_nivel = new double[]{
-                                0.0995, //numero de monstruos en el recorrido PP
+                                0.0895, //numero de monstruos en el recorrido PP
                                 0.02, //numero de tesoros en el recorrido PP
-                                0.29, //numero de monstruos
-                                0.29, //numero de tesoros
-                                0.23, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
+                                0.31, //numero de monstruos
+                                0.31, //numero de tesoros
+                                0.21, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
                                 0.02, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
                                 0.04, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
-                                0.0105,  //celdas de tipo pared
+                                0.0105, //celdas de tipo pared
 			    };
 			padre.numero_puertas = 2;
 			
@@ -66,8 +70,8 @@ public class Test {
 			individuo.tipo_celdas = padre.tipo_celdas;
 			individuo.porcentaje = padre.porcentaje;
 			individuo.porcentaje_paredes = padre.porcentaje_paredes;
-			individuo.celdas_Paredes = padre.celdas_Paredes;
-			individuo.celdas_Vacias = padre.celdas_Vacias; 
+//			individuo.celdas_Paredes = padre.celdas_Paredes;
+//			individuo.celdas_Vacias = padre.celdas_Vacias; 
 			individuo.dificultad_nivel = padre.dificultad_nivel;
 			individuo.ponderaciones_nivel = padre.ponderaciones_nivel;
 			
@@ -90,8 +94,8 @@ public class Test {
 			//que las celdas correspondientes tengan las mismas caracteristicas (puerta norte, ... puerta si, etc)
 //			individuo.anadir_puertas(individuo.t_puertas, individuo.numero_puertas);
 			
-			int [] puerta1 = {0, 6};
-			int [] puerta2 = {9, 2};
+			int [] puerta1 = {0, 3};
+			int [] puerta2 = {9, 8};
 			
 			individuo.dungeon[puerta1[0]][puerta1[1]].puerta = true;
 			individuo.dungeon[puerta1[0]][puerta1[1]].puerta_N = true;
