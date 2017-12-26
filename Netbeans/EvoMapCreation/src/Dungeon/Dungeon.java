@@ -2146,13 +2146,13 @@ public class Dungeon implements Cloneable {
             double super_mons =  Math.abs(dificultad_nivel[2] + porcent_mons);
             
             //Se comprueba si el numero de monstruos que hay en el mapa no esta por debajo ni por encima del 5% de lo esperado
-//            if((infer_mons > this.posicion_monstruos.size())){
+//            if(this.posicion_monstruos.size() > dificultad_nivel[2]){
 //                this.fitness = -100;
-//                System.out.println("Mal monstruos");
+////                System.out.println("Mal monstruos");
 //                return;
 //            }
-                
-            this.resultados[posicion] = Math.abs(this.posicion_monstruos.size() - dificultad_nivel[2]) * ponderaciones_nivel[2];
+
+            this.resultados[posicion] = Math.abs(this.posicion_monstruos.size() - dificultad_nivel[2]) * ponderaciones_nivel[2] * dificultad_nivel[8];
             this.distancias_esperadas[posicion] = dificultad_nivel[2];
             this.distancias_reales[posicion] = this.posicion_monstruos.size();
 
@@ -2169,7 +2169,13 @@ public class Dungeon implements Cloneable {
 //                return;
 //            }
             
-            this.resultados[posicion] = Math.abs(posicion_tesoros.size() - dificultad_nivel[3]) * ponderaciones_nivel[3];
+//            if(this.posicion_tesoros.size() > dificultad_nivel[3]){
+//                this.fitness = -100;
+////                System.out.println("Mal tesoros");
+//                return;
+//            }
+
+            this.resultados[posicion] = Math.abs(posicion_tesoros.size() - dificultad_nivel[3]) * ponderaciones_nivel[3] * dificultad_nivel[9];
             this.distancias_esperadas[posicion] = dificultad_nivel[3];
             this.distancias_reales[posicion] = this.posicion_tesoros.size();
 
