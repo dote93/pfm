@@ -1250,7 +1250,7 @@ public class EvPopulation {
             }
 
             //si el individuo que hemos conseguido es el idóneo paramos
-            if (Individuos_parada.get(1).fitness <= 1.5) {
+            if (Individuos_parada.get(1).fitness <= 0.5) {
                 try {
                     this.Individuos_parada.set(0, null);
                     this.Individuos_parada.set(0, new Dungeon());

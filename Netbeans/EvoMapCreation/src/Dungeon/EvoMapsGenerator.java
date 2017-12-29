@@ -51,7 +51,7 @@ public class EvoMapsGenerator
     int f = 10;
     int c = 10;
     int numero_puertas = 2;
-    int numero_poblacion = 10;
+    int numero_poblacion = 30;
 
 
     //Variable para subir o bajar el porcentaje del random de las paredes que abrimos de manera random
@@ -102,17 +102,16 @@ public class EvoMapsGenerator
     t_puertas.add(Celda.Tipo_puertas.ENTRADA);//puerta Este
     t_puertas.add(Celda.Tipo_puertas.SALIDA);//puerta Sur*/
 
-
-
+    
     //variable para luego comprobar el fitness de la habitacion (ya estan divididas entre 100 (son porcentajes))
     double [] nivel_facil_m_t = {
-        (int)Math.round((numero_monstruos * 20)/100 ),       //numero de monstruos que se esperan entre la puerta de entrada y la mas cercana
-        (int)Math.round((numero_tesoros * 40)/100 ),         //numero de tesoros que se esperan entre la puerta de entrada y la mas cercana
+        Math.round((numero_monstruos * 20.0)/100.0),       //numero de monstruos que se esperan entre la puerta de entrada y la mas cercana
+        Math.round((numero_tesoros * 40.0)/100.0),         //numero de tesoros que se esperan entre la puerta de entrada y la mas cercana
         numero_monstruos,  			                         //numero de monstruos         9% de monstruos de las celdas libres
         numero_tesoros,  			                         //numero de tesoros           6% de tesoros de las celdas libres
-        (int)Math.round((porcentaje * 10)/100 ),             //area segura 1er monstruo    29% de las celdas libres para el 1er monstruo (20% de de las totales si son 100 celdas)
-        (int)Math.round((porcentaje * 12)/100 ),		     //area segura 1er tesoro      22% de las celdas libres para el 1er tesoro (15% de las totales si son 100 celdas)
-        (int)Math.round((porcentaje * 4)/100 ),  		     //seguridad 1er tesoro        15% de las celdas libres de distancia entre el monstruo y el 1er tesoro (10% de las totales si son 100 celdas)
+        Math.round((porcentaje * 10.0)/100.0),             //area segura 1er monstruo    29% de las celdas libres para el 1er monstruo (20% de de las totales si son 100 celdas)
+        Math.round((porcentaje * 12.0)/100.0),		     //area segura 1er tesoro      22% de las celdas libres para el 1er tesoro (15% de las totales si son 100 celdas)
+        Math.round((porcentaje * 4.0)/100.0),  		     //seguridad 1er tesoro        15% de las celdas libres de distancia entre el monstruo y el 1er tesoro (10% de las totales si son 100 celdas)
         porcentaje_paredes,                                   //celdas pared
         porcentaje_mons,
         porcentaje_tes
@@ -133,13 +132,13 @@ public class EvoMapsGenerator
     
     double [] ponderaciones_facil_m_t = {
         0.0995, //numero de monstruos en el recorrido PP
-        0.02, //numero de tesoros en el recorrido PP
-        0.34, //numero de monstruos
-        0.24, //numero de tesoros
-        0.23, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
-        0.02, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
-        0.04, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
-        0.0105,  //celdas de tipo pared
+        0.05, //numero de tesoros en el recorrido PP
+        0.12, //numero de monstruos
+        0.12, //numero de tesoros
+        0.10, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
+        0.10, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
+        0.32, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
+        0.0905,  //celdas de tipo pared
      };
 
 

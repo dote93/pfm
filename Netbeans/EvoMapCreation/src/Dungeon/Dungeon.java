@@ -1573,7 +1573,7 @@ public class Dungeon implements Cloneable {
         if (this.posicion_monstruos.size() > 1) {
             int distancia_PM = -1;
             int distancia_PM_anterior = -1;
-            
+
             ArrayList<Celda> posicion_monstruos_ordenados = this.ordenarCeldas(this.posicion_monstruos);
             //se ordenan los recorridos
             this.posicion_monstruos = new ArrayList<Celda>();
@@ -1582,7 +1582,7 @@ public class Dungeon implements Cloneable {
             for (int i = 0; i < this.area_puerta_M.length; i++) {
                 this.area_puerta_M[i] = -1.0;
             }
-            
+
         } else if (this.posicion_monstruos.size() == 1) {
 
             this.area_puerta_M = new double[this.posicion_monstruos.size()];
@@ -1604,7 +1604,7 @@ public class Dungeon implements Cloneable {
             for (int i = 0; i < this.area_puerta_T.length; i++) {
                 this.area_puerta_T[i] = -1.0;
             }
-            
+
         } else if (this.posicion_tesoros.size() == 1) {
             this.area_puerta_T = new double[this.posicion_tesoros.size()];
             for (int i = 0; i < this.area_puerta_T.length; i++) {
@@ -1878,16 +1878,16 @@ public class Dungeon implements Cloneable {
     }
 
     /**
-     * 
+     *
      * @param listaDesordenada
      * @return
-     * @throws CloneNotSupportedException 
+     * @throws CloneNotSupportedException
      */
-    public ArrayList<Celda> ordenarCeldas(ArrayList<Celda> listaDesordenada) throws CloneNotSupportedException{
+    public ArrayList<Celda> ordenarCeldas(ArrayList<Celda> listaDesordenada) throws CloneNotSupportedException {
         ArrayList<Celda> listaOrdenada = new ArrayList<Celda>();
         int distancia_PT = -1;
         int distancia_PT_anterior = -1;
-        
+
         //se recorren los monstruos guardados
         for (int i = 0; i < listaDesordenada.size(); i++) {
 
@@ -1951,8 +1951,7 @@ public class Dungeon implements Cloneable {
 
                     if (pos != -1) {
                         listaOrdenada.add(pos, (Celda) listaDesordenada.get(i).clone());
-                    } 
-                    else {
+                    } else {
                         if (pos == -1 && (listaDesordenada.get(i).fila != this.puertaEntrada.fila || listaDesordenada.get(i).columna != this.puertaEntrada.columna)) {
                             listaOrdenada.add((Celda) listaDesordenada.get(i).clone());
                         } else if (pos == -1 && listaDesordenada.get(i).fila == this.puertaEntrada.fila && listaDesordenada.get(i).columna == this.puertaEntrada.columna) {
@@ -1962,11 +1961,10 @@ public class Dungeon implements Cloneable {
                 }
             }
         }
-    
+
         return (ArrayList<Celda>) listaOrdenada.clone();
     }
-    
-    
+
     /**
      * Funcion que calcula el fitness del dungeon
      *
@@ -2116,11 +2114,11 @@ public class Dungeon implements Cloneable {
                         if (ponderacion_restante_r_m - (ponderacion_restante_r_m * 0.5) > 0) {
                             ponderacion_restante_r_m = ponderacion_restante_r_m - (ponderacion_restante_r_m * 0.5);
                         }
-                        
+
                         if (ponderacion_restante_r_t - (ponderacion_restante_r_t * 0.5) > 0) {
                             ponderacion_restante_r_t = ponderacion_restante_r_t - (ponderacion_restante_r_t * 0.5);
                         }
-			
+
                     }
                     num_recorrido++;
                     posicion = posicion + 1;
@@ -2139,197 +2137,208 @@ public class Dungeon implements Cloneable {
             if (this.fitness == -100) {
                 return;
             }
-            
-            
-            double porcent_mons = Math.abs((dificultad_nivel[2] * 50 )/100);
-            double infer_mons =  Math.abs(dificultad_nivel[2] - porcent_mons);
-            double super_mons =  Math.abs(dificultad_nivel[2] + porcent_mons);
-            
+
+            double porcent_mons = Math.abs((dificultad_nivel[2] * 50) / 100);
+            double infer_mons = Math.abs(dificultad_nivel[2] - porcent_mons);
+            double super_mons = Math.abs(dificultad_nivel[2] + porcent_mons);
+
             //Se comprueba si el numero de monstruos que hay en el mapa no esta por debajo ni por encima del 5% de lo esperado
 //            if(this.posicion_monstruos.size() > dificultad_nivel[2]){
 //                this.fitness = -100;
 ////                System.out.println("Mal monstruos");
 //                return;
 //            }
-
             this.resultados[posicion] = Math.abs(this.posicion_monstruos.size() - dificultad_nivel[2]) * ponderaciones_nivel[2] * dificultad_nivel[8];
             this.distancias_esperadas[posicion] = dificultad_nivel[2];
             this.distancias_reales[posicion] = this.posicion_monstruos.size();
 
             posicion = posicion + 1;
-            
-            double porcent_tes = Math.abs((dificultad_nivel[3] * 80 )/100);
-            double infer_tes =  Math.abs(dificultad_nivel[3] - porcent_tes);
-            double super_tes =  Math.abs(dificultad_nivel[3] + porcent_tes);
-            
+
+            double porcent_tes = Math.abs((dificultad_nivel[3] * 80) / 100);
+            double infer_tes = Math.abs(dificultad_nivel[3] - porcent_tes);
+            double super_tes = Math.abs(dificultad_nivel[3] + porcent_tes);
+
             //Se comprueba si el numero de tesoros que hay en el mapa no esta por debajo ni por encima del 5% de lo esperado
 //            if((infer_tes > this.posicion_tesoros.size())){
 //                this.fitness = -100;
 //                System.out.println("Mal tesoros");
 //                return;
 //            }
-            
 //            if(this.posicion_tesoros.size() > dificultad_nivel[3]){
 //                this.fitness = -100;
 ////                System.out.println("Mal tesoros");
 //                return;
 //            }
-
             this.resultados[posicion] = Math.abs(posicion_tesoros.size() - dificultad_nivel[3]) * ponderaciones_nivel[3] * dificultad_nivel[9];
             this.distancias_esperadas[posicion] = dificultad_nivel[3];
             this.distancias_reales[posicion] = this.posicion_tesoros.size();
 
-            //Seguridad montruos con la puerta de entrada ----------------------------------------------
-            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
-            double ponderacion_restante_s_m = ponderaciones_nivel[4] * 0.5;
-
-            double distancia_esperada_s_m = dificultad_nivel[4];
-
-            
-            
-            
-            for (int s_monstruos = 0; s_monstruos < dificultad_nivel[2]; s_monstruos++) {
-
-                posicion = posicion + 1;
-
-                //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero
-                if (distancia_esperada_s_m >= (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
-                    distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
-                }
-
-                if (s_monstruos < this.posicion_monstruos.size()) {
-                    //si se encuentra en la misma celda que la puerta se le pone una penalizacion alta.
-                    if (area_puerta_M[s_monstruos] == 0.0 && distancia_esperada_s_m > 0.0) {
-                        this.fitness = -100;
-                        return;
-//                        this.resultados[posicion] = ((f * c) * ponderacion_restante_s_m);
-//                        this.distancias_esperadas[posicion] = this.posicion_monstruos.size();
-//                        this.distancias_reales[posicion] = s_monstruos;
-                    } else {
-//                        this.resultados[posicion] = (Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m); //se pone el 50 por ciento de la ponderacion
-                        if((Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m)) > (int)Math.round(((f * c) * 2)/100)){
-                            this.fitness = -100;
-                            return;
-                        }
-                        else{
-                            this.distancias_esperadas[posicion] = distancia_esperada_s_m;
-                            this.distancias_reales[posicion] = area_puerta_M[s_monstruos];
-                            this.resultados[posicion] = (Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
-                        }
-                        
-                    }
-
-                } else {
-                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_m);
-                    this.distancias_esperadas[posicion] = this.posicion_monstruos.size();
-                    this.distancias_reales[posicion] = s_monstruos;
-                    //resultados [posicion] = Math.abs(0 - distancia_esperada_s_m) * ponderacion_restante_s_m; //se pone el 50 por ciento de la ponderacion
-                }
-
-                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
-                if (s_monstruos < (dificultad_nivel[2] - 2)) {
-                    ponderacion_restante_s_m = ponderacion_restante_s_m - (ponderacion_restante_s_m * 0.5);
-
-                }
-
-                //se incrementa la distancia a la que se espera el siguiente monstruo
-                if (Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4])) < (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
-                    distancia_esperada_s_m = Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4]));
-                } else {
-                    distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
-                }
-
-            }
-            
-            //Seguridad tesoros con la puerta de entrada ----------------------------------------------
-            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
-            double ponderacion_restante_s_t = ponderaciones_nivel[5] * 0.5;
-            double distancia_esperada_s_t = dificultad_nivel[5];
-            for (int s_tesoros = 0; s_tesoros < dificultad_nivel[3]; s_tesoros++) {
-                posicion = posicion + 1;
-                
-                //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero			
-                if (distancia_esperada_s_t >= (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
-                    distancia_esperada_s_t = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
-                }
-
-                if (s_tesoros < posicion_tesoros.size()) {
-                    
-                    //si se encuentra en la misma celda que la puerta se le pone una penalizacion alta.
-                    if (area_puerta_T[s_tesoros] == 0 && distancia_esperada_s_t > 0) {
-                        this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t);
-                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
-                        this.distancias_reales[posicion] = area_puerta_T[s_tesoros];
-                    } else {
-                        //solo se pondera si la distancia es inferior a la esperada
-                        this.resultados[posicion] = (Math.abs(area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
-                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
-                        this.distancias_reales[posicion] = area_puerta_T[s_tesoros];
-
-                    }
-
-                } else {
-
-                    //resultados [posicion] = Math.abs(0 - distancia_esperada_s_t) * ponderacion_restante_s_t;
-                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t);
-                    this.distancias_esperadas[posicion] = posicion_tesoros.size();
-                    this.distancias_reales[posicion] = s_tesoros;
-                }
-
-                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
-                if (s_tesoros < (dificultad_nivel[3] - 2)) {
-                    ponderacion_restante_s_t = ponderacion_restante_s_t - (ponderacion_restante_s_t * 0.5);
-                }
-
-                //se incrementa la distancia a la que se espera el siguiente tesoro
-                if (Math.round(distancia_esperada_s_t + (0.5 * dificultad_nivel[5])) < (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
-                    distancia_esperada_s_t = Math.round(distancia_esperada_s_t + (0.5 * dificultad_nivel[5]));
-                } else {
-                    distancia_esperada_s_t = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
-                }
-
+//            //Seguridad montruos con la puerta de entrada ----------------------------------------------
+//            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+//            double ponderacion_restante_s_m = ponderaciones_nivel[4] * 0.5;
+//            double distancia_esperada_s_m = dificultad_nivel[4];
+//            for (int s_monstruos = 0; s_monstruos < dificultad_nivel[2]; s_monstruos++) {
+//
+//                posicion = posicion + 1;
+//
+//                //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero
+//                if (distancia_esperada_s_m >= (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+//                    distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+//                }
+//
+//                if (s_monstruos < this.posicion_monstruos.size()) {
+//                    //si se encuentra en la misma celda que la puerta se le pone una penalizacion alta.
+//                    if (area_puerta_M[s_monstruos] == 0.0 && distancia_esperada_s_m > 0.0) {
+//                        this.fitness = -100;
+//                        return;
+////                        this.resultados[posicion] = ((f * c) * ponderacion_restante_s_m);
+////                        this.distancias_esperadas[posicion] = this.posicion_monstruos.size();
+////                        this.distancias_reales[posicion] = s_monstruos;
+//                    } else {
+////                        this.resultados[posicion] = (Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m); //se pone el 50 por ciento de la ponderacion
+//                        if((Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m)) > (int)Math.round(((f * c) * 2)/100)){
+//                            this.fitness = -100;
+//                            return;
+//                        }
+//                        else{
+//                            this.distancias_esperadas[posicion] = distancia_esperada_s_m;
+//                            this.distancias_reales[posicion] = area_puerta_M[s_monstruos];
+//                            this.resultados[posicion] = (Math.abs(area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
+//                        }
+//                        
+//                    }
+//
+//                } else {
+//                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_m);
+//                    this.distancias_esperadas[posicion] = this.posicion_monstruos.size();
+//                    this.distancias_reales[posicion] = -1;
+//                    //resultados [posicion] = Math.abs(0 - distancia_esperada_s_m) * ponderacion_restante_s_m; //se pone el 50 por ciento de la ponderacion
+//                }
+//
+//                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+//                if (s_monstruos < (dificultad_nivel[2] - 2)) {
+//                    ponderacion_restante_s_m = ponderacion_restante_s_m - (ponderacion_restante_s_m * 0.5);
+//
+//                }
+//
+//                //se incrementa la distancia a la que se espera el siguiente monstruo
+//                if (Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4])) < (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+//                    distancia_esperada_s_m = Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4]));
+//                } else {
+//                    distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+//                }
+//
+//            }
+            if (this.fitness >= 0) {
+                posicion = this.calcular_fitness_seguridad_P_mons(posicion);
+            } else {
+                this.fitness = -100;
+                return;
             }
 
-            //Seguridad tesoros con los monstruos ----------------------------------------------
-            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
-            double ponderacion_restante_s_t_m = ponderaciones_nivel[6] * 0.5;
-            double distancia_esperada_s_t_m = dificultad_nivel[6];
-            for (int s_tes_mons = 0; s_tes_mons < dificultad_nivel[3]; s_tes_mons++) {
-                posicion = posicion + 1;
-                //si la ponderacion llega hasta 0 dejamos de decrementarla 
-                if (ponderacion_restante_s_t_m <= 0.0) {
-                    ponderacion_restante_s_t_m = 0.0;
-                }
+//            //Seguridad tesoros con la puerta de entrada ----------------------------------------------
+//            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+//            double ponderacion_restante_s_t = ponderaciones_nivel[5] * 0.5;
+//            double distancia_esperada_s_t = dificultad_nivel[5];
+//            for (int s_tesoros = 0; s_tesoros < dificultad_nivel[3]; s_tesoros++) {
+//                posicion = posicion + 1;
+//                
+//                //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero			
+//                if (distancia_esperada_s_t >= (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+//                    distancia_esperada_s_t = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+//                }
+//
+//                if (s_tesoros < posicion_tesoros.size()) {
+//                    
+//                    //si se encuentra en la misma celda que la puerta se le pone una penalizacion alta.
+//                    if (area_puerta_T[s_tesoros] == 0 && distancia_esperada_s_t > 0) {
+//                        this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t);
+//                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+//                        this.distancias_reales[posicion] = area_puerta_T[s_tesoros];
+//                    } else {
+//                        //solo se pondera si la distancia es inferior a la esperada
+//                        this.resultados[posicion] = (Math.abs(area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
+//                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+//                        this.distancias_reales[posicion] = area_puerta_T[s_tesoros];
+//
+//                    }
+//
+//                } else {
+//
+//                    //resultados [posicion] = Math.abs(0 - distancia_esperada_s_t) * ponderacion_restante_s_t;
+//                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t);
+//                    this.distancias_esperadas[posicion] = posicion_tesoros.size();
+//                    this.distancias_reales[posicion] = -1;
+//                }
+//
+//                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+//                if (s_tesoros < (dificultad_nivel[3] - 2)) {
+//                    ponderacion_restante_s_t = ponderacion_restante_s_t - (ponderacion_restante_s_t * 0.5);
+//                }
+//
+//                //se incrementa la distancia a la que se espera el siguiente tesoro
+//                if (Math.round(distancia_esperada_s_t + (0.5 * dificultad_nivel[5])) < (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+//                    distancia_esperada_s_t = Math.round(distancia_esperada_s_t + (0.5 * dificultad_nivel[5]));
+//                } else {
+//                    distancia_esperada_s_t = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+//                }
+//
+//            }
+            if (this.fitness >= 0) {
+                posicion = this.calcular_fitness_seguridad_P_tes(posicion);
+            } else {
+                this.fitness = -100;
+                return;
+            }
+            
+            
+//            //Seguridad tesoros con los monstruos ----------------------------------------------
+//            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+//            double ponderacion_restante_s_t_m = ponderaciones_nivel[6] * 0.5;
+//            double distancia_esperada_s_t_m = dificultad_nivel[6];
+//            for (int s_tes_mons = 0; s_tes_mons < dificultad_nivel[3]; s_tes_mons++) {
+//                posicion = posicion + 1;
+//                //si la ponderacion llega hasta 0 dejamos de decrementarla 
+//                if (ponderacion_restante_s_t_m <= 0.0) {
+//                    ponderacion_restante_s_t_m = 0.0;
+//                }
+//
+//                //si la distancia esperada a la que se debe encontrar el monstruo es inferior o igual a 1 lo igualamos a 1 (distancia minima a la que puede estar un monstruo de un tesoro)
+//                if (distancia_esperada_s_t_m <= 1) {
+//                    distancia_esperada_s_t_m = 1;
+//                }
+//
+//                if (s_tes_mons < posicion_tesoros.size()) {
+//
+//                    this.resultados[posicion] = (Math.abs(posicion_tesoros.get(s_tes_mons).distancia_seguridad_M - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m);
+//                    this.distancias_esperadas[posicion] = distancia_esperada_s_t_m;
+//                    this.distancias_reales[posicion] = posicion_tesoros.get(s_tes_mons).distancia_seguridad_M;
+//                } else {
+//                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t_m);
+//                    this.distancias_esperadas[posicion] = posicion_tesoros.size();
+//                    this.distancias_reales[posicion] = s_tes_mons;
+//                }
+//
+//                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+//                if (s_tes_mons < (dificultad_nivel[3] - 2)) {
+//                    ponderacion_restante_s_t_m = ponderacion_restante_s_t_m - (ponderacion_restante_s_t_m * 0.5);
+//
+//                }
+//
+//                //se decrementa la distancia a la que se espera el monstruo del tesoro
+//                if (Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6])) > 1) {
+//                    distancia_esperada_s_t_m = Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6]));
+//                } else {
+//                    distancia_esperada_s_t_m = 1;
+//                }
+//
+//            }
 
-                //si la distancia esperada a la que se debe encontrar el monstruo es inferior o igual a 1 lo igualamos a 1 (distancia minima a la que puede estar un monstruo de un tesoro)
-                if (distancia_esperada_s_t_m <= 1) {
-                    distancia_esperada_s_t_m = 1;
-                }
-
-                if (s_tes_mons < posicion_tesoros.size()) {
-
-                    this.resultados[posicion] = (Math.abs(posicion_tesoros.get(s_tes_mons).distancia_seguridad_M - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m);
-                    this.distancias_esperadas[posicion] = distancia_esperada_s_t_m;
-                    this.distancias_reales[posicion] = posicion_tesoros.get(s_tes_mons).distancia_seguridad_M;
-                } else {
-                    this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t_m);
-                    this.distancias_esperadas[posicion] = posicion_tesoros.size();
-                    this.distancias_reales[posicion] = s_tes_mons;
-                }
-
-                //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
-                if (s_tes_mons < (dificultad_nivel[3] - 2)) {
-                    ponderacion_restante_s_t_m = ponderacion_restante_s_t_m - (ponderacion_restante_s_t_m * 0.5);
-
-                }
-
-                //se decrementa la distancia a la que se espera el monstruo del tesoro
-                if (Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6])) > 1) {
-                    distancia_esperada_s_t_m = Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6]));
-                } else {
-                    distancia_esperada_s_t_m = 1;
-                }
-
+            if(this.fitness >= 0){
+                posicion = this.calcular_fitness_mons_tes(posicion);
+            }else{
+                this.fitness = -100;
+                return;
             }
 
             posicion++;
@@ -2351,6 +2360,172 @@ public class Dungeon implements Cloneable {
             fitness = -100;
         }
 
+    }
+
+    public int calcular_fitness_seguridad_P_mons(int posicion) {
+
+        //Seguridad montruos con la puerta de entrada ----------------------------------------------
+        //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+        double ponderacion_restante_s_m = ponderaciones_nivel[4] * 0.5;
+        double distancia_esperada_s_m = dificultad_nivel[4];
+
+        for (int s_monstruos = 0; s_monstruos < dificultad_nivel[2]; s_monstruos++) {
+
+            posicion = posicion + 1;
+
+            //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero
+            if (distancia_esperada_s_m >= (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+                distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+            }
+
+            if (s_monstruos < this.posicion_monstruos.size()) {
+                      
+                //si el monstruo se encuentra mas cercano a la puerta de la 
+                //distancia requerida se penaliza.
+                if (this.area_puerta_M[s_monstruos] - distancia_esperada_s_m < 0) {
+                    //solo se pondera si la distancia es inferior a la esperada
+                    this.resultados[posicion] = (Math.abs(this.area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
+                    this.distancias_esperadas[posicion] = distancia_esperada_s_m;
+                    this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
+                }
+                else{
+                    this.resultados[posicion] = 0.0;
+                    this.distancias_esperadas[posicion] = distancia_esperada_s_m;
+                    this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
+                }
+
+            } else {
+                this.resultados[posicion] = ((f * c) * ponderacion_restante_s_m);
+                this.distancias_esperadas[posicion] = this.posicion_monstruos.size();
+                this.distancias_reales[posicion] = -1;
+            }
+
+            //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+            if (s_monstruos < (dificultad_nivel[2] - 2)) {
+                ponderacion_restante_s_m = ponderacion_restante_s_m - (ponderacion_restante_s_m * 0.5);
+
+            }
+
+            //se incrementa la distancia a la que se espera el siguiente monstruo
+            if (Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4])) < (porcentaje - dificultad_nivel[2] - dificultad_nivel[3])) {
+                distancia_esperada_s_m = Math.round(distancia_esperada_s_m + (0.5 * dificultad_nivel[4]));
+            } else {
+                distancia_esperada_s_m = (porcentaje - dificultad_nivel[2] - dificultad_nivel[3]);
+            }
+
+        }
+
+        return posicion;
+    }
+
+    public int calcular_fitness_seguridad_P_tes(int posicion) {
+        //Seguridad tesoros con la puerta de entrada ----------------------------------------------
+        //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+        double ponderacion_restante_s_t = this.ponderaciones_nivel[5] * 0.5;
+        double distancia_esperada_s_t = this.dificultad_nivel[5];
+        for (int s_tesoros = 0; s_tesoros < (int)this.dificultad_nivel[3]; s_tesoros++) {
+            posicion = posicion + 1;
+
+            //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero			
+            if (distancia_esperada_s_t >= (this.porcentaje - this.dificultad_nivel[2] - this.dificultad_nivel[3])) {
+                distancia_esperada_s_t = (this.porcentaje - this.dificultad_nivel[2] - this.dificultad_nivel[3]);
+            }
+
+            if (s_tesoros < this.posicion_tesoros.size()) {
+
+                //si el tesoro se encuentra mas cercano a la puerta de la 
+                //distancia requerida se penaliza.
+                if (this.area_puerta_T[s_tesoros] - distancia_esperada_s_t < 0) {
+                    //solo se pondera si la distancia es inferior a la esperada
+                    this.resultados[posicion] = (Math.abs(this.area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
+                    this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+                    this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
+                }
+                else{
+                    this.resultados[posicion] = 0.0;
+                    this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+                    this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
+                }
+
+                //si se encuentra en la misma celda que la puerta se le pone una penalizacion alta.
+//                    if (this.area_puerta_T[s_tesoros] == 0 && distancia_esperada_s_t > 0) {
+//                        this.resultados[posicion] = ((this.f * this.c) * ponderacion_restante_s_t);
+//                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+//                        this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
+//                    } else {
+//                        //solo se pondera si la distancia es inferior a la esperada
+//                        this.resultados[posicion] = (Math.abs(this.area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
+//                        this.distancias_esperadas[posicion] = distancia_esperada_s_t;
+//                        this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
+//                    }
+            } else {
+
+                //resultados [posicion] = Math.abs(0 - distancia_esperada_s_t) * ponderacion_restante_s_t;
+                this.resultados[posicion] = ((this.f * this.c) * ponderacion_restante_s_t);
+                this.distancias_esperadas[posicion] = this.posicion_tesoros.size();
+                this.distancias_reales[posicion] = -1;
+            }
+
+            //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+            if (s_tesoros < (this.dificultad_nivel[3] - 2)) {
+                ponderacion_restante_s_t = ponderacion_restante_s_t - (ponderacion_restante_s_t * 0.5);
+            }
+
+            //se incrementa la distancia a la que se espera el siguiente tesoro
+            if (Math.round(distancia_esperada_s_t + (0.5 * this.dificultad_nivel[5])) < (this.porcentaje - this.dificultad_nivel[2] - this.dificultad_nivel[3])) {
+                distancia_esperada_s_t = Math.round(distancia_esperada_s_t + (0.5 * this.dificultad_nivel[5]));
+            } else {
+                distancia_esperada_s_t = (this.porcentaje - this.dificultad_nivel[2] - this.dificultad_nivel[3]);
+            }
+
+        }
+
+        return posicion;
+    }
+    
+    public int calcular_fitness_mons_tes(int posicion){
+        //Seguridad tesoros con los monstruos ----------------------------------------------
+        //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
+        double ponderacion_restante_s_t_m = ponderaciones_nivel[6] * 0.5;
+        double distancia_esperada_s_t_m = dificultad_nivel[6];
+        for (int s_tes_mons = 0; s_tes_mons < (int)dificultad_nivel[3]; s_tes_mons++) {
+            posicion = posicion + 1;
+            //si la ponderacion llega hasta 0 dejamos de decrementarla 
+            if (ponderacion_restante_s_t_m <= 0.0) {
+                ponderacion_restante_s_t_m = 0.0;
+            }
+
+            //si la distancia esperada a la que se debe encontrar el monstruo es inferior o igual a 1 lo igualamos a 1 (distancia minima a la que puede estar un monstruo de un tesoro)
+            if (distancia_esperada_s_t_m <= 1) {
+                distancia_esperada_s_t_m = 1;
+            }
+
+            if (s_tes_mons < posicion_tesoros.size()) {
+
+                this.resultados[posicion] = (Math.abs(posicion_tesoros.get(s_tes_mons).distancia_seguridad_M - distancia_esperada_s_t_m) * ponderacion_restante_s_t_m);
+                this.distancias_esperadas[posicion] = distancia_esperada_s_t_m;
+                this.distancias_reales[posicion] = posicion_tesoros.get(s_tes_mons).distancia_seguridad_M;
+            } else {
+                this.resultados[posicion] = ((f * c) * ponderacion_restante_s_t_m);
+                this.distancias_esperadas[posicion] = posicion_tesoros.size();
+                this.distancias_reales[posicion] = s_tes_mons;
+            }
+
+            //si nos encontramos en la penultima iteracion del bucle no modificamos la ponderacion (los dos ultimos elementos tienen la misma ponderacion), sino la decrementamos un 50 %
+            if (s_tes_mons < (dificultad_nivel[3] - 2)) {
+                ponderacion_restante_s_t_m = ponderacion_restante_s_t_m - (ponderacion_restante_s_t_m * 0.5);
+
+            }
+
+            //se decrementa la distancia a la que se espera el monstruo del tesoro
+            if (Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6])) > 1) {
+                distancia_esperada_s_t_m = Math.round(distancia_esperada_s_t_m - (0.25 * dificultad_nivel[6]));
+            } else {
+                distancia_esperada_s_t_m = 1;
+            }
+
+        }
+        return posicion;
     }
 
     /**
