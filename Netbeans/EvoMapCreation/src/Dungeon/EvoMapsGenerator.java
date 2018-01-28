@@ -133,11 +133,11 @@ public class EvoMapsGenerator
     double [] ponderaciones_facil_m_t = {
         0.0995, //numero de monstruos en el recorrido PP
         0.05, //numero de tesoros en el recorrido PP
-        0.12, //numero de monstruos
-        0.12, //numero de tesoros
-        0.10, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
-        0.10, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
-        0.32, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
+        0.15, //numero de monstruos
+        0.15, //numero de tesoros
+        0.13, //area segura 1er monstruo (ponderacion para todos los monstruos, a dividir)
+        0.13, //area segura 1er tesoro   (ponderacion para todos los tesoros, a dividir)
+        0.20, //seguridad 1er tesoro     (ponderacion para la seguridad de todos los tesoros, a dividir)
         0.0905,  //celdas de tipo pared
      };
 

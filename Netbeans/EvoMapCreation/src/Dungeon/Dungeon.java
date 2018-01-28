@@ -2290,8 +2290,7 @@ public class Dungeon implements Cloneable {
                 this.fitness = -100;
                 return;
             }
-            
-            
+
 //            //Seguridad tesoros con los monstruos ----------------------------------------------
 //            //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
 //            double ponderacion_restante_s_t_m = ponderaciones_nivel[6] * 0.5;
@@ -2333,10 +2332,9 @@ public class Dungeon implements Cloneable {
 //                }
 //
 //            }
-
-            if(this.fitness >= 0){
+            if (this.fitness >= 0) {
                 posicion = this.calcular_fitness_mons_tes(posicion);
-            }else{
+            } else {
                 this.fitness = -100;
                 return;
             }
@@ -2369,6 +2367,8 @@ public class Dungeon implements Cloneable {
         double ponderacion_restante_s_m = ponderaciones_nivel[4] * 0.5;
         double distancia_esperada_s_m = dificultad_nivel[4];
 
+        double celdas_vacias = (((this.f * this.c) - this.dificultad_nivel[7]) - this.dificultad_nivel[2] - dificultad_nivel[3]);
+
         for (int s_monstruos = 0; s_monstruos < dificultad_nivel[2]; s_monstruos++) {
 
             posicion = posicion + 1;
@@ -2379,19 +2379,24 @@ public class Dungeon implements Cloneable {
             }
 
             if (s_monstruos < this.posicion_monstruos.size()) {
-                      
+
                 //si el monstruo se encuentra mas cercano a la puerta de la 
                 //distancia requerida se penaliza.
                 if (this.area_puerta_M[s_monstruos] - distancia_esperada_s_m < 0) {
-                    //solo se pondera si la distancia es inferior a la esperada
-                    this.resultados[posicion] = (Math.abs(this.area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
-                    this.distancias_esperadas[posicion] = distancia_esperada_s_m;
-                    this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
-                }
-                else{
-                    this.resultados[posicion] = 0.0;
-                    this.distancias_esperadas[posicion] = distancia_esperada_s_m;
-                    this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
+                    this.fitness = -100;
+                    break;
+                } else {
+                    if ((this.area_puerta_M[s_monstruos] - distancia_esperada_s_m == 0)
+                            || ((this.area_puerta_M[s_monstruos] - distancia_esperada_s_m) < Math.round((distancia_esperada_s_m * 30) / 100))) {
+                        this.resultados[posicion] = 0.0;
+                        this.distancias_esperadas[posicion] = distancia_esperada_s_m;
+                        this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
+                    } else {
+                        //solo se pondera si la distancia es inferior a la esperada
+                        this.resultados[posicion] = (Math.abs(this.area_puerta_M[s_monstruos] - distancia_esperada_s_m) * ponderacion_restante_s_m);
+                        this.distancias_esperadas[posicion] = distancia_esperada_s_m;
+                        this.distancias_reales[posicion] = this.area_puerta_M[s_monstruos];
+                    }
                 }
 
             } else {
@@ -2423,7 +2428,7 @@ public class Dungeon implements Cloneable {
         //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
         double ponderacion_restante_s_t = this.ponderaciones_nivel[5] * 0.5;
         double distancia_esperada_s_t = this.dificultad_nivel[5];
-        for (int s_tesoros = 0; s_tesoros < (int)this.dificultad_nivel[3]; s_tesoros++) {
+        for (int s_tesoros = 0; s_tesoros < (int) this.dificultad_nivel[3]; s_tesoros++) {
             posicion = posicion + 1;
 
             //si la distancia esperada se pasa del numero de celdas libres igualamos la distancia a ese numero			
@@ -2440,8 +2445,7 @@ public class Dungeon implements Cloneable {
                     this.resultados[posicion] = (Math.abs(this.area_puerta_T[s_tesoros] - distancia_esperada_s_t) * ponderacion_restante_s_t);
                     this.distancias_esperadas[posicion] = distancia_esperada_s_t;
                     this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
-                }
-                else{
+                } else {
                     this.resultados[posicion] = 0.0;
                     this.distancias_esperadas[posicion] = distancia_esperada_s_t;
                     this.distancias_reales[posicion] = this.area_puerta_T[s_tesoros];
@@ -2482,13 +2486,13 @@ public class Dungeon implements Cloneable {
 
         return posicion;
     }
-    
-    public int calcular_fitness_mons_tes(int posicion){
+
+    public int calcular_fitness_mons_tes(int posicion) {
         //Seguridad tesoros con los monstruos ----------------------------------------------
         //inicializamos la ponderacion restante al 50% de la ponderacion total para todos los monstruos
         double ponderacion_restante_s_t_m = ponderaciones_nivel[6] * 0.5;
         double distancia_esperada_s_t_m = dificultad_nivel[6];
-        for (int s_tes_mons = 0; s_tes_mons < (int)dificultad_nivel[3]; s_tes_mons++) {
+        for (int s_tes_mons = 0; s_tes_mons < (int) dificultad_nivel[3]; s_tes_mons++) {
             posicion = posicion + 1;
             //si la ponderacion llega hasta 0 dejamos de decrementarla 
             if (ponderacion_restante_s_t_m <= 0.0) {
